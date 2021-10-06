@@ -21,75 +21,60 @@ _V = TypeVar('_V')
 # class GMV(Basic):
 class GExpr(Expr):
   
-  grade = []
-  is_atom = False
+  grade:set = {}
+  is_atom:bool = False
   __slots__ = ()
+  coeffs:List["GExpr"] = [S(1)]
 
-  # @sympify_return([('other', 'Expr')], NotImplemented)
-  def __add__(self, A):
+  def __add__(self:"GExpr", A:"GExpr") -> "GExpr":
     return add(self, A)
 
-  # @sympify_return([('other', 'Expr')], NotImplemented)
-  def __radd__(self, A):
+  def __radd__(self:"GExpr", A:"GExpr") -> "GExpr":
     return add(A, self)
 
-  # @sympify_return([('other', 'Expr')], NotImplemented)
-  def __sub__(self, A):
+  def __sub__(self:"GExpr", A:"GExpr") -> "GExpr":
     return add(self,mul(A,-1))
 
-  # @sympify_return([('other', 'Expr')], NotImplemented)
-  def __rsub__(self, A):
+  def __rsub__(self:"GExpr", A:"GExpr") -> "GExpr":
     return add(A,mul(self,-1))
 
-  # @sympify_return([('other', 'Expr')], NotImplemented)
-  def __mul__(self, dopr):  # * geometric product
+  def __mul__(self:"GExpr", dopr:"GExpr") -> "GExpr":  # * geometric product
     return mul(self, dopr)
 
-  # @sympify_return([('other', 'Expr')], NotImplemented)
-  def __rmul__(self, dopl):  # * geometric product
+  def __rmul__(self:"GExpr", dopl:"GExpr") -> "GExpr":  # * geometric product
     return mul(dopl,self)
 
-  # @sympify_return([('other', 'Expr')], NotImplemented)
-  def __xor__(self, dopr):  # ^ outer product
+  def __xor__(self:"GExpr", dopr:"GExpr") -> "extp":  # ^ outer product
     return extp(self,dopr)
 
-  # @sympify_return([('other', 'Expr')], NotImplemented)
-  def __rxor__(self, dopl):  # ^ outer product
+  def __rxor__(self:"GExpr", dopl:"GExpr") -> "extp":  # ^ outer product
     return extp(dopl,self)
 
-  # @sympify_return([('other', 'Expr')], NotImplemented)
-  def __lt__(self, dopr):  # < left contraction
+  def __lt__(self:"GExpr", dopr:"GExpr") -> "GExpr":  # < left contraction
     return lcntrct(self, dopr)
 
-  # @sympify_return([('other', 'Expr')], NotImplemented)
-  def __gt__(self, dopr):  # > right contraction
+  def __gt__(self:"GExpr", dopr:"GExpr") -> "GExpr":  # > right contraction
     return rcntrct(self, dopr)
 
-  # @sympify_return([('other', 'Expr')], NotImplemented)
-  def __or__(self, dopr):  # | inner product
+  def __or__(self:"GExpr", dopr:"GExpr") -> "GExpr":  # | inner product
     return inprdct(self, dopr)
 
-  # @sympify_return([('other', 'Expr')], NotImplemented)
-  def __ror__(self, dopl):  # | inner product
+  def __ror__(self:"GExpr", dopl:"GExpr") -> "GExpr":  # | inner product
     return inprdct(dopl,self)
 
-  # @sympify_return([('other', 'Expr')], NotImplemented)
-  def __lshift__(self, A):  # anti-comutator (<<)
+  def __lshift__(self:"GExpr", A:"GExpr") -> "GExpr":  # anti-comutator (<<)
     return anticomm(self, A)
 
-  # @sympify_return([('other', 'Expr')], NotImplemented)
-  def __rshift__(self, A):  # comutator (>>)
+  def __rshift__(self:"GExpr", A:"GExpr") -> "GExpr":  # comutator (>>)
     return comm(self, A)
 
-  # @sympify_return([('other', 'Expr')], NotImplemented)
-  def __rlshift__(self, A):  # anti-comutator (<<)
+  def __rlshift__(self:"GExpr", A:"GExpr") -> "GExpr":  # anti-comutator (<<)
     return anticomm(A, self)
   
-  # @sympify_return([('other', 'Expr')], NotImplemented)
-  def __rrshift__(self, A):  # comutator (>>)
+  def __rrshift__(self:"GExpr", A:"GExpr") -> "GExpr":  # comutator (>>)
     return comm(A,self)
 
-  def sSubs(self, args):
+  def sSubs(self:"GExpr", args):
     def replace(old,new):
       if new is None:
         exprlst.remove(old)
@@ -113,16 +98,19 @@ class GExpr(Expr):
     else :
       raise
 
-  def subs(self,map):
+  def subs(self:"GExpr",map) -> "GExpr":
     if isinstance(map,list):
       for old,new in map:
-        self = strtSubs({old:new})(self)
-      return self
+        expr = strtSubs({old:new})(self)
+        expr1 = expr.func(*expr.args)
+      return expr1
       
     elif isinstance(map,tuple):
       old,new = map
-      self = strtSubs({old:new})(self)
-      return self
+      expr = strtSubs({old:new})(self)
+      expr1 = expr.func(*expr.args)
+      # expression needs to be rebui;d
+      return expr1
     else :
       raise
 

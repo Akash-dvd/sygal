@@ -1,3 +1,6 @@
+from typing import Tuple, TypeVar, Callable, Dict, Sequence, List, Optional, Union
+
+
 from sympy import (
   Basic,diff, Rational, Symbol, S, Mul, Add, Expr,
   expand, simplify, eye, trigsimp,
@@ -10,13 +13,13 @@ from sympy.core.cache import cacheit
 
 class gv(GExpr,AtomicExpr):
 
-  grade = 1
+  grade = {1}
   is_atom = True
 
-  def __new__(cls, name, **assumptions):  
+  def __new__(cls, name:str, **assumptions) -> "gv":  
     return gv.__xnew_cached_(cls, name, **assumptions)
 
-  def __new_stage2__(cls, name, **assumptions):
+  def __new_stage2__(cls, name:str, **assumptions) -> "gv":
     if not isinstance(name, str):
       raise TypeError("name should be a string, not %s" % repr(type(name)))
 
@@ -39,7 +42,7 @@ class gv(GExpr,AtomicExpr):
 
   def __eq__(self, other):
     return (
-      self.__class__ == other.__class__ and
+      (type(other) == type(self))  and
       self.name == other.name
     )
 
@@ -49,5 +52,8 @@ class GV(gv):
   _x  = gv('_x')
   _y  = gv('_y')
   _rx = gv('_rx')
-  _I4 = _o^_x^_y^_oo
+  
+  _I3 = _x^_y^_oo
+  _I41 = _o^_x^_y^_oo
+  _I42 = _x^_y^_rx^_oo
   _I5 = _o^_x^_y^_rx^_oo

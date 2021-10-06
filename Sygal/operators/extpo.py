@@ -1,6 +1,3 @@
-from typing import Tuple, TypeVar, Callable, Dict, Sequence, List, Optional, Union
-
-
 from collections import defaultdict
 from functools import cmp_to_key
 import operator
@@ -23,25 +20,26 @@ from sympy.strategies.tools import subs, typed ,canon
 from sympy.strategies.traverse import (top_down, bottom_up, sall, top_down_once,bottom_up_once, basic_fns)
 from sympy.strategies.tree import treeapply, greedy, allresults, brute
 
-# from libs.Sygal.utils.rules import rlGSortArgs
 
-class add(GExpr) :
-  identity = S(0)
+class extp(GExpr):
 
-  def __new__(cls, *args:Tuple["GExpr"],**kwargs) -> Union["add",Tuple[S]]:
+  identity = S(1)
+
+  def __new__(cls, *args,**kwargs):
     if not args:
       return cls.identity
 
     # This must be removed aggressively in the constructor to avoid
     # TypeErrors from GenericZeroMatrix().shape
-    t1 = filter(lambda i: cls.identity != i, args)
-    t2 = tuple(map(sympify, t1))
+    args = filter(lambda i: cls.identity != i, args)
+    args = list(map(sympify, args))
     
     if ((len(args)-len(set(args))) == 0):  
-      obj = Basic.__new__(cls, *t2)
+      args = cls.sort_seq(args)
     else :
-      t3 = (S(0))
-      return Basic.__new__(cls, *t3)
+      args = [S(0)]
+
+    obj = Basic.__new__(cls, *args)
 
     check = kwargs.get('check', False)
     if check:
@@ -53,7 +51,7 @@ class add(GExpr) :
       # validate(*args)
 
 
-    if all(not isinstance(i, GExpr) for i in t2):
+    if all(not isinstance(i, GExpr) for i in args):
       pass
       # append to appendage for grade 0
 
@@ -62,11 +60,30 @@ class add(GExpr) :
 
     return obj
 
+
   @property
-  def grade(self:"add") -> int:
+  def grade(self):
     return sum([nullsafe((lambda x:x)(x)) for x in self.args])
 
-  def __str__(self:"add") -> str:
+  
+  @classmethod
+  def sort_seq(cls,seq):
+
+    seq0 = [elem for elem in seq if not isinstance(elem,GExpr) and isinstance(elem,Expr)]
+
+    seq1 = [elem for elem in seq if isinstance(elem,GExpr) and elem.is_atom]
+
+    seq2 = [elem for elem in seq if isinstance(elem,GExpr) and not elem.is_atom]
+
+    newseq1 = sorted(seq1,key=lambda ele: ele.name)
+    newseq2 = sorted(seq2,key=lambda ele: ele.__hash__())
+    
+    seq0.extend(newseq1)
+    seq0.extend(newseq2)
+    
+    return seq0
+
+  def __str__(self):
     ls = self.args
     str = '('
     for o in ls:
@@ -77,8 +94,7 @@ class add(GExpr) :
 
   __repr__ = __str__
 
-
-  def __hash__(self:"add") -> int:
+  def __hash__(self):
     h = self._mhash
     if h is None:
       strng = (type(self).__name__)
@@ -88,13 +104,13 @@ class add(GExpr) :
       self._mhash = h
     return h
   
-  def __eq__(self:"add", other:"GExpr") -> bool:
+  def __eq__(self, other):
     return (
-      (type(other) == type(self)) and
+      self.__class__ == other.__class__ and
       self.__hash__() == other.__hash__()
     )
 
-  def __neg__(self:"add") -> "add":
+  def __neg__(self):
     c, args = self.as_coeff_mul()
     c = -c
     if c is not S.One:
@@ -111,10 +127,10 @@ class add(GExpr) :
 
 
 rules = (
-  unpack, rm_id(lambda x: x == 0), flatten,sort(lambda ele: ele.grade)
+  unpack, rm_id(lambda x: x == 1), flatten
   )
 
-canonicalize = exhaust(typed({sum: do_one(*rules)}))
+canonicalize = exhaust(typed({extp: do_one(*rules)}))
 
 def nullsafe(arg):
   try:

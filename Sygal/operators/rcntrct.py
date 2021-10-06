@@ -38,6 +38,6 @@ class rcntrct(GExpr):
   
   def __eq__(self, other):
     return (
-      self.__class__ == other.__class__ and
+      (type(other) == type(self))  and
       self.__hash__() == other.__hash__()
     )

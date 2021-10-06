@@ -21,7 +21,7 @@ from sympy.strategies.tools import subs, typed ,canon
 from sympy.strategies.traverse import (top_down, bottom_up, sall, top_down_once,bottom_up_once, basic_fns)
 from sympy.strategies.tree import treeapply, greedy, allresults, brute
 
-new = extp.__new__
+new = Basic.__new__
 
 
 """
@@ -68,11 +68,10 @@ class concat():
       lst1 = []
       # Pattern Match (<Grade-1>)(<>)(Exterior Product)
       # TODO Write a pattern matching api call
-      if(isinstance(expr,extp)):
-        for i, x in enumerate(expr.args):
-          if (isinstance(x,lcntrct) or isinstance(x,rcntrct)) and\
-              (x.args[0].grade == {1}) and isinstance(x.args[1],extp):
-            lst1.append((x.args[0],i))
+      for i, x in enumerate(expr.args):
+        if (isinstance(x,lcntrct) or isinstance(x,rcntrct)) and\
+            (x.args[0].grade == 1) and isinstance(x.args[1],extp):
+          lst1.append((x.args[0],i))
       # lst1 = [(_rx, 0), (_rx, 1), (_oo, 2),(_oo,3),(_rx,4)]
       
       # Only execute if above filter has matches present.
@@ -113,7 +112,7 @@ class concat():
           T[indx] = None
       
         
-        expr = new(expr.__class__, *tuple(filter((None).__ne__, T)))
+        expr = new(type(expr), *tuple(filter((None).__ne__, T)))
       
       return expr
     return sandhi1 
@@ -190,6 +189,8 @@ class concat():
       return [S(0)]
 
 
+
+  
 @staticmethod
 def Rcntrct2Lcntrct():
   pass

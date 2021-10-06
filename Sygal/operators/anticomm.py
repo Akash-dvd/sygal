@@ -39,7 +39,6 @@ class anticomm(GExpr):
 
   __repr__ = __str__
   
-  
   def __hash__(self):
     h = self._mhash
     if h is None:
