@@ -2,10 +2,13 @@ from sympy import Basic
 from sympy.core.expr import Expr
 from sympy.core.singleton import S
 
-from libs.Sygal.GExpr import GExpr
+from sympy import (
+  Basic,diff, Rational, Symbol, S, Mul, Add, Expr,
+  expand, simplify, eye, trigsimp,
+  symbols, sqrt, Matrix,srepr,bottom_up
+)
 
-from libs.Sygal.operators import (add,anticomm,comm,extp,
-inprdct,lcntrct,mul,rcntrct)
+from sympy.utilities.iterables import sift
 
 from sympy.strategies.rl import (rm_id, glom, flatten, unpack, sort, distribute,subs, rebuild)
 from sympy.strategies.core import (null_safe, exhaust, memoize, condition,chain, tryit, do_one, debug, switch, minimize)
@@ -13,6 +16,10 @@ from sympy.strategies.tools import subs, typed ,canon
 from sympy.strategies.traverse import (top_down, bottom_up, sall, top_down_once,bottom_up_once, basic_fns)
 from sympy.strategies.tree import treeapply, greedy, allresults, brute
 
+
+from libs.Sygal.GExpr import GExpr
+
+# from libs.Sygal.operators import (gadd,ganticomm,gcomm,gextp,ginprdct,glcntrct,gmul,grcntrct)
 
 new = Basic.__new__
 # TODO add new to arguements
@@ -37,45 +44,28 @@ def rlChkDup(expr:GExpr)->GExpr:
   else:
     return S(0)
 
-def rlGSortArgs(expr:"GExpr") -> "extp":
+def rlGSortArgs(expr:"GExpr") -> "GExpr":
   """
-  Sort Paritioned arguements based on Grades
+  Sort Paritioned arguements based on Grades,names
+  Complex arguement are put at last sorted by sum of their weights
   """
   def GSortArgs(seq):
 
-    seq0 = [elem for elem in seq if not isinstance(elem,GExpr) and isinstance(elem,Expr)]
-
-    seq1 = [elem for elem in seq if isinstance(elem,GExpr) and elem.is_atom]
-
-    seq2 = [elem for elem in seq if isinstance(elem,GExpr) and not elem.is_atom]
-
-    newseq1 = sorted(seq1,key=lambda ele: ele.name)
-    newseq2 = sorted(seq2,key=lambda ele: ele.__hash__())
-    
-    seq0.extend(newseq1)
-    seq0.extend(newseq2)
-    
-    return seq0
+    newseq = sorted(seq,key=lambda ele:(len(ele.grade),next(iter(ele.grade)),ele.name,ele.__hash__()))
+    return newseq
   return new(expr.__class__, *GSortArgs(expr.args))
 
-    
-def rlGSortGrades(expr:"GExpr") -> "mul":
+def rlglom(key, count, combine):
+  """ 
+  Replaced sum of glom with Add here
   """
-  Sort arguements based on Grades
-  """
-  def GrSortArgs(seq):
-
-    seq0 = [elem for elem in seq if not isinstance(elem,GExpr) and isinstance(elem,Expr)]
-
-    seq1 = [elem for elem in seq if isinstance(elem,GExpr) and elem.is_atom]
-
-    seq2 = [elem for elem in seq if isinstance(elem,GExpr) and not elem.is_atom]
-
-    newseq1 = sorted(seq1,key=lambda ele: ele.name)
-    newseq2 = sorted(seq2,key=lambda ele: ele.__hash__())
-    
-    seq0.extend(newseq1)
-    seq0.extend(newseq2)
-    
-    return seq0
-  return new(expr.__class__, *GrSortArgs(expr.args))
+  def conglomerate(expr):
+    """ Conglomerate together identical args x + x -> 2x """
+    groups = sift(expr.args, key)
+    counts = dict((k, Add(map(count, args))) for k, args in groups.items())
+    newargs = [combine(cnt, mat) for mat, cnt in counts.items()]
+    if set(newargs) != set(expr.args):
+      return new(type(expr), *newargs)
+    else:
+      return expr
+  return conglomerate

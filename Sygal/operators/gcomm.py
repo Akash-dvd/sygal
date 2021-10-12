@@ -9,19 +9,30 @@ from sympy import (
 
 from libs.Sygal.GExpr import GExpr
 
-class rcntrct(GExpr):
-
+class gcomm(GExpr):
+  """Represents a modulo operation on symbolic expressions.
+  Receives two arguments, dividend p and divisor q.
+  The convention used is the same as Python's: the remainder always has the
+  same sign as the divisor.
+  Examples
+  ========
+  >>> from sympy.abc import x, y
+  >>> x**2 % y
+  Mod(x**2, y)
+  >>> _.subs({x: 5, y: 6})
+  1
+  """
   @property
   def grade(self):
-    return self.args[1].grade-self.args[0].grade
-
+    raise
+  
   @classmethod
   def eval(cls, p, q):
     return
   
   def __str__(self):
     str = '('+(self.args[0]).__str__()\
-    +'>'\
+    +'>>'\
     +(self.args[1]).__str__()+')'
     return str
 
@@ -30,14 +41,6 @@ class rcntrct(GExpr):
   def __hash__(self):
     h = self._mhash
     if h is None:
-      h = hash((type(self).__name__) + \
-        str(self.args[0].__hash__()) + \
-        str(self.args[1].__hash__()))
+      h = hash((type(self).__name__,) + self.args)
       self._mhash = h
     return h
-  
-  def __eq__(self, other):
-    return (
-      (type(other) == type(self))  and
-      self.__hash__() == other.__hash__()
-    )

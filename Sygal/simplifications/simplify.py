@@ -12,8 +12,8 @@ from sympy.core.singleton import S
 from libs.Sygal.GV import GV,gv
 from libs.Sygal.utils import rlZero ,conjugation
 from libs.Sygal.GExpr import GExpr
-from libs.Sygal.operators import (add,anticomm,comm,extp,
-inprdct,lcntrct,mul,rcntrct)
+from libs.Sygal.operators import (gadd,ganticomm,gcomm,gextp,
+ginprdct,glcntrct,gmul,grcntrct)
 
 from sympy.strategies.rl import (rm_id, glom, flatten, unpack, sort, distribute,subs, rebuild)
 from sympy.strategies.core import (null_safe, exhaust, memoize, condition,chain, tryit, do_one, debug, switch, minimize)
@@ -21,7 +21,7 @@ from sympy.strategies.tools import subs, typed ,canon
 from sympy.strategies.traverse import (top_down, bottom_up, sall, top_down_once,bottom_up_once, basic_fns)
 from sympy.strategies.tree import treeapply, greedy, allresults, brute
 
-new = extp.__new__
+new = gextp.__new__
 
 
 """
@@ -68,10 +68,10 @@ class concat():
       lst1 = []
       # Pattern Match (<Grade-1>)(<>)(Exterior Product)
       # TODO Write a pattern matching api call
-      if(isinstance(expr,extp)):
+      if(isinstance(expr,gextp)):
         for i, x in enumerate(expr.args):
-          if (isinstance(x,lcntrct) or isinstance(x,rcntrct)) and\
-              (x.args[0].grade == {1}) and isinstance(x.args[1],extp):
+          if (isinstance(x,glcntrct) or isinstance(x,grcntrct)) and\
+              (x.args[0].grade == {1}) and isinstance(x.args[1],gextp):
             lst1.append((x.args[0],i))
       # lst1 = [(_rx, 0), (_rx, 1), (_oo, 2),(_oo,3),(_rx,4)]
       

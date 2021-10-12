@@ -1,22 +1,22 @@
 """Core module. Provides the basic operations needed in sympy.
 """
 
-from .add import add
-from .anticomm import anticomm
-from .comm import comm
-from .extp import extp
-from .inprdct import inprdct
-from .lcntrct import lcntrct
-from .mul import mul
-from .rcntrct import rcntrct
+from .gadd import gadd
+from .ganticomm import ganticomm
+from .gcomm import gcomm
+from .gextp import gextp
+from .ginprdct import ginprdct
+from .glcntrct import glcntrct
+from .gmul import gmul
+from .grcntrct import grcntrct
 
 __all__ = [
-    'add',
-    'anticomm',
-    'comm',
-    'extp',
-    'inprdct',
-    'lcntrct',
-    'mul',
-    'rcntrct'
+    'gadd',
+    'ganticomm',
+    'gcomm',
+    'gextp',
+    'ginprdct',
+    'glcntrct',
+    'gmul',
+    'grcntrct'
 ]

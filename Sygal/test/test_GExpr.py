@@ -5,9 +5,9 @@ sys.path.append('/app/solver')
 from functools import reduce
 from operator import and_
 
-from libs.Sygal.simplifications.simplify import concat
 from libs.Sygal.GV import GV
 from libs.Sygal.GExpr import GExpr
+from libs.Sygal.simplifications.simplify import concat
 from libs.Sygal.operators import (add,anticomm,comm,extp,
 inprdct,lcntrct,mul,rcntrct)
 

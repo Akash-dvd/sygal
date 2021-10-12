@@ -7,44 +7,52 @@ from sympy import (
   symbols, sqrt, Matrix,srepr,AtomicExpr
 )
 
-from libs.Sygal.GExpr import GExpr
+
+from libs.Sygal.GB import GB
 from sympy.core.cache import cacheit
 
 
-class gv(GExpr,AtomicExpr):
 
-  grade = {1}
-  is_atom = True
 
-  def __new__(cls, name:str, **assumptions) -> "gv":  
-    return gv.__xnew_cached_(cls, name, **assumptions)
+# class gv(GExpr,AtomicExpr):
 
-  def __new_stage2__(cls, name:str, **assumptions) -> "gv":
-    if not isinstance(name, str):
-      raise TypeError("name should be a string, not %s" % repr(type(name)))
+#   grade = {1}
+#   is_atom = True
 
-    obj = GExpr.__new__(cls)
-    obj.name = name
+#   def __new__(cls, name:str, **assumptions) -> "gv":  
+#     return gv.__xnew_cached_(cls, name, **assumptions)
 
-    return obj
+#   def __new_stage2__(cls, name:str, **assumptions) -> "gv":
+#     if not isinstance(name, str):
+#       raise TypeError("name should be a string, not %s" % repr(type(name)))
 
-  __xnew__ = staticmethod(
-    __new_stage2__)            # never cached (e.g. dummy)
-  __xnew_cached_ = staticmethod(
-    cacheit(__new_stage2__))   # symbols are always cached
+#     obj = GExpr.__new__(cls)
+#     obj.name = name
+
+#     return obj
+
+#   __xnew__ = staticmethod(
+#     __new_stage2__)            # never cached (e.g. dummy)
+#   __xnew_cached_ = staticmethod(
+#     cacheit(__new_stage2__))   # symbols are always cached
   
-  def __str__(self):
-    return self.name
-  __repr__ = __str__
+#   def __str__(self):
+#     return self.name
+#   __repr__ = __str__
 
-  def __hash__(self):
-    return hash(self.name)
+#   def __hash__(self):
+#     return hash(self.name)
 
-  def __eq__(self, other):
-    return (
-      (type(other) == type(self))  and
-      self.name == other.name
-    )
+#   def __eq__(self, other):
+#     return (
+#       (type(other) == type(self))  and
+#       self.name == other.name
+#     )
+
+class gv(GB):
+  def __new__(cls, name:str, **assumptions) -> "gv":
+    args = (name,frozenset({1}))
+    return GB.__new__(GB,*args)
 
 class GV(gv):
   _o  = gv('_o') 
@@ -52,7 +60,7 @@ class GV(gv):
   _x  = gv('_x')
   _y  = gv('_y')
   _rx = gv('_rx')
-  
+
   _I3 = _x^_y^_oo
   _I41 = _o^_x^_y^_oo
   _I42 = _x^_y^_rx^_oo

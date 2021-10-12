@@ -9,7 +9,7 @@ from sympy import (
 
 from libs.Sygal.GExpr import GExpr
 
-class inprdct(GExpr):
+class ginprdct(GExpr):
   """Represents a modulo operation on symbolic expressions.
   Receives two arguments, dividend p and divisor q.
   The convention used is the same as Python's: the remainder always has the
