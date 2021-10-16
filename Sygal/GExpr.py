@@ -18,6 +18,7 @@ class GExpr(Expr):
   __slots__ = ()
   coeffs:List["GExpr"] = [S(1)]
   name = "zzzzzGExpr"
+  initialized:bool = False
 
   # Both are boxes
   @property
@@ -35,6 +36,44 @@ class GExpr(Expr):
     from libs.Sygal.GB import GB
     return GB("_nl",frozenset({0})).args[1]
  
+  @property
+  def oo():
+    return GExpr.prim[1]
+
+  @property
+  def rx():
+    return GExpr.prim[4]
+
+  @property
+  def I3():
+    from libs.Sygal.GV import GV
+    return GV._I3
+
+  @property
+  def I41():
+    from libs.Sygal.GV import GV
+    return GV._I41
+
+  @property
+  def I42():
+    from libs.Sygal.GV import GV
+    return GV._I42
+
+  @property
+  def I5():
+    from libs.Sygal.GV import GV
+    return GV._I5
+
+  @property
+  def I8():
+    from libs.Sygal.GV import GV
+    return GV._I8
+
+  @property
+  def I13():
+    from libs.Sygal.GV import GV
+    return GV._I13
+
 
   def __add__(self:"GExpr", A:"GExpr") -> "GExpr":
     return gadd(self, A)

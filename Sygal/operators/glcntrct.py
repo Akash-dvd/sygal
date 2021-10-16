@@ -42,16 +42,15 @@ class glcntrct(GExpr):
   identity = Box.Znl
 
   # Currently both arguements should be boxed! extp/GB
-  def __new__(cls, *args:Tuple["GExpr"]) -> Box:
-    if len(args)!=2 :
-      return cls.identity
-
-
-    t1 = tuple(map(Boxify, args))
+  def __new__(cls, args0:GExpr,args1:GExpr) -> Box:
+    # Already matched pattern for binary op
+    
+    t = tuple(args0,args1)
+    t1 = tuple(map(Boxify, t))
     t2 = [t1[0].args[1],t1[1].args[1]]
     coeff = Mul(t1[0].args[0],t1[1].args[0]).simplify()
     
-    # Pattern match
+    # Pattern match for grade value
     # Check for scalars
     if(t1[0].args[1]==Box.nl):
       return(Box.__new__(Box,t1[1].args[1],Mul(t1[0].args[0],t1[1].args[0]).simplify()))

@@ -34,11 +34,17 @@ class gmul(GExpr):
 
   identity = Box.Onl
 
-  def __new__(cls, *args:Tuple["GExpr"],**kwargs) -> Box:
-    if not args:
-      return cls.identity
+  def __new__(cls, args0:GExpr,*args:Tuple["GExpr"],**kwargs) -> Box:
+    # gmul(Box,Optional[Box,Box.....])
 
-    t1 = tuple(map(Boxify, args))
+    # Pattern Matching for # of args for associative op
+    t =  [args0]
+    t.extend(args)
+    t1 = tuple(map(Boxify, t))
+    if(len(t1)==1):
+      return t1
+
+
     args1 = [bx.args[1] for bx in t1 if bx.args[1]!=Box.nl]
     if args1 == []:
       args1=[Box.nl]

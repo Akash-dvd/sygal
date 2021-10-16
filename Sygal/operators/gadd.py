@@ -38,12 +38,17 @@ class gadd(GExpr) :
   sift_count = lambda x:x.args[0]
   sift_combine = lambda cnt,args:Box.__new__(Box,args,cnt.simplify())
 
-  def __new__(cls, *args:Tuple["GExpr"],**kwargs) -> Box:
-    # gadd(Box,Box,Box.....)
-    if not args:
-      return cls.identity
+  def __new__(cls, args0:GExpr,*args:Tuple["GExpr"],**kwargs) -> Box:
+    # gadd(Box,Optional[Box,Box.....])
 
-    t1 = tuple(map(Boxify, args))
+    # Pattern Matching for # of args for associative op
+    t =  [args0]
+    t.extend(args)
+    t1 = tuple(map(Boxify, t))
+    if(len(t1)==1):
+      return t1
+    
+    
     t2 = []
     # Flatten coz of gadd present inside Box
     for BX in t1:
@@ -85,9 +90,17 @@ class gadd(GExpr) :
       Sortedseq = sorted(grouped,key=lambda bx:(len(bx.args[1].grade),next(iter(bx.args[1].grade)),bx.args[1].name,bx.args[1].__hash__()))
       
 
-
-      obj2 = Basic.__new__(gadd, *Sortedseq)
-      return Boxify(obj2)
+      if(len(Sortedseq)>1):
+        obj2 = Basic.__new__(gadd, *Sortedseq)
+        return Boxify(obj2)
+      elif (len(Sortedseq)==1):
+        singarg = Sortedseq[0]
+        return Boxify(singarg)
+      else:
+        # case for gadd(no arguements)
+        raise
+        
+      
     elif(type(obj1)==Box):
       # When gadd is unmasked
       return obj1
