@@ -18,7 +18,7 @@ from sympy.core.expr import Expr
 from sympy.core.parameters import global_parameters
 
 from sympy import (
-    diff, Rational, Symbol, S, Mul, Add, Expr,
+    diff, Rational, Symbol, S, Mul, Add, Expr,Pow,
     expand, simplify, eye, trigsimp,cos,sin,
     symbols, sqrt, Matrix, SympifyError, sympify
 )
@@ -31,40 +31,39 @@ from sympy.strategies.tree import treeapply, greedy, allresults, brute
 
 from libs.Sygal.GExpr import GExpr
 from libs.Sygal.Box import Box
-from libs.Sygal.utils import Boxify,rlGSortArgs,is_unMixedGrade,parity
+from libs.Sygal.utils import rlGSortArgs,is_unMixedGrade,parity
 
 
-class glcntrct(GExpr):
+class grcntrct(GExpr):
   """
   Left Contraction < operator
   Is non-associative, non-commutative
   """
-  identity = Box.Znl
 
   # Currently both arguements should be boxed! extp/GB
   def __new__(cls, args0:GExpr,args1:GExpr) -> Box:
     # Already matched pattern for binary op
     
     t = tuple(args0,args1)
-    t1 = tuple(map(Boxify, t))
-    t2 = [t1[0].args[1],t1[1].args[1]]
-    coeff = Mul(t1[0].args[0],t1[1].args[0]).simplify()
+    t1 = tuple(map(lambda x:Box.__new__(Box,x),t))
+    tmvs = [t1[0].mv,t1[1].mv]
+    coeff = Mul(t1[0].coeff,t1[1].coeff).simplify()
     
-    # Pattern match for grade value
+    # Pattern match
     # Check for scalars
-    if(t1[0].args[1]==Box.nl):
-      return(Box.__new__(Box,t1[1].args[1],Mul(t1[0].args[0],t1[1].args[0]).simplify()))
+    if(t1[0].mv==Box.nl):
+      return(Box.__new__(Box,t1[1].mv,Mul(t1[0].coeff,t1[1].coeff).simplify()))
     
-    elif(t1[1].args[1]==Box.nl):
+    elif(t1[0].mv==Box.nl):
       return Box.Znl
 
     else:
-      mv = Basic.__new__(glcntrct, *t2)
+      mv = Basic.__new__(grcntrct, *tmvs)
       return(Box.__new__(Box,mv,coeff))
 
 
   @property
-  def grade(self:"glcntrct"):
+  def grade(self:"grcntrct")-> Union[set,frozenset]:
     # Two arguements will always be present
  
     t = set()
@@ -73,19 +72,19 @@ class glcntrct(GExpr):
 
     for elem1 in arg1:
       for elem2 in arg2:
-        if((elem2-elem1)>=0): 
-          t.add((elem2-elem1))
+        if((elem1-elem2)>=0): 
+          t.add((elem1-elem2))
     return t
 
-  def __str__(self:"glcntrct"):
+  def __str__(self:"grcntrct")->str:
     str = '('+(self.args[0]).__str__()\
-    +'<'\
+    +'>'\
     +(self.args[1]).__str__()+')'
     return str
 
   __repr__ = __str__
 
-  def __hash__(self:"glcntrct"):
+  def __hash__(self:"grcntrct")->int:
     h = self._mhash
     if h is None:
       h = hash((type(self).__name__) + \
@@ -94,9 +93,13 @@ class glcntrct(GExpr):
       self._mhash = h
     return h
   
-  def __eq__(self:"glcntrct", other:"GExpr"):
+  def __eq__(self:"grcntrct", other:"GExpr")->bool:
     return (
       (type(other) == type(self))  and
       self.__hash__() == other.__hash__()
     )
   
+  def __neg__(self:"grcntrct") -> Box:
+    coeff = Mul(S(-1),self.args[0]).simplify()
+    mv = self.args[1]
+    return Box.__new__(Box,mv,coeff)

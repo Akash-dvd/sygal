@@ -3,127 +3,230 @@ from typing import Tuple, TypeVar, Callable, Dict, Sequence, List, Optional, Uni
 
 from sympy import (
   Basic,diff, Rational, Symbol, S, Mul, Add, Expr,
-  expand, simplify, eye, trigsimp,
+  expand, simplify, eye, trigsimp,sympify,
   symbols, sqrt, Matrix,srepr,AtomicExpr
 )
 
 from libs.Sygal.GExpr import GExpr
 from libs.Sygal.Box import Box
 from sympy.core.cache import cacheit
-
+from libs.Sygal.operators import (gadd,ganticomm,gcomm,gextp,
+ginprdct,glcntrct,gmul,grcntrct)
 
 class GB(GExpr,AtomicExpr):
 
-  def __new__(cls, args0:str,args1:Union[int,List[int],Tuple[int]],args2:GExpr=lambda x:GExpr.I13,args3:Expr=S(1), dotdict:Dict={}) -> "Box":
-    # args0 = name .args1 = grade set ,args2 gextp, args3 = coeff
-    # Put a check on set length
+  def __new__(cls, name:str,grade:Union[int,List[int],Tuple[int]],pSC:Box=lambda :GExpr.I13,coeff:Expr=S(1), dotdict:Dict={}) -> "Box":
+    # name = name:str 
+    # grade = grade:Union[int,List[int]]
+    # pSC = pseudoscalar:Union[callable,gextp]
+    # coeff = coeff:GExpr
     
-    # Much wow
-    # It can be placed smwhe else also
-    GB.preprocess()
-
-    # null grade zero element is unique
-    if(args1=={0}):
-        args0 = "_nl"
+    # Pattern match for name -> str
+    if not isinstance(name, str):
+      raise TypeError("name should be a string, not %s" % repr(type(name)))
+    elif name.startswith('_'):
+      raise TypeError("name should not start with  _")
 
 
-    if not isinstance(args0, str):
-      raise TypeError("name should be a string, not %s" % repr(type(args0)))
-    
-    if isinstance(args1,int):
-      if(args1<0):
+    # Pattern match for grade -> grade_1:Frozenset
+    if(grade==0):
+      name = "_nl"
+      return GExpr.Onl
+    elif isinstance(grade,int):
+      if(grade<0):
         return GExpr.Znl
-      arg_grade = frozenset([args1])
-    elif isinstance(args1, list) or isinstance(args1, Tuple):
-      filtgrade = [i for i in args1 if i>=0]
+      grade_1 = frozenset([grade])
+    elif isinstance(grade, list) or isinstance(grade, Tuple):
+      filtgrade = [i for i in grade if i>=0]
       if(len(filtgrade)==0):
         return GExpr.Znl
-      arg_grade = frozenset(filtgrade)
+      grade_1 = frozenset(filtgrade)
     else :
-      raise TypeError("grade should be int or list or tuple not %s" % repr(type(args1)))
+      raise TypeError("grade should be int or list or tuple not %s" % repr(type(grade)))
 
 
-    # Pattern match for args2,args3
-    if not issubclass(type(args2),GExpr):
-      raise TypeError("coeff should be a gextp, not %s" % repr(type(args2)))
+    # Pattern match for pSC
+    if(not callable(pSC)):
+      pSC_1 = lambda :pSC
+    else :
+      pSC_1 = pSC
 
-    if not issubclass(type(args3),Expr) or issubclass(type(args3),GExpr):
-      raise TypeError("coeff should be a sympy obj, not %s" % repr(type(args3)))
+    
+    # Pattern match for coeff
+    if not issubclass(type(coeff),Expr) or issubclass(type(coeff),GExpr):
+      raise TypeError("coeff should be a sympy obj, not %s" % repr(type(coeff)))
 
 
-    nargs = (args0,arg_grade,args2,args3)
-    obj = GB.__xnew_cached_(GB, *nargs)
-    obj.args[1].dotdict = dotdict
-    return obj
+    nargs = (name,grade_1,pSC_1,coeff)
+    
+    bx = GB.__xnew_cached_(GB, *nargs)
+    bx.mv.dotdict = dotdict
+    
+    return bx
 
-  def __new_stage2__(cls, *args) -> "GB":
+  def __new_stage2__(cls, name,grade,pSC,coeff) -> Box:
+    
+    # name = name:str 
+    # grade = grade:frozenset
+    # pSC = pseudoscalar:Union[callable,gextp]
+    # coeff = coeff:GExpr
+    
     # Pattern match for arguements
     # CAn be better with pattern matching
     
-    mv = GExpr.__new__(cls)
-    mv.name = args[0]
-    mv.is_commutative = (args[1]] == {0})
+    mv = GExpr.__new__(cls,name,grade,pSC)
+    mv.is_commutative = (grade == {0})
     mv.is_atom = True
-    mv.grade = args[1]
 
-    obj = Box.__new__(Box,mv,args[2])
-    
+    obj = Box.__new__(Box,mv,coeff)    
     return obj
 
-  __xnew__ = staticmethod(
-    __new_stage2__)            # never cached (e.g. dummy)
-  __xnew_cached_ = staticmethod(
-    cacheit(__new_stage2__))   # symbols are always cached
 
+  def __str__(self):
+    return self.args[0]
+
+  __repr__ = __str__
+
+  def __hash__(self):
+    return hash(self.name)
+
+  def __eq__(self, other):
+    return (
+      (type(other) == type(self))  and
+      self.name == other.name
+    )
+
+  @property
+  def name(self):
+    return self.args[0]
+
+  @property
+  def grade(self):
+    return self.args[1]
+
+  @property
+  def pSC(self):
+    return self.args[2]
+
+  def _preprocHelper(cls,name,grade,pSC,coeff):
+    # For initialization
+    # Box.__new__ cannot be called b4 initialization
+    mv = GExpr.__new__(cls,name,grade,pSC)
+    mv.is_commutative = (grade == {0})
+    mv.is_atom = True
+
+    return Basic.__new__(Box,mv,coeff)
+
+  def Box_new(cls,mv:"GExpr"=S(1),coeff:Expr=S(1))->"Box":
+    # Pattern matching for types
+    fct1 = issubclass(type(mv),GExpr)
+    # fct2 is for scalar multivectors
+    fct2 = True if fct1 and (mv.grade == {0}) else False
+    fct3 = issubclass(type(mv),Box)
+    new = GExpr.__new__
+
+    if fct3:
+      BX = mv
+      # Force gadd to have 1 as coeff
+      if(type(BX.mv)==gadd):
+        # It must be 1
+        if(BX.coeff!=S(1)):
+          raise 
+        t = [new(Box,bx.mv,Mul(bx.coeff,coeff).simplify()) for bx in BX.mv.args]
+        return new(Box,new(gadd,*t),S(1))
+      else :  
+        return new(Box,BX.mv,Mul(coeff,BX.coeff).simplify())
+    elif fct2:
+      if(type(mv)==gadd):
+        t = [new(Box,bx.mv,Mul(bx.coeff,coeff).simplify()) for bx in mv.args]
+        return new(Box,GExpr.nl,Mul(coeff,new(gadd,*t)).simplify())
+      else:
+        return new(Box,GExpr.nl,Mul(coeff,mv).simplify())
+    elif fct1:
+      if(type(mv)==gadd):
+        t = [new(Box,bx.mv,Mul(bx.coeff,coeff).simplify()) for bx in mv.args]
+        return new(Box,new(gadd,*t),S(1))
+      else:
+        return new(Box,mv,coeff)
+    else :
+      # Here only mv is supplied as scalar
+      if(coeff!=S(1)):
+        raise
+      return new(Box,GExpr.nl,sympify(mv))
+
+
+  def _preprocess():
+    if GExpr.initialized:
+      raise ValueError
+    else:
+      #######################
     
 
-  def preprocess():
+      GExpr.Onl = GB.__new_helper(GB,"_nl",frozenset({0}),lambda :GExpr.Onl,S(1)) 
 
-    if(not GExpr.initialized):
-      _o   = GExpr.__new__(GExpr) 
-      _oo  = GExpr.__new__(GExpr)
-      _x   = GExpr.__new__(GExpr)
-      _y   = GExpr.__new__(GExpr)
-      _rx  = GExpr.__new__(GExpr)
-      _x1  = GExpr.__new__(GExpr)
-      _x2  = GExpr.__new__(GExpr)
-      _x3  = GExpr.__new__(GExpr)
-      _x4  = GExpr.__new__(GExpr)
-      _x5  = GExpr.__new__(GExpr)
-      _x6  = GExpr.__new__(GExpr)
-      _x7  = GExpr.__new__(GExpr)
-      _x8  = GExpr.__new__(GExpr)
+      # To make sure Both Znl and Onl share same _nl
+      GExpr.Znl = Basic.__new__(Box,GExpr.Onl.mv,S(0)) 
 
-      names = ['_o','_oo','_x','_y','_rx','_x1','_x2','_x3','_x4','_x5','_x6','_x7','_x8']
+      GExpr.nl = GExpr.Znl.mv
 
-      lst = [_o,_oo,_x,_y,_rx,_x1,_x2,_x3,_x4,_x5,_x6,_x7,_x8]
+      #######################
 
-      rel_dot = [[_o,_oo,S(-1)],[_oo,_o,S(-1)],[_x,_x,S(1)],[_y,_y,S(1)],[_rx,_rx,S(-1)],[_x1,_x1,S(1)],[_x2,_x2,S(1)],[_x3,_x3,S(1)],[_x4,_x4,S(1)],[_x5,_x5,S(1)],[_x6,_x6,S(1)],[_x7,_x7,S(1)],[_x8,_x8,S(1)]]
-      
-      dotdict = {}
-      tmpdict = {}
-      
-      for ele in lst:
-        tmpdict[ele] = S(0)
-      for ele in lst:
-        dotdict[ele] = tmpdict
+      Box.__new__ = GB.Box_new
 
-      for ele1,ele2,ele3 in rel_dot:
-        dotdict[ele1][ele2] = ele3
+      #######################
+      names = ['_o','_x','_y','_rx','_oo','_x1','_x2','_x3','_x4','_x5','_x6','_x7','_x8']
       
       prim = []
-      for i,mv in enumerate(lst):
-        args0 = lst[i]
-        args1 = frozenset([1])
-        args2 = lambda args0:x
-        args3 = S(1)
-        nargs = (args0,args1,args2,args3)
-        obj = GB.__xnew_cached_(GB, *nargs)
-        obj.args[1].dotdict = dotdict
-        
-        prim.append(obj)
+      for i,name in enumerate(names):
+        name = name
+        grade = frozenset({1})
+        pSC = lambda i:GExpr.prim[i]
+        coeff = S(1)
+        nargs = (name,grade,pSC,coeff)
+        bx = GB.__xnew_cached_(GB, *nargs)      
+        prim.append(bx)
 
+      #######################
+      _o  = prim[0]
+      _x  = prim[1]
+      _y  = prim[2]
+      _rx = prim[3]
+      _oo = prim[4]
+      _x1 = prim[5]
+      _x2 = prim[6]
+      _x3 = prim[7]
+      _x4 = prim[8]
+      _x5 = prim[9]
+      _x6 = prim[10]
+      _x7 = prim[11]
+      _x8 = prim[12]
+      
+      rel_dot = [[_o,_oo,S(-1)],[_x,_x,S(1)],[_y,_y,S(1)],[_rx,_rx,S(-1)],[_oo,_o,S(-1)],[_x1,_x1,S(1)],[_x2,_x2,S(1)],[_x3,_x3,S(1)],[_x4,_x4,S(1)],[_x5,_x5,S(1)],[_x6,_x6,S(1)],[_x7,_x7,S(1)],[_x8,_x8,S(1)]]
+      
+      # p1 = GExpr.Znl
+      # m1 = -1*GExpr.Znl
+      
+      # rel_dot = [[_o,_oo,m1],[_x,_x,p1],[_y,_y,p1],_rx,_rx,m1],[_oo,_o,m1],[_x1,_x1,p1],_x2,_x2,p1],[_x3,_x3,p1],[_x4,_x4,p1],[_x5,_x5,p1],[_x6,_x6,p1],[_x7,_x7,p1],[_x8,_x8,p1]]
 
+      accu_dotdict = {}
+      tmpdict = {}
+      
+      for bx in prim:
+        tmpdict[bx.mv] = S(0)
+      for bx in prim:
+        newtmpdict = tmpdict.copy()
+        accu_dotdict[bx.mv] = newtmpdict
+
+      for bx1,bx2,ele3 in rel_dot:
+        accu_dotdict[bx1.mv][bx2.mv] = ele3
+      for bx in prim:
+        bx.mv.dotdict = accu_dotdict[bx.mv]
+
+      #######################
+          
+      GExpr._oo = _oo 
+      GExpr._rx = _rx
+      
       GExpr.prim = prim
 
       GExpr.I3 = _x^_y^_oo
@@ -134,3 +237,12 @@ class GB(GExpr,AtomicExpr):
       GExpr.I8 = _x1^_x2^_x3^_x4^_x5^_x6^_x7^_x8
       GExpr.I13 = GExpr.I5^GExpr.I8
       GExpr.initialized = True 
+  
+  __xnew__ = staticmethod(
+    __new_stage2__)            # never cached (e.g. dummy)
+  __xnew_cached_ = staticmethod(
+    cacheit(__new_stage2__))   # symbols are always cached
+  __new_helper = staticmethod(
+    cacheit(_preprocHelper))   # cached symbols for preproc 
+
+GB._preprocess()

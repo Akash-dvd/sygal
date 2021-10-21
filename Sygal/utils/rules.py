@@ -55,6 +55,7 @@ def rlGSortArgs(expr:"GExpr") -> "GExpr":
     return newseq
   return new(expr.__class__, *GSortArgs(expr.args))
 
+
 def rlglom(key, count, combine):
   """ 
   Replaced sum of glom with Add here

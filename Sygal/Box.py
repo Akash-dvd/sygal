@@ -2,32 +2,45 @@ from typing import Tuple, TypeVar, Callable, Dict, Sequence, List, Optional, Uni
 
 from sympy import (
   Basic,diff, Rational, Symbol, S, Mul, Add, Expr,
-  expand, simplify, eye, trigsimp,
+  expand, simplify, eye, trigsimp,sympify,
   symbols, sqrt, Matrix,srepr,bottom_up
 )
 from sympy.strategies.tools import subs as strtSubs
 
 from libs.Sygal.GExpr import GExpr
 
-# from sympy.core.decorators import call_highest_priority, sympify_return
-
 class Box(GExpr):
 
-  def __new__(cls,mv:"GExpr",coeff:Expr=S(1))->"Box":
-    obj = GExpr.__new__(Box,coeff,mv)
+  # def __new__(cls,mv:"GExpr"=S(1),coeff:Expr=S(1))->"Box":
+  #   # Pattern matching for types
+  #   fct1 = issubclass(type(mv),GExpr)
+  #   # fct2 is for scalar multivectors
+  #   fct2 = True if fct1 and (mv.grade == {0}) else False
+  #   fct3 = issubclass(type(mv),Box)
 
-    return obj
-  
+
+  #   if fct3:
+  #     return GExpr.__new__(Box,mv.mv,Mul(coeff,mv.coeff).simplify())
+  #   elif fct2:
+  #     return GExpr.__new__(Box,GExpr.nl,Mul(coeff,mv).simplify())
+  #   elif fct1:
+  #     return GExpr.__new__(Box,mv,coeff)
+  #   else :
+  #     # Here only mv is supplied as scalar
+  #     if(coeff!=S(1)):
+  #       raise
+  #     return GExpr.__new__(Box,GExpr.nl,sympify(mv))
+
   
   def __str__(self:"Box") -> str:
-    strcf = self.args[0].__str__()
-    strmv = self.args[1].__str__()
-    if self.args[0] == S(1):
+    strcf = self.coeff.__str__()
+    strmv = self.mv.__str__()
+    if self.coeff == S(1):
       istr = ""
       lstr = ""
       str1 = ""
     else :
-      str1 = "{"+strcf+"}"+"*" 
+      str1 = "["+strcf+"]"+"*" 
       istr = "("
       lstr = ")"
     if __debug__:
@@ -52,7 +65,7 @@ class Box(GExpr):
     # returns a tuple of values (#,#) 
     # ( cf, mv )
     return (
-      other.args[1] == self.args[1] and
+      other.__hash__() == self.__hash__() and
       other.__class__ == self.__class__
     )
 
@@ -60,15 +73,28 @@ class Box(GExpr):
     # returns a tuple of values (#,#) 
     # ( cf, mv )
     return (
-      (other.args[0] == self.args[0] and
+      (other.coeff == self.coeff and
       other.__class__ == self.__class__),
-      (other.args[1] == self.args[1] and
+      (other.mv == self.mv and
       other.__class__ == self.__class__)
     )
 
-    tup = (other.cf == (self.cf),other.mv == (self.mv))
-    return tup
+  def __neg__(self:"Box")->"Box":
+    return Box.__new__(Box,mv=self.mv,coeff=Mul(self.coeff,S(-1)).simplify())
 
   @property
   def grade(self:"Box") -> set:
-    return self.args[1].grade
+    return self.mv.grade
+
+  @property
+  def pSC(self:"Box") -> GExpr:
+    return self.mv.pSC
+
+  @property
+  def coeff(self:"Box") -> GExpr:
+    return self.args[1]
+  
+  @property
+  def mv(self:"Box") -> GExpr:
+    return self.args[0]
+

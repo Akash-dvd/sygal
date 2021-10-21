@@ -31,11 +31,9 @@ from sympy.strategies.tree import treeapply, greedy, allresults, brute
 
 from libs.Sygal.GExpr import GExpr
 from libs.Sygal.Box import Box
-from libs.Sygal.utils import Boxify,rlGSortArgs,is_unMixedGrade,parity
+from libs.Sygal.utils import rlGSortArgs,is_unMixedGrade,parity
 
 class gextp(GExpr):
-
-  identity = Box.Onl
 
   def __new__(cls, args0:GExpr,*args:Tuple["GExpr"],**kwargs) -> Box:
     # gextp(Box,Optional[Box,Box.....])
@@ -43,64 +41,65 @@ class gextp(GExpr):
     # Pattern Matching for # of args for associative op# Pattern Matching for # of args for associative op
     t =  [args0]
     t.extend(args)
-    t1 = tuple(map(Boxify, t))
-    
-    if(len(t1)==1):
-      return t1
-    
+    t1 = tuple(map(lambda x:Box.__new__(Box,x),t))
 
-    deBoxargs = [bx.args[1] for bx in t1 if bx.args[1]!=Box.nl]
-    if deBoxargs == []:
-      deBoxargs=[Box.nl]
-
-    obj = Basic.__new__(gextp, *deBoxargs)
-    coeffs = [bx.args[0] for bx in t1]
+    # every element has grade !={0}
+    # Here Altering with args so pattern matching is required
+    tmvs = [bx.mv for bx in t1 if bx.mv!=Box.nl]
+    cfs = [bx.coeff for bx in t1]
+    cf = Mul(*cfs).simplify()
     
-    obj1 = canonicalize1(obj)
-    coeff = Mul(*coeffs).simplify()
-    
-    # chkList = [is_parityGrade(val) for val in deBoxargs1]
-    # check = reduce(lambda a,b:a and b ,chkList)
-    # if(check):
-
-    # THis obj1 below is very bad it seems
-    # Logically is correct but very deep logic
-    # MAy be write tests for boundary cases
-    if(is_unMixedGrade(obj1)):
-      # check for boundary cases
-      # For single arguement typed wont let cannocalize work
-      # gextp(gextp(gextp())) .... Not possible coz its binary op
-      # Or only scalar present .. Done 
-      # rather every element of immediate child is of odd or even grade
-      obj2 = canonicalize2(obj1)
+    # Pattern Matching for # of args for associative op
+    if tmvs == []:
+      return Box.__new__(Box,mv=Box.nl,coeff=cf)
+    elif len(tmvs)==1:
+      return Box.__new__(Box,mv=tmvs[0],coeff=cf)
+    else:
+      expr1 = Basic.__new__(gextp, *tmvs)
+      # For flattening
+      # Here Altering with args so pattern matching is required
+      # But this canocalize doesn't reduce the args ever
+      expr2 = canonicalize1(expr1)
       
-      coeffs.append(parity(obj2.args,obj1.args))
-      coeff = Mul(*coeffs).simplify()
-    else :
-      obj2 = obj1
-    obj3 = Box.__new__(Box,obj2,coeff)
-    
-    # if ((len(args)-len(set(args))) == 0): 
-    # IMplement After Pseudo sclalr  
-    #   obj = Basic.__new__(cls, *t1)
-    # else :
-    #   t3 = super().Znl
-    #   return Basic.__new__(cls, *t3)
-
-    check = kwargs.get('check', False)
-    if check:
-      # Use this for pseudoscalar checks
-      pass
+      # More patternmatching
+      if(len(expr2.args)<=1):
+        # Not possible
+        # to arrive here
+        raise ValueError
       
-      # if all(not isinstance(i, MatrixExpr) for i in args):
-      #   return Add.fromiter(args)
-      # validate(*args)
+      # Repitition Check
+      if ((len(expr2.args)-len(set(expr2.args))) > 0):  
+        return GExpr.Znl
 
-    
-    return obj3
+      if(is_unMixedGrade(expr2)):
+        # For signed sorting
+        expr3 = canonicalize2(expr2)
+        # More patternmatching
+        if(len(expr3.args)<=1):
+        # Not possible
+        # to arrive here
+          raise ValueError
+
+        cf1 = Mul(parity(expr2.args,expr3.args),cf).simplify()
+      else :
+        expr3 = expr2
+        cf1 = cf
+      bx = Box.__new__(Box,mv=expr3,coeff=cf1)
+      
+
+
+
+      if all(not isinstance(i, GExpr) for i in t1):
+        pass
+        # pseudoscalar check
+
+
+      
+      return bx
+
 
   @property
-  def grade(self:"gextp") -> set:
+  def grade(self:"gextp") -> Union[set,frozenset]:
     if(len(self.args)==1):
       return self.args[0].grade
     else:
@@ -146,20 +145,11 @@ class gextp(GExpr):
       self.__hash__() == other.__hash__()
     )
 
-  def __neg__(self:"gextp") -> "gextp":
-    c, args = self.as_coeff_mul()
-    c = -c
-    if c is not S.One:
-      if args[0].is_Number:
-        args = list(args)
-        if c is S.NegativeOne:
-          args[0] = -args[0]
-        else:
-          args[0] *= c
-      else:
-        args = (c,) + args
-    return self._from_args(args, self.is_commutative)
-  
+  # def __neg__(self:"gextp") -> Box:
+  #   coeff = Mul(S(-1),self.args[0]).simplify()
+  #   mv = self.args[1]
+  #   return Box.__new__(Box,mv,coeff)
+
 
 # rules = (
 #   unpack, rm_id(lambda x: x == 1), flatten,rlGSortArgs

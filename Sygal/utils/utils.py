@@ -4,6 +4,7 @@ from typing import Tuple, TypeVar, Callable, Dict, Sequence, List, Optional, Uni
 from collections import defaultdict
 from functools import cmp_to_key
 import operator
+from sympy.core import facts
 
 from sympy.core.sympify import sympify
 from sympy.core.basic import Basic
@@ -27,17 +28,24 @@ from libs.Sygal.GExpr import GExpr
 from libs.Sygal.Box import Box
 
 
-def Boxify(arg:Union[Box,GExpr,Expr])->Box:
-  """Takes only one arguement at a time"""
-  fct1 = issubclass(type(arg),GExpr)
-  fct2 = issubclass(type(arg),Box)
+# def Boxify(arg:Union[Box,GExpr,Expr])->Box:
+#   """Takes only one arguement at a time"""
 
-  if(fct1 and fct2):
-    return arg
-  elif(fct1 and not fct2):
-    return Box(arg)
-  else :
-    return Box(Box.nl,sympify(arg))
+#   # Pattern matching for types
+#   fct1 = issubclass(type(arg),GExpr)
+#   # fct2 is for scalar multivectors
+#   fct2 = True if fct1 and (arg.grade == {0}) else False
+#   fct3 = issubclass(type(arg),Box)
+
+
+#   if fct3:
+#     return arg
+#   elif fct2:
+#     return Box.__new__(Box,mv=Box.nl,coeff=arg)
+#   elif fct1:
+#     return Box.__new__(Box,mv=arg)
+#   else :
+#     return Box.__new__(Box,mv=Box.nl,coeff=sympify(arg))
 
 def is_unMixedGrade(args:GExpr)->bool:
   t = set()
@@ -82,3 +90,6 @@ def bx_sift(seqBx:Tuple[Box], keyfunc:Callable, count:Callable)->List[Box]:
   for key, value in m.items():
     lst.append(Box.__new__(Box,key,value))
   return lst
+
+def is_invertible(expr):
+  return True

@@ -28,61 +28,62 @@ from sympy.strategies.tree import treeapply, greedy, allresults, brute
 
 from libs.Sygal.GExpr import GExpr
 from libs.Sygal.Box import Box
-from libs.Sygal.utils import Boxify,rlGSortArgs
+from libs.Sygal.utils import rlGSortArgs
 
 class gmul(GExpr):
 
-  identity = Box.Onl
-
-  def __new__(cls, args0:GExpr,*args:Tuple["GExpr"],**kwargs) -> Box:
+  def __new__(cls, args0:GExpr,*args:Tuple["GExpr"]) -> Box:
     # gmul(Box,Optional[Box,Box.....])
 
-    # Pattern Matching for # of args for associative op
+
     t =  [args0]
     t.extend(args)
-    t1 = tuple(map(Boxify, t))
-    if(len(t1)==1):
-      return t1
+    t1 = tuple(map(lambda x:Box.__new__(Box,x),t))
 
-
-    args1 = [bx.args[1] for bx in t1 if bx.args[1]!=Box.nl]
-    if args1 == []:
-      args1=[Box.nl]
-    coeffs = [bx.args[0] for bx in t1]
-    coeff = Mul(*coeffs).simplify()
-
-    obj = Basic.__new__(gmul, *args1)
-    obj1 = canonicalize(obj)
-
-    obj2 = Box.__new__(Box,obj1,coeff)
+    # every element has grade !={0}
+    # Here Altering with args so pattern matching is required
+    tmvs = [bx.mv for bx in t1 if bx.mv!=Box.nl]
+    cfs = [bx.coeff for bx in t1]
+    cf = Mul(*cfs).simplify()
     
-    # if ((len(args)-len(set(args))) == 0):  
-    #   obj = Basic.__new__(cls, *t1)
-    # else :
-    #   t3 = super().Znl
-    #   return Basic.__new__(cls, *t3)
-
-    check = kwargs.get('check', False)
-    if check:
-      # Use this for pseudoscalar checks
-      pass
+    # Pattern Matching for # of args for associative op
+    if tmvs == []:
+      return Box.__new__(Box,mv=Box.nl,coeff=cf)
+    elif len(tmvs)==1:
+      return Box.__new__(Box,mv=tmvs[0],coeff=cf)
+    else:
+      expr1 = Basic.__new__(gmul, *tmvs)
+      # Here Altering with args so pattern matching is required
+      # But this canocalize doesn't reduce the args ever
+      expr2 = canonicalize(expr1)
       
-      # if all(not isinstance(i, MatrixExpr) for i in args):
-      #   return Add.fromiter(args)
-      # validate(*args)
+      # More patternmatching
+      if(len(expr2.args)<=1):
+        # Not possible
+        # to arrive here
+        raise ValueError
+      
+      
+      bx = Box.__new__(Box,mv=expr2,coeff=cf)
+      
+      # if ((len(args)-len(set(args))) == 0):  
+      #   obj = Basic.__new__(cls, *t1)
+      # else :
+      #   t3 = super().Znl
+      #   return Basic.__new__(cls, *t3)
 
 
-    if all(not isinstance(i, GExpr) for i in t1):
-      pass
-      # append to appendage for grade 0
+      if all(not isinstance(i, GExpr) for i in t1):
+        pass
+        # append to appendage for grade 0
 
 
-    
-    return obj2
+      
+      return bx
 
 
   @property
-  def grade(self:"gmul") -> set:
+  def grade(self:"gmul") -> Union[set,frozenset]:
     if(len(self.args)==1):
       return self.args[0].grade
     else:
@@ -128,28 +129,26 @@ class gmul(GExpr):
       self.__hash__() == other.__hash__()
     )
 
-  def __neg__(self:"gmul") -> "gmul":
-    c, args = self.as_coeff_mul()
-    c = -c
-    if c is not S.One:
-      if args[0].is_Number:
-        args = list(args)
-        if c is S.NegativeOne:
-          args[0] = -args[0]
-        else:
-          args[0] *= c
-      else:
-        args = (c,) + args
-    return self._from_args(args, self.is_commutative)
+  # def __neg__(self:"gmul") ->Box:
+  #   c, args = self.as_coeff_mul()
+  #   c = -c
+  #   if c is not S.One:
+  #     if args[0].is_Number:
+  #       args = list(args)
+  #       if c is S.NegativeOne:
+  #         args[0] = -args[0]
+  #       else:
+  #         args[0] *= c
+  #     else:
+  #       args = (c,) + args
+  #   return self._from_args(args, self.is_commutative)
   
 
-def donone(expr):
-  return expr
 # rules = (
 #   unpack, rm_id(lambda x: x == 1), flatten,rlGSortArgs
 #   )
 rules = (
-   flatten,donone
+   flatten,lambda x:x
   )
 
 canonicalize = exhaust(typed({gmul: do_one(*rules)}))

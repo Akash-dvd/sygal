@@ -1,3 +1,4 @@
+from operator import inv
 from typing import Tuple, TypeVar, Callable, Dict, Sequence, List, Optional, Union
 
 from sympy import (
@@ -19,61 +20,6 @@ class GExpr(Expr):
   coeffs:List["GExpr"] = [S(1)]
   name = "zzzzzGExpr"
   initialized:bool = False
-
-  # Both are boxes
-  @property
-  def Onl(self):
-    from libs.Sygal.GB import GB
-    return GB("_nl",frozenset({0})) 
-  
-  @property
-  def Znl(self):
-    from libs.Sygal.GB import GB
-    return GB("_nl",frozenset({0}),S(0))
-  
-  @property
-  def nl():
-    from libs.Sygal.GB import GB
-    return GB("_nl",frozenset({0})).args[1]
- 
-  @property
-  def oo():
-    return GExpr.prim[1]
-
-  @property
-  def rx():
-    return GExpr.prim[4]
-
-  @property
-  def I3():
-    from libs.Sygal.GV import GV
-    return GV._I3
-
-  @property
-  def I41():
-    from libs.Sygal.GV import GV
-    return GV._I41
-
-  @property
-  def I42():
-    from libs.Sygal.GV import GV
-    return GV._I42
-
-  @property
-  def I5():
-    from libs.Sygal.GV import GV
-    return GV._I5
-
-  @property
-  def I8():
-    from libs.Sygal.GV import GV
-    return GV._I8
-
-  @property
-  def I13():
-    from libs.Sygal.GV import GV
-    return GV._I13
-
 
   def __add__(self:"GExpr", A:"GExpr") -> "GExpr":
     return gadd(self, A)
@@ -162,7 +108,21 @@ class GExpr(Expr):
       return expr1
     else :
       raise
+  
+  def inversion(self:"GExpr", A:"GExpr") -> "GExpr":
+    return  ginversion(self,A)
+  
+  def rejection(self:"GExpr", A:"GExpr") -> "GExpr":
+    return  grejection(self,A)
+  
+  def projection(self:"GExpr", A:"GExpr") -> "GExpr":
+    return  gprojection(self,A)
+  
+  # def gsimplify(self):
+  #   return gsimplification(self)
+
 
 from libs.Sygal.operators import (gadd,ganticomm,gcomm,gextp,
 ginprdct,glcntrct,gmul,grcntrct)
 
+from libs.Sygal.operators.hdef import hdef,inversion as ginversion,projection as gprojection,rejection as grejection

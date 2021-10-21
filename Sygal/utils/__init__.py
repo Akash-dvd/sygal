@@ -3,14 +3,15 @@
 
 from .rules import rlZero ,conjugation,rlGSortArgs
 
-from .utils import Boxify,is_unMixedGrade,parity,bx_sift
+from .utils import is_unMixedGrade,parity,bx_sift,is_invertible
 
 __all__ = [
     'rlZero',
     'conjugation',
     'rlGSortArgs',
-    'Boxify',
+ 
     'is_unMixedGrade',
     'parity',
-    'bx_sift'
+    'bx_sift',
+    'is_invertible'
 ]
