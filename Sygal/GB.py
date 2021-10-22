@@ -10,8 +10,7 @@ from sympy import (
 from libs.Sygal.GExpr import GExpr
 from libs.Sygal.Box import Box
 from sympy.core.cache import cacheit
-from libs.Sygal.operators import (gadd,ganticomm,gcomm,gextp,
-ginprdct,glcntrct,gmul,grcntrct)
+
 
 class GB(GExpr,AtomicExpr):
 
@@ -117,42 +116,6 @@ class GB(GExpr,AtomicExpr):
 
     return Basic.__new__(Box,mv,coeff)
 
-  def Box_new(cls,mv:"GExpr"=S(1),coeff:Expr=S(1))->"Box":
-    # Pattern matching for types
-    fct1 = issubclass(type(mv),GExpr)
-    # fct2 is for scalar multivectors
-    fct2 = True if fct1 and (mv.grade == {0}) else False
-    fct3 = issubclass(type(mv),Box)
-    new = GExpr.__new__
-
-    if fct3:
-      BX = mv
-      # Force gadd to have 1 as coeff
-      if(type(BX.mv)==gadd):
-        # It must be 1
-        if(BX.coeff!=S(1)):
-          raise 
-        t = [new(Box,bx.mv,Mul(bx.coeff,coeff).simplify()) for bx in BX.mv.args]
-        return new(Box,new(gadd,*t),S(1))
-      else :  
-        return new(Box,BX.mv,Mul(coeff,BX.coeff).simplify())
-    elif fct2:
-      if(type(mv)==gadd):
-        t = [new(Box,bx.mv,Mul(bx.coeff,coeff).simplify()) for bx in mv.args]
-        return new(Box,GExpr.nl,Mul(coeff,new(gadd,*t)).simplify())
-      else:
-        return new(Box,GExpr.nl,Mul(coeff,mv).simplify())
-    elif fct1:
-      if(type(mv)==gadd):
-        t = [new(Box,bx.mv,Mul(bx.coeff,coeff).simplify()) for bx in mv.args]
-        return new(Box,new(gadd,*t),S(1))
-      else:
-        return new(Box,mv,coeff)
-    else :
-      # Here only mv is supplied as scalar
-      if(coeff!=S(1)):
-        raise
-      return new(Box,GExpr.nl,sympify(mv))
 
 
   def _preprocess():
@@ -171,9 +134,6 @@ class GB(GExpr,AtomicExpr):
 
       #######################
 
-      Box.__new__ = GB.Box_new
-
-      #######################
       names = ['_o','_x','_y','_rx','_oo','_x1','_x2','_x3','_x4','_x5','_x6','_x7','_x8']
       
       prim = []

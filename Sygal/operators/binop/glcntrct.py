@@ -5,8 +5,6 @@ from collections import defaultdict
 from functools import cmp_to_key
 import operator
 
-
-
 from sympy.core.sympify import sympify
 from sympy.core.basic import Basic
 from sympy.core.singleton import S
@@ -30,8 +28,6 @@ from sympy.strategies.traverse import (top_down, bottom_up, sall, top_down_once,
 from sympy.strategies.tree import treeapply, greedy, allresults, brute
 
 from libs.Sygal.GExpr import GExpr
-from libs.Sygal.Box import Box
-from libs.Sygal.utils import rlGSortArgs,is_unMixedGrade,parity
 
 
 class glcntrct(GExpr):
@@ -41,7 +37,7 @@ class glcntrct(GExpr):
   """
 
   # Currently both arguements should be boxed! extp/GB
-  def __new__(cls, args0:GExpr,args1:GExpr) -> Box:
+  def __new__(cls, args0:GExpr,args1:GExpr) -> "Box":
     # Already matched pattern for binary op
     
     t = tuple(args0,args1)
@@ -99,3 +95,9 @@ class glcntrct(GExpr):
       self.__hash__() == other.__hash__()
     )
   
+from libs.Sygal.Box import Box
+from libs.Sygal.utils import rlGSortArgs,is_unMixedGrade,parity
+
+from libs.Sygal.operators.binop.higher.glcntrcthigher import glcntrcthigher
+from libs.Sygal.operators.binop.simplify.glcntrctsimp import glcntrctsimp
+from libs.Sygal.operators.binop.expand.glcntrctexpand import glcntrctexpand

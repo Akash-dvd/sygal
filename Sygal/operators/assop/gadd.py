@@ -28,12 +28,11 @@ from sympy.strategies.traverse import (top_down, bottom_up, sall, top_down_once,
 from sympy.strategies.tree import treeapply, greedy, allresults, brute
 
 from libs.Sygal.GExpr import GExpr
-from libs.Sygal.Box import Box
-from libs.Sygal.utils import bx_sift
+
 
 class gadd(GExpr) :
 
-  def __new__(cls, args0:GExpr,*args:Tuple["GExpr"],**kwargs) -> Box:
+  def __new__(cls, args0:GExpr,*args:Tuple["GExpr"],**kwargs) -> "Box":
     # gadd(Box,Optional[Box,Box.....])
 
     # Pattern Matching for # of args for associative op
@@ -134,3 +133,10 @@ rules1 = (
 
 canonicalize = exhaust(typed({gadd: do_one(*rules1)}))
 
+from libs.Sygal.Box import Box
+from libs.Sygal.utils import bx_sift
+
+
+from libs.Sygal.operators.assop.higher.gaddhigher import gaddhigher
+from libs.Sygal.operators.assop.simplify.gaddsimp import gaddsimp
+from libs.Sygal.operators.assop.expand.gaddexpand import gaddexpand

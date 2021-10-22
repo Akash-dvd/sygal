@@ -30,8 +30,8 @@ from sympy.strategies.traverse import (top_down, bottom_up, sall, top_down_once,
 from sympy.strategies.tree import treeapply, greedy, allresults, brute
 
 from libs.Sygal.GExpr import GExpr
-from libs.Sygal.Box import Box
-from libs.Sygal.utils import rlGSortArgs,is_unMixedGrade,parity
+
+
 
 
 class grcntrct(GExpr):
@@ -41,7 +41,7 @@ class grcntrct(GExpr):
   """
 
   # Currently both arguements should be boxed! extp/GB
-  def __new__(cls, args0:GExpr,args1:GExpr) -> Box:
+  def __new__(cls, args0:GExpr,args1:GExpr) -> "Box":
     # Already matched pattern for binary op
     
     t = tuple(args0,args1)
@@ -99,7 +99,10 @@ class grcntrct(GExpr):
       self.__hash__() == other.__hash__()
     )
   
-  def __neg__(self:"grcntrct") -> Box:
-    coeff = Mul(S(-1),self.args[0]).simplify()
-    mv = self.args[1]
-    return Box.__new__(Box,mv,coeff)
+
+from libs.Sygal.Box import Box
+from libs.Sygal.utils import rlGSortArgs,is_unMixedGrade,parity
+
+from libs.Sygal.operators.binop.higher.grcntrcthigher import grcntrcthigher
+from libs.Sygal.operators.binop.simplify.grcntrctsimp import grcntrctsimp
+from libs.Sygal.operators.binop.expand.grcntrctexpand import grcntrctexpand

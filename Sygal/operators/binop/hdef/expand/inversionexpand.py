@@ -1,0 +1,2 @@
+def inversionexpand():
+  pass

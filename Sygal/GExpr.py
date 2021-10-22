@@ -118,11 +118,32 @@ class GExpr(Expr):
   def projection(self:"GExpr", A:"GExpr") -> "GExpr":
     return  gprojection(self,A)
   
+  gsimplify = lambda x:x
+
+  gexpand = lambda x:x
+
+  ghigher = lambda x:x
   # def gsimplify(self):
   #   return gsimplification(self)
 
 
-from libs.Sygal.operators import (gadd,ganticomm,gcomm,gextp,
-ginprdct,glcntrct,gmul,grcntrct)
+from libs.Sygal.operators.assop.gadd import gadd
+from libs.Sygal.operators.assop.gextp import gextp
+from libs.Sygal.operators.assop.gmul import gmul
 
-from libs.Sygal.operators.hdef import hdef,inversion as ginversion,projection as gprojection,rejection as grejection
+from libs.Sygal.operators.binop.ganticomm import ganticomm
+from libs.Sygal.operators.binop.gcomm import gcomm
+from libs.Sygal.operators.binop.ginprdct import ginprdct
+from libs.Sygal.operators.binop.grcntrct import grcntrct
+from libs.Sygal.operators.binop.glcntrct import glcntrct
+
+from libs.Sygal.operators.binop.hdef.hdef import hdef
+from libs.Sygal.operators.binop.hdef.inversion import inversion as ginversion
+from libs.Sygal.operators.binop.hdef.projection import projection as gprojection
+from libs.Sygal.operators.binop.hdef.rejection import rejection as grejection 
+
+
+# This style causes errors
+# from libs.Sygal.operators import (gadd,ganticomm,gcomm,gextp,ginprdct,glcntrct,gmul,grcntrct)
+
+# from libs.Sygal.operators.hdef import hdef,inversion as ginversion,projection as gprojection,rejection as grejection

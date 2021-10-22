@@ -30,12 +30,10 @@ from sympy.strategies.traverse import (top_down, bottom_up, sall, top_down_once,
 from sympy.strategies.tree import treeapply, greedy, allresults, brute
 
 from libs.Sygal.GExpr import GExpr
-from libs.Sygal.Box import Box
-from libs.Sygal.utils import rlGSortArgs,is_unMixedGrade,parity
 
 class gextp(GExpr):
 
-  def __new__(cls, args0:GExpr,*args:Tuple["GExpr"],**kwargs) -> Box:
+  def __new__(cls, args0:GExpr,*args:Tuple["GExpr"],**kwargs) -> "Box":
     # gextp(Box,Optional[Box,Box.....])
 
     # Pattern Matching for # of args for associative op# Pattern Matching for # of args for associative op
@@ -154,6 +152,13 @@ class gextp(GExpr):
 # rules = (
 #   unpack, rm_id(lambda x: x == 1), flatten,rlGSortArgs
 #   )
+
+from libs.Sygal.Box import Box
+from libs.Sygal.utils import rlGSortArgs,is_unMixedGrade,parity
+from libs.Sygal.operators.assop.higher.gextphigher import gextphigher
+from libs.Sygal.operators.assop.simplify.gextpsimp import gextpsimp
+from libs.Sygal.operators.assop.expand.gextpexpand import gextpexpand
+
 rules1 = (
     unpack,flatten
   )
@@ -164,3 +169,4 @@ rules2 = (
 
 canonicalize1 = exhaust(typed({gextp: do_one(*rules1)}))
 canonicalize2 = exhaust(typed({gextp: do_one(*rules2)}))
+

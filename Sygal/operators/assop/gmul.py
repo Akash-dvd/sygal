@@ -27,12 +27,11 @@ from sympy.strategies.traverse import (top_down, bottom_up, sall, top_down_once,
 from sympy.strategies.tree import treeapply, greedy, allresults, brute
 
 from libs.Sygal.GExpr import GExpr
-from libs.Sygal.Box import Box
-from libs.Sygal.utils import rlGSortArgs
+
 
 class gmul(GExpr):
 
-  def __new__(cls, args0:GExpr,*args:Tuple["GExpr"]) -> Box:
+  def __new__(cls, args0:GExpr,*args:Tuple["GExpr"]) -> "Box":
     # gmul(Box,Optional[Box,Box.....])
 
 
@@ -151,6 +150,11 @@ rules = (
    flatten,lambda x:x
   )
 
+from libs.Sygal.operators.assop.higher.gmulhigher import gmulhigher
+from libs.Sygal.operators.assop.simplify.gmulsimp import gmulsimp
+from libs.Sygal.operators.assop.expand.gmulexpand import gmulexpand
+
 canonicalize = exhaust(typed({gmul: do_one(*rules)}))
 
-
+from libs.Sygal.Box import Box
+from libs.Sygal.utils import rlGSortArgs
