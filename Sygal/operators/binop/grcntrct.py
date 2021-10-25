@@ -5,7 +5,7 @@ from collections import defaultdict
 from functools import cmp_to_key
 import operator
 
-
+from sympy.printing.str import StrPrinter
 
 from sympy.core.sympify import sympify
 from sympy.core.basic import Basic
@@ -44,7 +44,7 @@ class grcntrct(GExpr):
   def __new__(cls, args0:GExpr,args1:GExpr) -> "Box":
     # Already matched pattern for binary op
     
-    t = tuple(args0,args1)
+    t = (args0,args1)
     t1 = tuple(map(lambda x:Box.__new__(Box,x),t))
     tmvs = [t1[0].mv,t1[1].mv]
     coeff = Mul(t1[0].coeff,t1[1].coeff).simplify()
@@ -76,6 +76,13 @@ class grcntrct(GExpr):
           t.add((elem1-elem2))
     return t
 
+  def sympystr(self,expr:"grcntrct")->str:
+    str = '('+(expr.args[0]).__str__()\
+    +'<'\
+    +(expr.args[1]).__str__()+')'
+    return str
+
+
   def __str__(self:"grcntrct")->str:
     str = '('+(self.args[0]).__str__()\
     +'>'\
@@ -99,9 +106,13 @@ class grcntrct(GExpr):
       self.__hash__() == other.__hash__()
     )
   
+StrPrinter._print_grcntrct = grcntrct.sympystr
+
 
 from libs.Sygal.Box import Box
-from libs.Sygal.utils import rlGSortArgs,is_unMixedGrade,parity
+from libs.Sygal.utils.rules import rlGSortArgs
+from libs.Sygal.utils.utils import is_unMixedGrade,parity
+
 
 from libs.Sygal.operators.binop.higher.grcntrcthigher import grcntrcthigher
 from libs.Sygal.operators.binop.simplify.grcntrctsimp import grcntrctsimp

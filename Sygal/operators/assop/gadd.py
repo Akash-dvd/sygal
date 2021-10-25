@@ -4,6 +4,7 @@ from collections import defaultdict
 from functools import cmp_to_key
 import operator
 
+from sympy.printing.str import StrPrinter
 
 from sympy.core.sympify import sympify
 from sympy.core.basic import Basic
@@ -16,10 +17,11 @@ from sympy.core.expr import Expr
 from sympy.core.parameters import global_parameters
 
 from sympy import (
-    diff, Rational, Symbol, S, Mul, Add, Expr,
-    expand, simplify, eye, trigsimp,cos,sin,
-    symbols, sqrt, Matrix, SympifyError, sympify
+  diff, Rational, Symbol, S, Mul, Add, Expr,Pow,
+  expand, simplify, eye, trigsimp,cos,sin,subsets,
+  symbols, sqrt, Matrix, SympifyError, sympify
 )
+
 
 from sympy.strategies.rl import (rm_id, glom, flatten, unpack, sort, distribute,subs, rebuild)
 from sympy.strategies.core import (null_safe, exhaust, memoize, condition,chain, tryit, do_one, debug, switch, minimize)
@@ -61,6 +63,15 @@ class gadd(GExpr) :
     for i in self.args:
       t.update(i.grade)
     return t
+
+  def sympystr(self,expr:"gadd") -> str:
+    ls = expr.args
+    str = '('
+    for o in ls:
+      str += o.__str__()+'+'
+    str = str[:-1]
+    str += ')'
+    return str
 
   def __str__(self:"gadd") -> str:
     ls = self.args
@@ -133,8 +144,11 @@ rules1 = (
 
 canonicalize = exhaust(typed({gadd: do_one(*rules1)}))
 
+StrPrinter._print_glcntrct = gadd.sympystr
+
 from libs.Sygal.Box import Box
-from libs.Sygal.utils import bx_sift
+from libs.Sygal.utils.rules import rlGSortArgs
+from libs.Sygal.utils.utils import is_unMixedGrade,parity,bx_sift
 
 
 from libs.Sygal.operators.assop.higher.gaddhigher import gaddhigher

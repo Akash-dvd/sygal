@@ -8,7 +8,7 @@ from sympy import (
 
 from libs.Sygal.GExpr import GExpr
 from libs.Sygal.Box import Box
-from libs.Sygal.utils import is_invertible
+from libs.Sygal.utils.utils import is_invertible
 
 from .hdef import hdef
 

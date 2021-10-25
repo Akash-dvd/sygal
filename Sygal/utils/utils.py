@@ -6,6 +6,13 @@ from functools import cmp_to_key
 import operator
 from sympy.core import facts
 
+from sympy import (
+  Basic,diff, Rational, Symbol, S, Mul, Add, Expr,Pow,
+  expand, simplify, eye, trigsimp,cos,sin,subsets,
+  symbols, sqrt, Matrix, SympifyError, sympify
+)
+
+
 from sympy.core.sympify import sympify
 from sympy.core.basic import Basic
 from sympy.core.singleton import S
@@ -83,9 +90,10 @@ def parity(args1:List["GExpr"],args2:List["GExpr"])->S:
 def bx_sift(seqBx:Tuple[Box], keyfunc:Callable, count:Callable)->List[Box]:
 
   m = defaultdict(lambda:S(0))
-  for i in seqBx:
-    m[keyfunc(i)] +=count(i)
-    m[keyfunc(i)] = m[keyfunc(i)].simplify()
+  for bx in seqBx:
+    m[keyfunc(bx)] = Add(count(bx),m[keyfunc(bx)])
+    # m[keyfunc(i)] = m[keyfunc(i)].simplify()
+    # m[keyfunc(i)] = m[keyfunc(i)]
   lst = []
   for key, value in m.items():
     lst.append(Box.__new__(Box,key,value))

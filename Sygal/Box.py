@@ -33,37 +33,55 @@ class Box(GExpr):
   #     return GExpr.__new__(Box,GExpr.nl,sympify(mv))
 
   def __new__(cls,mv:"GExpr"=S(1),coeff:Expr=S(1))->"Box":
-    # from libs.Sygal.operators import gadd
+    if(type(coeff)==Box):
+      raise ValueError
+    
+
     # Pattern matching for types
     fct1 = issubclass(type(mv),GExpr)
     # fct2 is for scalar multivectors
     fct2 = True if fct1 and (mv.grade == {0}) else False
     fct3 = issubclass(type(mv),Box)
+    fct4 = fct3 and fct2
+    
     new = GExpr.__new__
-
-    if fct3:
+    
+    if fct4:
       BX = mv
-      # Force gadd to have 1 as coeff
+      # Here well formed Box must have nl as mv
+      if(BX.mv!=GExpr.nl):
+        raise
+      return new(Box,GExpr.nl,Mul(coeff,BX.coeff))
+    elif fct3:
+      BX = mv
+      # Check if the arrived box encloses gadd
       if(type(BX.mv)==gadd):
-        # It must be 1
+        # Well formed gadd box always has S(1) coeff
         if(BX.coeff!=S(1)):
-          raise 
-        t = [new(Box,bx.mv,Mul(bx.coeff,coeff).simplify()) for bx in BX.mv.args]
+          raise
+        t = [new(Box,bx.mv,Mul(bx.coeff,coeff)) for bx in BX.mv.args]
         return new(Box,new(gadd,*t),S(1))
-      else :  
-        return new(Box,BX.mv,Mul(coeff,BX.coeff).simplify())
-    elif fct2:
-      if(type(mv)==gadd):
-        t = [new(Box,bx.mv,Mul(bx.coeff,coeff).simplify()) for bx in mv.args]
-        return new(Box,GExpr.nl,Mul(coeff,new(gadd,*t)).simplify())
       else:
-        return new(Box,GExpr.nl,Mul(coeff,mv).simplify())
+        return new(Box,BX.mv,Mul(coeff,BX.coeff))
+    
+    # Not box mvs
+    # Zero grade
+    elif fct2:
+      # NO need to check for gadd
+      if(mv == GExpr.nl):
+        return new(Box,GExpr.nl,coeff)
+      else:
+        return new(Box,GExpr.nl,Mul(mv,coeff))
+    # Non Zero grade
     elif fct1:
       if(type(mv)==gadd):
-        t = [new(Box,bx.mv,Mul(bx.coeff,coeff).simplify()) for bx in mv.args]
+        # t = [new(Box,bx.mv,Mul(bx.coeff,coeff).simplify()) for bx in mv.args]
+        t = [new(Box,bx.mv,Mul(bx.coeff,coeff)) for bx in mv.args]
         return new(Box,new(gadd,*t),S(1))
       else:
         return new(Box,mv,coeff)
+    
+    # Scalars boxing
     else :
       # Here only mv is supplied as scalar
       if(coeff!=S(1)):
@@ -119,7 +137,7 @@ class Box(GExpr):
     )
 
   def __neg__(self:"Box")->"Box":
-    return Box.__new__(Box,mv=self.mv,coeff=Mul(self.coeff,S(-1)).simplify())
+    return Box.__new__(Box,mv=self.mv,coeff=Mul(self.coeff,S(-1)))
 
   @property
   def grade(self:"Box") -> set:
@@ -137,6 +155,14 @@ class Box(GExpr):
   def mv(self:"Box") -> "GExpr":
     return self.args[0]
 
+  def gsimplify(self:"Box"):
+    return self.mv.gsimplify()
+
+  def gexpand(self:"Box"):
+    return Box.__new__(Box,self.mv.gexpand(),self.coeff)
+
+  def ghigher(self:"Box"):
+    return self.mv.ghigher()
 # Standard import style
 from libs.Sygal.operators.assop.gadd import gadd
 # Non standard style

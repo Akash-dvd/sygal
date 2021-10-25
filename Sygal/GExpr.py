@@ -123,6 +123,8 @@ class GExpr(Expr):
   gexpand = lambda x:x
 
   ghigher = lambda x:x
+
+  gdistribute = lambda x:x
   # def gsimplify(self):
   #   return gsimplification(self)
 

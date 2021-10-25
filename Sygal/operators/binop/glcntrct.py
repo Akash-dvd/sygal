@@ -5,6 +5,8 @@ from collections import defaultdict
 from functools import cmp_to_key
 import operator
 
+from sympy.printing.str import StrPrinter
+
 from sympy.core.sympify import sympify
 from sympy.core.basic import Basic
 from sympy.core.singleton import S
@@ -40,7 +42,7 @@ class glcntrct(GExpr):
   def __new__(cls, args0:GExpr,args1:GExpr) -> "Box":
     # Already matched pattern for binary op
     
-    t = tuple(args0,args1)
+    t = (args0,args1)
     t1 = tuple(map(lambda x:Box.__new__(Box,x),t))
     tmvs = [t1[0].mv,t1[1].mv]
     coeff = Mul(t1[0].coeff,t1[1].coeff).simplify()
@@ -48,7 +50,7 @@ class glcntrct(GExpr):
     # Pattern match for grade value
     # Check for scalars
     if(t1[0].mv==Box.nl):
-      return(Box.__new__(Box,t1[1].mv,Mul(t1[0].coeff,t1[1].coeff).simplify()))
+      return(Box.__new__(Box,t1[1].mv,Mul(t1[0].coeff,t1[1].coeff)))
     
     elif(t1[1].mv==Box.nl):
       return Box.Znl
@@ -72,11 +74,19 @@ class glcntrct(GExpr):
           t.add((elem2-elem1))
     return t
 
+  def sympystr(self,expr:"glcntrct")->str:
+    str = '('+(expr.args[0]).__str__()\
+    +'<'\
+    +(expr.args[1]).__str__()+')'
+    return str
+
+
   def __str__(self:"glcntrct")->str:
     str = '('+(self.args[0]).__str__()\
     +'<'\
     +(self.args[1]).__str__()+')'
     return str
+
 
   __repr__ = __str__
 
@@ -95,8 +105,14 @@ class glcntrct(GExpr):
       self.__hash__() == other.__hash__()
     )
   
+
+StrPrinter._print_glcntrct = glcntrct.sympystr
+
+
 from libs.Sygal.Box import Box
-from libs.Sygal.utils import rlGSortArgs,is_unMixedGrade,parity
+from libs.Sygal.utils.rules import rlGSortArgs
+from libs.Sygal.utils.utils import is_unMixedGrade,parity
+
 
 from libs.Sygal.operators.binop.higher.glcntrcthigher import glcntrcthigher
 from libs.Sygal.operators.binop.simplify.glcntrctsimp import glcntrctsimp

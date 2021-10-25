@@ -92,7 +92,8 @@ class GB(GExpr,AtomicExpr):
   def __eq__(self, other):
     return (
       (type(other) == type(self))  and
-      self.name == other.name
+      self.__hash__() == other.__hash__()
+      # Check if hash is not present in the object
     )
 
   @property

@@ -18,9 +18,9 @@ from sympy.core.expr import Expr
 from sympy.core.parameters import global_parameters
 
 from sympy import (
-    diff, Rational, Symbol, S, Mul, Add, Expr,
-    expand, simplify, eye, trigsimp,cos,sin,
-    symbols, sqrt, Matrix, SympifyError, sympify
+  diff, Rational, Symbol, S, Mul, Add, Expr,Pow,
+  expand, simplify, eye, trigsimp,cos,sin,subsets,
+  symbols, sqrt, Matrix, SympifyError, sympify
 )
 
 from sympy.strategies.rl import (rm_id, glom, flatten, unpack, sort, distribute,subs, rebuild)
@@ -154,7 +154,12 @@ class gextp(GExpr):
 #   )
 
 from libs.Sygal.Box import Box
-from libs.Sygal.utils import rlGSortArgs,is_unMixedGrade,parity
+from libs.Sygal.utils.rules import rlGSortArgs
+from libs.Sygal.utils.utils import is_unMixedGrade,parity
+
+
+from libs.Sygal.utils.rules import rlGSortArgs
+
 from libs.Sygal.operators.assop.higher.gextphigher import gextphigher
 from libs.Sygal.operators.assop.simplify.gextpsimp import gextpsimp
 from libs.Sygal.operators.assop.expand.gextpexpand import gextpexpand
