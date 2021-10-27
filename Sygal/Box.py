@@ -7,30 +7,13 @@ from sympy import (
 )
 from sympy.strategies.tools import subs as strtSubs
 
+from sympy.printing.str import StrPrinter
+
 from libs.Sygal.GExpr import GExpr
+from libs.Sygal.utils.utils1 import is_devmode
 
 
 class Box(GExpr):
-
-  # def __new__(cls,mv:"GExpr"=S(1),coeff:Expr=S(1))->"Box":
-  #   # Pattern matching for types
-  #   fct1 = issubclass(type(mv),GExpr)
-  #   # fct2 is for scalar multivectors
-  #   fct2 = True if fct1 and (mv.grade == {0}) else False
-  #   fct3 = issubclass(type(mv),Box)
-
-
-  #   if fct3:
-  #     return GExpr.__new__(Box,mv.mv,Mul(coeff,mv.coeff).simplify())
-  #   elif fct2:
-  #     return GExpr.__new__(Box,GExpr.nl,Mul(coeff,mv).simplify())
-  #   elif fct1:
-  #     return GExpr.__new__(Box,mv,coeff)
-  #   else :
-  #     # Here only mv is supplied as scalar
-  #     if(coeff!=S(1)):
-  #       raise
-  #     return GExpr.__new__(Box,GExpr.nl,sympify(mv))
 
   def __new__(cls,mv:"GExpr"=S(1),coeff:Expr=S(1))->"Box":
     if(type(coeff)==Box):
@@ -88,25 +71,37 @@ class Box(GExpr):
         raise
       return new(Box,GExpr.nl,sympify(mv))
 
+  def sympystr(self,expr:"Box") -> str:
+    return str(expr)
+
+  def sympyrepr(self,expr:"Box") -> str:
+    return repr(expr)
   
   def __str__(self:"Box") -> str:
     strcf = self.coeff.__str__()
     strmv = self.mv.__str__()
-    if self.coeff == S(1):
-      istr = ""
-      lstr = ""
-      str1 = ""
-    else :
-      str1 = "["+strcf+"]"+"*" 
-      istr = "("
-      lstr = ")"
-    if __debug__:
-      str = "|B|"+istr+str1+strmv+lstr
-    else:
-      str = istr+str1+strmv+lstr
-    return str
+    istr = "\033[1;37;40m[\033[0;37;40m"
+    mstr = "\033[1;36;40m|\033[0;37;40m"
+    lstr = "\033[1;37;40m]\033[0;37;40m"
 
-  __repr__ = __str__
+    if self.coeff == S(1):
+      strcf = ""
+      mstr = ""
+
+    str = istr+strcf+mstr+strmv+lstr
+    return str
+  
+  def __repr__(self:"Box") -> str:
+    strcf = self.coeff.__repr__()
+    strmv = self.mv.__repr__()
+    istr = "["
+    mstr = "|"
+    lstr = "]"
+    if self.coeff == S(1):
+      strcf = ""
+      mstr = ""
+    str = istr+strcf+mstr+strmv+lstr
+    return str
 
   def __hash__(self:"Box")->int:
     h = self._mhash
@@ -155,15 +150,22 @@ class Box(GExpr):
   def mv(self:"Box") -> "GExpr":
     return self.args[0]
 
-  def gsimplify(self:"Box"):
-    return self.mv.gsimplify()
+  # def gsimplify(self:"Box"):
+  #   return self.mv.gsimplify()
 
-  def gexpand(self:"Box"):
-    return Box.__new__(Box,self.mv.gexpand(),self.coeff)
+  # def gexpand(self:"Box"):
+  #   return Box.__new__(Box,self.mv.gexpand(),self.coeff)
 
-  def ghigher(self:"Box"):
-    return self.mv.ghigher()
+  # def ghigher(self:"Box"):
+  #   return self.mv.ghigher()
 # Standard import style
 from libs.Sygal.operators.assop.gadd import gadd
 # Non standard style
 # from libs.Sygal.operators import (gadd,ganticomm,gcomm,gextp,ginprdct,glcntrct,gmul,grcntrct)
+
+
+
+if is_devmode():
+  StrPrinter._print_Box = Box.sympyrepr
+else :
+  StrPrinter._print_Box = Box.sympystr

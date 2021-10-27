@@ -9,9 +9,19 @@ def assoc(d, k, v):
     d[k] = v
     return d
 
-basic_fns = {'op': type,
-             'new': Basic.__new__,
-             'leaf': lambda x: not isinstance(x, Basic) or x.is_Atom,
-             'children': lambda x: x.args}
+gen_traverse = {'op': type,
+  'new': Basic.__new__,
+  'leaf': lambda x: not isinstance(x, Basic) or x.is_Atom,
+  'children': lambda x: x.args,
+  'coeff_flag' : True
+}
 
-expr_fns = assoc(basic_fns, 'new', lambda op, *args: op(*args))
+spe_traverse = {'op': type,
+  'new': Basic.__new__,
+  'leaf': lambda x: not isinstance(x, Basic) or x.is_Atom,
+  'children': lambda x: x.args,
+  'coeff_flag' : False
+}
+
+
+expr_fns = assoc(gen_traverse, 'new', lambda op, *args: op(*args))

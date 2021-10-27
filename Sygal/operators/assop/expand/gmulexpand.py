@@ -13,7 +13,7 @@ from libs.Sygal.utils.utils import parity
 from libs.Sygal.strategies.rl import (rm_id, glom, flatten, unpack, sort, distribute,subs, rebuild)
 from libs.Sygal.strategies.core import (null_safe, exhaust, memoize, condition,chain, tryit, do_one, debug, switch, minimize)
 from libs.Sygal.strategies.tools import subs, typed ,canon
-from libs.Sygal.strategies.traverse import (top_down, bottom_up, bxsall, top_down_once,bottom_up_once, basic_fns)
+from libs.Sygal.strategies.traverse import (top_down, bottom_up, bxsall, top_down_once,bottom_up_once)
 from libs.Sygal.strategies.tree import treeapply, greedy, allresults, brute
 
 from libs.Sygal.GExpr import GExpr
@@ -33,8 +33,8 @@ def difflist(t1,t2):
   return [ele for ele in t1 if ele not in t2]
 
 
-def gmulexpand(expr,func=gmul,grade="all"):
-  if(type(expr)==func):
+def gmul_expand(expr,A=gmul,grade="all"):
+  if(type(expr)==A):
     for i,ele in enumerate(expr.args):
       j=i+1
       if(j<len(expr.args)):
@@ -54,7 +54,10 @@ def gmulexpand(expr,func=gmul,grade="all"):
           lst[i] = mulexpansion(expr.args[i],expr.args[j])
           del lst[j]
           t = gmul(*lst)
-          return t
+          if(t.mv == GExpr.nl):
+            return t.coeff
+          else:
+            return t.mv
       # No else here
     # Loop ends but no output then return
     return expr
@@ -101,9 +104,7 @@ def mulexpansion(A,B):
   t = gadd(*lst)
   return t
 
-canonicalize = exhaust((do_one(gmulexpand)))
+canonicalize = exhaust(do_one(gmul_expand))
 
-
-
-
-gmul.gexpand = canonicalize
+def gmulexpand():
+  gmul.gexpand = canonicalize

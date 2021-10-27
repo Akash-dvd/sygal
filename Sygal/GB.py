@@ -29,7 +29,8 @@ class GB(GExpr,AtomicExpr):
 
     # Pattern match for grade -> grade_1:Frozenset
     if(grade==0):
-      name = "_nl"
+      # name = "\u03C6"
+      name = "\u0950"
       return GExpr.Onl
     elif isinstance(grade,int):
       if(grade<0):
@@ -82,9 +83,10 @@ class GB(GExpr,AtomicExpr):
 
 
   def __str__(self):
-    return self.args[0]
+    return "\033[1;37;40m"+self.args[0]+"\033[0;37;40m"
 
-  __repr__ = __str__
+  def __repr__(self):
+    return self.args[0]
 
   def __hash__(self):
     return hash(self.name)
@@ -126,7 +128,9 @@ class GB(GExpr,AtomicExpr):
       #######################
     
 
-      GExpr.Onl = GB.__new_helper(GB,"_nl",frozenset({0}),lambda :GExpr.Onl,S(1)) 
+      GExpr.Onl = GB.__new_helper(GB,"\u0950",frozenset({0}),lambda :GExpr.Onl,S(1)) 
+
+      # GExpr.Onl = GB.__new_helper(GB,"\u03C6",frozenset({0}),lambda :GExpr.Onl,S(1)) 
 
       # To make sure Both Znl and Onl share same _nl
       GExpr.Znl = Basic.__new__(Box,GExpr.Onl.mv,S(0)) 

@@ -4,6 +4,9 @@ from collections import defaultdict
 from functools import cmp_to_key
 import operator
 
+from sympy.printing.str import StrPrinter
+from libs.Sygal.utils.utils1 import is_devmode
+
 from sympy.core.sympify import sympify
 from sympy.core.basic import Basic
 from sympy.core.singleton import S
@@ -102,16 +105,35 @@ class gmul(GExpr):
           t1.update(t2)
     return t2
 
-  def __str__(self:"gmul") -> str:
-    ls = self.args
-    str = '('
-    for o in ls:
-      str += o.__str__()+'*'
-    str = str[:-1]
-    str += ')'
-    return str
 
-  __repr__ = __str__
+  def sympystr(self,expr:"gmul") -> str:
+    return str(expr)
+
+  def sympyrepr(self,expr:"gmul") -> str:
+    return expr.__repr__()
+
+  def __str__(self:"gmul") -> str:
+    tup_head = self.args[:-1]
+    tail = self.args[-1]
+    
+    strng = '('
+    for o in tup_head:
+      strng += o.__str__()+'\033[1;31;40m*\033[0;37;40m'
+    strng += tail.__str__()
+    strng += ')'
+    return strng
+
+  def __repr__(self:"gmul") -> str:
+    tup_head = self.args[:-1]
+    tail = self.args[-1]
+    
+    strng = '('
+    for o in tup_head:
+      strng += o.__repr__()+'*'
+    strng += tail.__repr__()
+    strng += ')'
+    return strng
+
 
   def __hash__(self:"gmul") -> int:
     h = self._mhash
@@ -151,6 +173,12 @@ rules = (
    flatten,lambda x:x
   )
 
+if is_devmode():
+  StrPrinter._print_gmul = gmul.sympyrepr
+else :
+  StrPrinter._print_gmul = gmul.sympystr
+
+
 from libs.Sygal.operators.assop.higher.gmulhigher import gmulhigher
 from libs.Sygal.operators.assop.simplify.gmulsimp import gmulsimp
 from libs.Sygal.operators.assop.expand.gmulexpand import gmulexpand
@@ -161,3 +189,6 @@ from libs.Sygal.Box import Box
 from libs.Sygal.utils.rules import rlGSortArgs
 from libs.Sygal.utils.utils import is_unMixedGrade,parity
 
+gmulhigher()
+gmulsimp()
+gmulexpand()

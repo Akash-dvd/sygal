@@ -5,7 +5,8 @@ from collections import defaultdict
 from functools import cmp_to_key
 import operator
 
-
+from sympy.printing.str import StrPrinter
+from libs.Sygal.utils.utils1 import is_devmode
 
 from sympy.core.sympify import sympify
 from sympy.core.basic import Basic
@@ -116,16 +117,35 @@ class gextp(GExpr):
           t1.update(t2)
     return t2
 
-  def __str__(self:"gextp") -> str:
-    ls = self.args
-    str = '('
-    for o in ls:
-      str += o.__str__()+'^'
-    str = str[:-1]
-    str += ')'
-    return str
 
-  __repr__ = __str__
+  def sympystr(self,expr:"gextp") -> str:
+    return str(expr)
+
+  def sympyrepr(self,expr:"gextp") -> str:
+    return expr.__repr__()
+
+
+  def __str__(self:"gextp") -> str:
+    tup_head = self.args[:-1]
+    tail = self.args[-1]
+    
+    strng = '('
+    for o in tup_head:
+      strng += o.__str__()+'\033[1;31;40m^\033[0;37;40m'
+    strng += tail.__str__()
+    strng += ')'
+    return strng
+
+  def __repr__(self:"gextp") -> str:
+    tup_head = self.args[:-1]
+    tail = self.args[-1]
+    
+    strng = '('
+    for o in tup_head:
+      strng += o.__repr__()+'^'
+    strng += tail.__repr__()
+    strng += ')'
+    return strng
 
   def __hash__(self:"gextp") -> int:
     h = self._mhash
@@ -164,6 +184,13 @@ from libs.Sygal.operators.assop.higher.gextphigher import gextphigher
 from libs.Sygal.operators.assop.simplify.gextpsimp import gextpsimp
 from libs.Sygal.operators.assop.expand.gextpexpand import gextpexpand
 
+if is_devmode():
+  StrPrinter._print_gextp = gextp.sympyrepr
+else :
+  StrPrinter._print_gextp = gextp.sympystr
+
+
+
 rules1 = (
     unpack,flatten
   )
@@ -175,3 +202,6 @@ rules2 = (
 canonicalize1 = exhaust(typed({gextp: do_one(*rules1)}))
 canonicalize2 = exhaust(typed({gextp: do_one(*rules2)}))
 
+gextphigher()
+gextpsimp()
+gextpexpand()

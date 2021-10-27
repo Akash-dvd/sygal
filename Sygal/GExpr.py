@@ -37,7 +37,7 @@ class GExpr(Expr):
     return gmul(self, dopr)
 
   def __rmul__(self:"GExpr", dopl:"GExpr") -> "GExpr":  # * geometric product
-    return gmul(dopl,self)
+    return gmul(self,dopl)
 
   def __xor__(self:"GExpr", dopr:"GExpr") -> "GExpr":  # ^ outer product
     return gextp(self,dopr)

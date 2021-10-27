@@ -1,10 +1,12 @@
+import sys,operator
+
 from typing import Tuple, TypeVar, Callable, Dict, Sequence, List, Optional, Union,NewType,Type,Any
 
 from collections import defaultdict
 from functools import cmp_to_key
-import operator
 
 from sympy.printing.str import StrPrinter
+from libs.Sygal.utils.utils1 import is_devmode
 
 from sympy.core.sympify import sympify
 from sympy.core.basic import Basic
@@ -30,7 +32,6 @@ from sympy.strategies.traverse import (top_down, bottom_up, sall, top_down_once,
 from sympy.strategies.tree import treeapply, greedy, allresults, brute
 
 from libs.Sygal.GExpr import GExpr
-
 
 class gadd(GExpr) :
 
@@ -65,24 +66,32 @@ class gadd(GExpr) :
     return t
 
   def sympystr(self,expr:"gadd") -> str:
-    ls = expr.args
-    str = '('
-    for o in ls:
-      str += o.__str__()+'+'
-    str = str[:-1]
-    str += ')'
-    return str
+    return str(expr)
+
+  def sympyrepr(self,expr:"gadd") -> str:
+    return expr.__repr__()
 
   def __str__(self:"gadd") -> str:
-    ls = self.args
-    str = '('
-    for o in ls:
-      str += o.__str__()+'+'
-    str = str[:-1]
-    str += ')'
-    return str
+    tup_head = self.args[:-1]
+    tail = self.args[-1]
+    
+    strng = '('
+    for o in tup_head:
+      strng += o.__str__()+'\033[1;31;40m+\033[0;37;40m'
+    strng += tail.__str__()
+    strng += ')'
+    return strng
 
-  __repr__ = __str__
+  def __repr__(self:"gadd") -> str:
+    tup_head = self.args[:-1]
+    tail = self.args[-1]
+    
+    strng = '('
+    for o in tup_head:
+      strng += o.__repr__()+'+'
+    strng += tail.__repr__()
+    strng += ')'
+    return strng
 
 
   def __hash__(self:"gadd") -> int:
@@ -110,7 +119,7 @@ def rlgaddFlatten(expr):
     if(type(BX.mv)==gadd):
       childbxes = BX.mv.args
       cf = BX.coeff
-      flatbxes = [Box.__new__(Box,mv=bx.mv,coeff=Mul(bx.coeff,cf).simplify()) for bx in childbxes]
+      flatbxes = [Box.__new__(Box,mv=bx.mv,coeff=Mul(bx.coeff,cf)) for bx in childbxes]
 
       tbx.extend(flatbxes)
   
@@ -144,7 +153,11 @@ rules1 = (
 
 canonicalize = exhaust(typed({gadd: do_one(*rules1)}))
 
-StrPrinter._print_glcntrct = gadd.sympystr
+if is_devmode():
+  StrPrinter._print_gadd = gadd.sympyrepr
+else :
+  StrPrinter._print_gadd = gadd.sympystr
+
 
 from libs.Sygal.Box import Box
 from libs.Sygal.utils.rules import rlGSortArgs
@@ -154,3 +167,8 @@ from libs.Sygal.utils.utils import is_unMixedGrade,parity,bx_sift
 from libs.Sygal.operators.assop.higher.gaddhigher import gaddhigher
 from libs.Sygal.operators.assop.simplify.gaddsimp import gaddsimp
 from libs.Sygal.operators.assop.expand.gaddexpand import gaddexpand
+
+gaddhigher()
+gaddsimp()
+gaddexpand()
+

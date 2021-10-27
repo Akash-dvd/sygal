@@ -1,3 +1,5 @@
+from typing import Tuple, TypeVar, Callable, Dict, Sequence, List, Optional, Union
+
 from sympy import Basic
 from sympy.core.expr import Expr
 from sympy.core.singleton import S
@@ -44,16 +46,22 @@ def rlChkDup(expr:GExpr)->GExpr:
   else:
     return S(0)
 
-def rlGSortArgs(expr:"GExpr") -> "GExpr":
+def rlGSortArgs(expr:"GExpr",reverse:bool=False) -> "GExpr":
   """
   Sort Paritioned arguements based on Grades,names
   Complex arguement are put at last sorted by sum of their weights
   """
-  def GSortArgs(seq):
+  newseq = sorted(expr.args,key=lambda ele:(len(ele.grade),next(iter(ele.grade)),ele.name,ele.__hash__()),reverse=reverse)
+  return new(expr.__class__, *newseq)
 
-    newseq = sorted(seq,key=lambda ele:(len(ele.grade),next(iter(ele.grade)),ele.name,ele.__hash__()))
-    return newseq
-  return new(expr.__class__, *GSortArgs(expr.args))
+def GSortArgs(seq:Union[list,tuple],reverse:bool=False) -> Union[list,tuple]:
+  """
+  Sort Paritioned arguements based on Grades,names
+  Complex arguement are put at last sorted by sum of their weights
+  """
+
+  newseq = sorted(seq,key=lambda ele:(len(ele.grade),next(iter(ele.grade)),ele.name,ele.__hash__()),reverse=reverse)
+  return newseq
 
 
 def rlglom(key, count, combine):

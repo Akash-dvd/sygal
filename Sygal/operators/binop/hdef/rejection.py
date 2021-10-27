@@ -21,6 +21,8 @@ from libs.Sygal.operators.binop.grcntrct import grcntrct
 from libs.Sygal.operators.binop.glcntrct import glcntrct
 
 from .hdef import hdef
+from sympy.printing.str import StrPrinter
+from libs.Sygal.utils.utils1 import is_devmode
 
 class rejection(hdef):
 
@@ -30,32 +32,32 @@ class rejection(hdef):
       obj = GExpr.__new__(rejection,sub,obj)
     else :
       raise ValueError
-    return Box.__new__(obj)
+    return Box.__new__(Box,obj)
   
-  def gexpand(self:"rejection")->Optional[Box]:
-    sub = self.args[0]
-    obj = self.args[1]
-    if is_invertible(sub):
-      coeff = Pow((sub>sub),-1)
-      return Box.__new__(Box,(obj^sub)>(sub),coeff)
-    else :
-      raise
-
   @property
   def grade(self:"rejection") -> Union[set,frozenset]:
+    return {1}
     expanded = self.gexpand()
     return expanded.grade
 
+  
+  def sympystr(self,expr:"rejection") -> str:
+    return str(expr)
+
+  def sympyrepr(self,expr:"rejection") -> str:
+    return expr.__repr__()
+
   def __str__(self:"rejection") -> str:
-    ls = self.args
-    str = '( REJ '
-    for o in ls:
-      str += o.__str__()+' '
-    str = str[:-1]
-    str += ')'
+    str = '('+(self.down).__str__()\
+    +'\033[1;33;40mREJ\033[0;37;40m'\
+    +(self.up).__str__()+')'
     return str
 
-  __repr__ = __str__
+  def __repr__(self:"rejection") -> str:
+    str = '('+(self.down).__repr__()\
+    +'REJ'\
+    +(self.up).__repr__()+')'
+    return str
 
   def __hash__(self:"rejection") -> int:
     h = self._mhash
@@ -74,6 +76,24 @@ class rejection(hdef):
       self.__hash__() == other.__hash__()
     )
 
+  @property
+  def down(self:"rejection")->"GExpr":
+    return self.args[0]
+
+  @property
+  def up(self:"rejection")->"GExpr":
+    return self.args[1]
+
+if is_devmode():
+  StrPrinter._print_rejection = rejection.sympyrepr
+else :
+  StrPrinter._print_rejection = rejection.sympystr
+
+
 from libs.Sygal.operators.binop.hdef.higher.rejectionhigher import rejectionhigher
 from libs.Sygal.operators.binop.hdef.simplify.rejectionsimp import rejectionsimp
 from libs.Sygal.operators.binop.hdef.expand.rejectionexpand import rejectionexpand
+
+rejectionhigher()
+rejectionsimp()
+rejectionexpand()

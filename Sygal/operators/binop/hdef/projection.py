@@ -19,7 +19,12 @@ from libs.Sygal.operators.binop.gcomm import gcomm
 from libs.Sygal.operators.binop.ginprdct import ginprdct
 from libs.Sygal.operators.binop.grcntrct import grcntrct
 from libs.Sygal.operators.binop.glcntrct import glcntrct
+
 from .hdef import hdef
+
+from sympy.printing.str import StrPrinter
+from libs.Sygal.utils.utils1 import is_devmode
+
 
 class projection(hdef):
 
@@ -29,32 +34,32 @@ class projection(hdef):
       obj = GExpr.__new__(projection,sub,obj)
     else :
       raise ValueError
-    return Box.__new__(obj)
-  
-  def gexpand(self:"projection")->Optional[Box]:
-    sub = self.args[0]
-    obj = self.args[1]
-    if is_invertible(sub):
-      coeff = Pow((sub>sub),-1)
-      return Box.__new__(Box,(obj<sub)<sub,coeff)
-    else :
-      raise
+    return Box.__new__(Box,obj)
 
   @property
   def grade(self:"projection") -> Union[set,frozenset]:
+    return {1}
     expanded = self.gexpand()
     return expanded.grade
 
+  
+  def sympystr(self,expr:"projection") -> str:
+    return str(expr)
+
+  def sympyrepr(self,expr:"projection") -> str:
+    return expr.__repr__()
+
   def __str__(self:"projection") -> str:
-    ls = self.args
-    str = '( PROJ '
-    for o in ls:
-      str += o.__str__()+' '
-    str = str[:-1]
-    str += ')'
+    str = '('+(self.down).__str__()\
+    +'\033[1;33;40mPRO\033[0;37;40m'\
+    +(self.up).__str__()+')'
     return str
 
-  __repr__ = __str__
+  def __repr__(self:"projection") -> str:
+    str = '('+(self.down).__repr__()\
+    +'PRO'\
+    +(self.up).__repr__()+')'
+    return str
 
   def __hash__(self:"projection") -> int:
     h = self._mhash
@@ -73,7 +78,24 @@ class projection(hdef):
       self.__hash__() == other.__hash__()
     )
 
+  @property
+  def down(self:"projection")->"GExpr":
+    return self.args[0]
+
+  @property
+  def up(self:"projection")->"GExpr":
+    return self.args[1]
+
+if is_devmode():
+  StrPrinter._print_projectionn = projection.sympyrepr
+else :
+  StrPrinter._print_projection = projection.sympystr
+
 
 from libs.Sygal.operators.binop.hdef.higher.projctionhigher import projctionhigher
 from libs.Sygal.operators.binop.hdef.simplify.projctionsimp import projctionsimp
 from libs.Sygal.operators.binop.hdef.expand.projctionexpand import projctionexpand
+
+projctionhigher()
+projctionsimp()
+projctionexpand()

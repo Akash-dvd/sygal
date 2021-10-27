@@ -6,6 +6,7 @@ from functools import cmp_to_key
 import operator
 
 from sympy.printing.str import StrPrinter
+from libs.Sygal.utils.utils1 import is_devmode
 
 from sympy.core.sympify import sympify
 from sympy.core.basic import Basic
@@ -30,8 +31,7 @@ from sympy.strategies.traverse import (top_down, bottom_up, sall, top_down_once,
 from sympy.strategies.tree import treeapply, greedy, allresults, brute
 
 from libs.Sygal.GExpr import GExpr
-
-
+from libs.Sygal.utils.rules import GSortArgs
 
 
 class grcntrct(GExpr):
@@ -51,11 +51,19 @@ class grcntrct(GExpr):
     
     # Pattern match
     # Check for scalars
-    if(t1[0].mv==Box.nl):
-      return(Box.__new__(Box,t1[1].mv,Mul(t1[0].coeff,t1[1].coeff).simplify()))
+    if(t1[1].mv==Box.nl):
+      if(t1[1].coeff==S(0)):
+        return(GExpr.Znl)
+      else :
+        return(Box.__new__(Box,t1[0].mv,Mul(t1[0].coeff,t1[1].coeff).simplify()))
     
     elif(t1[0].mv==Box.nl):
       return Box.Znl
+
+    # Check if zero grade .. Then call arguement sort
+    elif (len(tmvs[0].grade)==len(tmvs[1].grade)==1 and (next(iter(tmvs[0].grade))-next(iter(tmvs[0].grade))==0)):
+      mv = Basic.__new__(grcntrct, *GSortArgs(tmvs,True))
+      return(Box.__new__(Box,mv,coeff))
 
     else:
       mv = Basic.__new__(grcntrct, *tmvs)
@@ -76,20 +84,24 @@ class grcntrct(GExpr):
           t.add((elem1-elem2))
     return t
 
-  def sympystr(self,expr:"grcntrct")->str:
-    str = '('+(expr.args[0]).__str__()\
-    +'<'\
-    +(expr.args[1]).__str__()+')'
-    return str
+  def sympystr(self,expr:"grcntrct") -> str:
+    return str(expr)
+
+  def sympyrepr(self,expr:"grcntrct") -> str:
+    return expr.__repr__()
 
 
   def __str__(self:"grcntrct")->str:
-    str = '('+(self.args[0]).__str__()\
-    +'>'\
-    +(self.args[1]).__str__()+')'
+    str = '('+(self.down).__str__()\
+    +'\033[1;33;40m>\033[0;37;40m'\
+    +(self.up).__str__()+')'
     return str
 
-  __repr__ = __str__
+  def __repr__(self:"grcntrct")->str:
+    str = '('+(self.down).__repr__()\
+    +'>'\
+    +(self.up).__repr__()+')'
+    return str
 
   def __hash__(self:"grcntrct")->int:
     h = self._mhash
@@ -106,7 +118,21 @@ class grcntrct(GExpr):
       self.__hash__() == other.__hash__()
     )
   
-StrPrinter._print_grcntrct = grcntrct.sympystr
+  
+  @property
+  def up(self:"grcntrct")->"GExpr":
+    return self.args[1]
+
+  @property
+  def down(self:"grcntrct")->"GExpr":
+    return self.args[0]
+
+
+if is_devmode():
+  StrPrinter._print_grcntrct = grcntrct.sympyrepr
+else :
+  StrPrinter._print_grcntrct = grcntrct.sympystr
+
 
 
 from libs.Sygal.Box import Box
@@ -117,3 +143,7 @@ from libs.Sygal.utils.utils import is_unMixedGrade,parity
 from libs.Sygal.operators.binop.higher.grcntrcthigher import grcntrcthigher
 from libs.Sygal.operators.binop.simplify.grcntrctsimp import grcntrctsimp
 from libs.Sygal.operators.binop.expand.grcntrctexpand import grcntrctexpand
+
+grcntrcthigher()
+grcntrctsimp()
+grcntrctexpand()

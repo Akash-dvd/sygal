@@ -10,7 +10,9 @@ from libs.Sygal.GExpr import GExpr
 from libs.Sygal.Box import Box
 from libs.Sygal.utils.utils import is_invertible
 
-from .hdef import hdef
+
+from sympy.printing.str import StrPrinter
+from libs.Sygal.utils.utils1 import is_devmode
 
 from libs.Sygal.operators.assop.gadd import gadd
 from libs.Sygal.operators.assop.gextp import gextp
@@ -22,6 +24,8 @@ from libs.Sygal.operators.binop.ginprdct import ginprdct
 from libs.Sygal.operators.binop.grcntrct import grcntrct
 from libs.Sygal.operators.binop.glcntrct import glcntrct
 
+from .hdef import hdef
+
 class inversion(hdef):
 
   def __new__(cls,sub:"GExpr",obj:"GExpr")->Optional[Box]:
@@ -30,32 +34,31 @@ class inversion(hdef):
       obj = GExpr.__new__(inversion,sub,obj)
     else :
       raise ValueError
-    return Box.__new__(obj)
-  
-  def gexpand(self:"inversion")->Optional[Box]:
-    sub = self.args[0]
-    obj = self.args[1]
-    if is_invertible(sub):
-      coeff = Pow((sub>sub),-1)
-      return Box.__new__(Box,sub*obj*sub,coeff)
-    else :
-      raise
+    return Box.__new__(Box,obj)
 
   @property
   def grade(self:"inversion") -> Union[set,frozenset]:
+    return {1}
     expanded = self.gexpand()
     return expanded.grade
 
+  def sympystr(self,expr:"inversion") -> str:
+    return str(expr)
+
+  def sympyrepr(self,expr:"inversion") -> str:
+    return expr.__repr__()
+
   def __str__(self:"inversion") -> str:
-    ls = self.args
-    str = '( INV '
-    for o in ls:
-      str += o.__str__()+' '
-    str = str[:-1]
-    str += ')'
+    str = '('+(self.down).__str__()\
+    +'\033[1;33;40mINV\033[0;37;40m'\
+    +(self.up).__str__()+')'
     return str
 
-  __repr__ = __str__
+  def __repr__(self:"inversion") -> str:
+    str = '('+(self.down).__repr__()\
+    +'INV'\
+    +(self.up).__repr__()+')'
+    return str
 
   def __hash__(self:"inversion") -> int:
     h = self._mhash
@@ -74,6 +77,26 @@ class inversion(hdef):
       self.__hash__() == other.__hash__()
     )
 
+  @property
+  def down(self:"inversion")->"GExpr":
+    return self.args[0]
+
+  @property
+  def up(self:"inversion")->"GExpr":
+    return self.args[1]
+
+
+
+if is_devmode():
+  StrPrinter._print_inversion = inversion.sympyrepr
+else :
+  StrPrinter._print_inversion = inversion.sympystr
+
+
 from libs.Sygal.operators.binop.hdef.higher.inversionhigher import inversionhigher
 from libs.Sygal.operators.binop.hdef.simplify.inversionsimp import inversionsimp
 from libs.Sygal.operators.binop.hdef.expand.inversionexpand import inversionexpand
+
+inversionhigher()
+inversionsimp()
+inversionexpand()
