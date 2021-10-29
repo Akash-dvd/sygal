@@ -104,7 +104,6 @@ def mulexpansion(A,B):
   t = gadd(*lst)
   return t
 
-canonicalize = exhaust(do_one(gmul_expand))
 
 def gmulexpand():
-  gmul.gexpand = canonicalize
+  gmul.gexpand = gmul_expand

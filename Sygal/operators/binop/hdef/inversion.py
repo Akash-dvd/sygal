@@ -8,8 +8,6 @@ from sympy import (
 
 from libs.Sygal.GExpr import GExpr
 from libs.Sygal.Box import Box
-from libs.Sygal.utils.utils import is_invertible
-
 
 from sympy.printing.str import StrPrinter
 from libs.Sygal.utils.utils1 import is_devmode
@@ -25,6 +23,7 @@ from libs.Sygal.operators.binop.grcntrct import grcntrct
 from libs.Sygal.operators.binop.glcntrct import glcntrct
 
 from .hdef import hdef
+from libs.Sygal.utils.utils import is_invertible
 
 class inversion(hdef):
 
