@@ -6,17 +6,12 @@ from sympy import (
   symbols, sqrt, Matrix, SympifyError, sympify
 )
 
-# from libs.Sygal.utils.utils import parity
-
 from libs.Sygal.strategies.rl import (rm_id, glom, flatten, unpack, sort, distribute,subs, rebuild)
 from libs.Sygal.strategies.core import (null_safe, exhaust, memoize, condition,chain, tryit, do_one, debug, switch, minimize)
 from libs.Sygal.strategies.tools import subs, typed ,canon
 from libs.Sygal.strategies.traverse import (top_down, bottom_up, bxsall, top_down_once,bottom_up_once)
 from libs.Sygal.strategies.tree import treeapply, greedy, allresults, brute
 
-
-from libs.Sygal.Box import Box
-from libs.Sygal.GExpr import GExpr
 
 from libs.Sygal.operators.assop.gadd import gadd
 from libs.Sygal.operators.assop.gextp import gextp
@@ -28,24 +23,29 @@ from libs.Sygal.operators.binop.ginprdct import ginprdct
 from libs.Sygal.operators.binop.grcntrct import grcntrct
 from libs.Sygal.operators.binop.glcntrct import glcntrct
 
-from libs.Sygal.operators.binop.hdef.inversion import inversion
 
-from libs.Sygal.utils.utils import is_invertible
+from libs.Sygal.Box import Box
+from libs.Sygal.GExpr import GExpr
 
-def inversion_simplify(expr:"inversion")->Optional[Box]:
-  if type(expr) == inversion:
-    sub = expr.down
-    obj = expr.up
-    if is_invertible(sub):
-      if(type(obj)== inversion):
-        sub1 = obj.down
-        obj1 = obj.up
-        mv = inversion(sub*sub1,obj1)
-        return Box.__new__(Box,mv)
-    else :
-      raise
-  else :
+
+def lcntrctconcat_rl(expr):
+  if isinstance(expr,glcntrct):
+    if(type(expr.down)==glcntrct):
+      t1 = expr.up
+      t2 = expr.down.up
+      t3 = expr.down.down
+      t4 = [t1,t2]
+      t5 = gextp(*t4)
+      t6 = glcntrct(t5,t3)
+      if(t6.mv == GExpr.nl):
+        return t6.coeff
+      else :
+        return t6.mv
+    else:
+      return expr
+  else:
     return expr
 
-def inversionsimp():
-  inversion.gsimplify = exhaust(inversion_simplify)
+
+def glcntrctsimp():
+  glcntrct.gsimplify = lcntrctconcat_rl

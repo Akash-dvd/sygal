@@ -8,7 +8,9 @@ from sympy import (
 
 from libs.Sygal.GExpr import GExpr
 from libs.Sygal.Box import Box
-from libs.Sygal.utils.utils  import is_invertible
+
+from sympy.printing.str import StrPrinter
+from libs.Sygal.utils.utils1 import is_devmode
 
 from libs.Sygal.operators.assop.gadd import gadd
 from libs.Sygal.operators.assop.gextp import gextp
@@ -20,48 +22,53 @@ from libs.Sygal.operators.binop.ginprdct import ginprdct
 from libs.Sygal.operators.binop.grcntrct import grcntrct
 from libs.Sygal.operators.binop.glcntrct import glcntrct
 
-from .hdef import hdef
+from .isomorphic import isomorphic
+from libs.Sygal.utils.utils import is_invertible
 
-from sympy.printing.str import StrPrinter
-from libs.Sygal.utils.utils1 import is_devmode
-
-
-class projection(hdef):
+class inversion(isomorphic):
 
   def __new__(cls,sub:"GExpr",obj:"GExpr")->Optional[Box]:
-    # Pattern Match for two arguements
-    if (is_invertible(sub)):
-      obj = GExpr.__new__(projection,sub,obj)
+    t = (sub,obj)
+    t1 = tuple(map(lambda x:Box.__new__(Box,x),t))
+    tmvs = [t1[0].mv,t1[1].mv]
+    coeff = Mul(t1[0].coeff,t1[1].coeff)
+    
+    # Pattern match for grade value
+    # Check for scalars
+    if(coeff==S(0)):
+      return(GExpr.Znl)
+
+    if (is_invertible(tmvs[0])):
+      obj = GExpr.__new__(inversion,tmvs[0],tmvs[1])
     else :
       raise ValueError
-    return Box.__new__(Box,obj)
+    return Box.__new__(Box,obj,coeff)
 
   @property
-  def grade(self:"projection") -> Union[set,frozenset]:
+  def grade(self:"inversion") -> Union[set,frozenset]:
     return {1}
     expanded = self.gexpand()
     return expanded.grade
 
-  
-  def sympystr(self,expr:"projection") -> str:
+  def sympystr(self,expr:"inversion") -> str:
     return str(expr)
 
-  def sympyrepr(self,expr:"projection") -> str:
+  def sympyrepr(self,expr:"inversion") -> str:
     return expr.__repr__()
 
-  def __str__(self:"projection") -> str:
+  def __str__(self:"inversion") -> str:
     str = '('+(self.down).__str__()\
-    +'\033[1;33;40mPRO\033[0;37;40m'\
+    +'\033[1;33;40mINV\033[0;37;40m'\
     +(self.up).__str__()+')'
     return str
 
-  def __repr__(self:"projection") -> str:
+  def __repr__(self:"inversion") -> str:
     str = '('+(self.down).__repr__()\
-    +'PRO'\
+    +'INV'\
     +(self.up).__repr__()+')'
     return str
 
-  def __hash__(self:"projection") -> int:
+  def __hash__(self:"inversion") -> int:
     h = self._mhash
     if h is None:
       strng = (type(self).__name__)
@@ -71,7 +78,7 @@ class projection(hdef):
       self._mhash = h
     return h
   
-  def __eq__(self:"projection", other:"GExpr") -> bool:
+  def __eq__(self:"inversion", other:"GExpr") -> bool:
     # THIS DEFINITION CAN BE MODIFIED BY EXPANDING THE EXPRESSION
     return (
       (type(other) == type(self)) and
@@ -79,23 +86,25 @@ class projection(hdef):
     )
 
   @property
-  def down(self:"projection")->"GExpr":
+  def down(self:"inversion")->"GExpr":
     return self.args[0]
 
   @property
-  def up(self:"projection")->"GExpr":
+  def up(self:"inversion")->"GExpr":
     return self.args[1]
 
+
+
 if is_devmode():
-  StrPrinter._print_projectionn = projection.sympyrepr
+  StrPrinter._print_inversion = inversion.sympyrepr
 else :
-  StrPrinter._print_projection = projection.sympystr
+  StrPrinter._print_inversion = inversion.sympystr
 
 
-from libs.Sygal.operators.binop.hdef.higher.projctionhigher import projctionhigher
-from libs.Sygal.operators.binop.hdef.simplify.projctionsimp import projctionsimp
-from libs.Sygal.operators.binop.hdef.expand.projctionexpand import projctionexpand
+from libs.Sygal.operators.binop.outermorphic.isomorphic.higher.inversionhigher import inversionhigher
+from libs.Sygal.operators.binop.outermorphic.isomorphic.simplify.inversionsimp import inversionsimp
+from libs.Sygal.operators.binop.outermorphic.isomorphic.expand.inversionexpand import inversionexpand
 
-projctionhigher()
-projctionsimp()
-projctionexpand()
+inversionhigher()
+inversionsimp()
+inversionexpand()

@@ -31,21 +31,7 @@ from libs.Sygal.GExpr import GExpr
 def distriOvr_GAdd(A):
 # Notice multiple returns otherwise null is returned causing errors
   def distribute_rl(expr):
-    if (type(expr)==Box):
-      BX = expr
-      cf = BX.coeff
-      if isinstance(BX.mv,A):
-        for i, arg in enumerate(BX.mv.args):
-          if isinstance(arg, gadd):
-            first, b, tail = BX.mv.args[:i], BX.mv.args[i], BX.mv.args[i+1:]
-            tmplst = [A(*(first + (bx,) + tail))*cf for bx in b.args]
-            t =  gadd(*tmplst)
-            return t
-        return expr
-      else:
-        return expr
-    # This will come only when Expr args invoke them
-    elif(type(expr)==A):
+    if isinstance(expr,A):
       for i, arg in enumerate(expr.args):
         if isinstance(arg, gadd):
           first, b, tail = expr.args[:i], expr.args[i], expr.args[i+1:]
@@ -55,9 +41,10 @@ def distriOvr_GAdd(A):
           if(t.mv==GExpr.nl):
             return t.coeff
           else:
-            return t.mv
+            return t
+            # return t.mv
       return expr
-    else :
+    else:
       return expr
 
   return distribute_rl

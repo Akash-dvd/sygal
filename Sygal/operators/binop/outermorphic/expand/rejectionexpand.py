@@ -28,7 +28,7 @@ from libs.Sygal.operators.binop.ginprdct import ginprdct
 from libs.Sygal.operators.binop.grcntrct import grcntrct
 from libs.Sygal.operators.binop.glcntrct import glcntrct
 
-from libs.Sygal.operators.binop.hdef.rejection import rejection
+from libs.Sygal.operators.binop.outermorphic.rejection import rejection
 
 from libs.Sygal.utils.utils import is_invertible
 

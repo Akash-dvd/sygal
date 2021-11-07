@@ -31,8 +31,10 @@ from sympy.strategies.traverse import (top_down, bottom_up, sall, top_down_once,
 from sympy.strategies.tree import treeapply, greedy, allresults, brute
 
 from libs.Sygal.GExpr import GExpr
+from libs.Sygal.operators.assop.assop import assop
 
-class gextp(GExpr):
+
+class gextp(assop):
 
   def __new__(cls, args0:GExpr,*args:Tuple["GExpr"],**kwargs) -> "Box":
     # gextp(Box,Optional[Box,Box.....])

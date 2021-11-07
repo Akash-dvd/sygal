@@ -31,10 +31,12 @@ from sympy.strategies.traverse import (top_down, bottom_up, sall, top_down_once,
 from sympy.strategies.tree import treeapply, greedy, allresults, brute
 
 from libs.Sygal.GExpr import GExpr
+from libs.Sygal.operators.binop.binop import binop
+
 from libs.Sygal.utils.rules import GSortArgs
 
 
-class glcntrct(GExpr):
+class glcntrct(binop):
   """
   Left Contraction < operator
   Is non-associative, non-commutative

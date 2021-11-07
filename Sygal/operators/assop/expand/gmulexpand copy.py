@@ -34,40 +34,34 @@ def difflist(t1,t2):
 
 
 def gmul_expand(expr,A=gmul,grade="all"):
-  if(type(expr)==Box):
-    BX = expr
-    cf = BX.coeff
-    if(type(BX.mv)==A):
-      for i,ele in enumerate(BX.mv.args):
-        j=i+1
-        if(j<len(BX.mv.args)):
-          lst = list(BX.mv.args)
-          fct1 =  (BX.mv.args[i].grade == {1} ) 
-          fct2 =  (BX.mv.args[j].grade == {1} ) 
-          fct3 =  (type(BX.mv.args[i]) == gextp ) 
-          fct4 =  (type(BX.mv.args[j]) == gextp )
-          if fct3:
-            fct5 = reduce(lambda x, y: x and y, [ele.grade == {1} for ele in BX.mv.args[i].args])
-            
-          if fct4:
-            fct6 = reduce(lambda x, y: x and y, [ele.grade == {1} for ele in BX.mv.args[j].args])
+  if(type(expr)==A):
+    for i,ele in enumerate(expr.args):
+      j=i+1
+      if(j<len(expr.args)):
+        lst = list(expr.args)
+        fct1 =  (expr.args[i].grade == {1} ) 
+        fct2 =  (expr.args[j].grade == {1} ) 
+        fct3 =  (type(expr.args[i]) == gextp ) 
+        fct4 =  (type(expr.args[j]) == gextp )
+        if fct3:
+          fct5 = reduce(lambda x, y: x and y, [ele.grade == {1} for ele in expr.args[i].args])
+          
+        if fct4:
+          fct6 = reduce(lambda x, y: x and y, [ele.grade == {1} for ele in expr.args[j].args])
 
-          # Both arguements must be either be of grade 1 or gextp each composed of grade 1 elements
-          if((fct1 or fct5) and (fct2 or fct6)):
-            lst[i] = mulexpansion(BX.mv.args[i],BX.mv.args[j])
-            del lst[j]
-            t = gmul(*lst)*cf
-            return t
-            # if(t.mv == GExpr.nl):
-            #   return t.coeff
-            # else:
-            #   return t.mv
-        # No else here
-      # Loop ends but no output then return
-      return expr
-    else:
-      return expr
-  else :
+        # Both arguements must be either be of grade 1 or gextp each composed of grade 1 elements
+        if((fct1 or fct5) and (fct2 or fct6)):
+          lst[i] = mulexpansion(expr.args[i],expr.args[j])
+          del lst[j]
+          t = gmul(*lst)
+          if(t.mv == GExpr.nl):
+            return t.coeff
+          else:
+            return t.mv
+      # No else here
+    # Loop ends but no output then return
+    return expr
+  else:
     return expr
 
 def mulexpansion(A,B):

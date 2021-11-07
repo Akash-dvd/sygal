@@ -120,7 +120,10 @@ class GExpr(Expr):
   
   gsimplify = lambda x:x
 
-  gexpand = lambda x:x
+  @classmethod
+  def gexpand(expr):
+    return expr
+  # gexpand = lambda x:x
 
   ghigher = lambda x:x
 
@@ -139,10 +142,10 @@ from libs.Sygal.operators.binop.ginprdct import ginprdct
 from libs.Sygal.operators.binop.grcntrct import grcntrct
 from libs.Sygal.operators.binop.glcntrct import glcntrct
 
-from libs.Sygal.operators.binop.hdef.hdef import hdef
-from libs.Sygal.operators.binop.hdef.inversion import inversion as ginversion
-from libs.Sygal.operators.binop.hdef.projection import projection as gprojection
-from libs.Sygal.operators.binop.hdef.rejection import rejection as grejection 
+from libs.Sygal.operators.binop.outermorphic.outermorphic import outermorphic
+from libs.Sygal.operators.binop.outermorphic.isomorphic.inversion import inversion as ginversion
+from libs.Sygal.operators.binop.outermorphic.projection import projection as gprojection
+from libs.Sygal.operators.binop.outermorphic.rejection import rejection as grejection 
 
 
 # This style causes errors

@@ -6,7 +6,8 @@ from sympy import (
   symbols, sqrt, Matrix, SympifyError, sympify
 )
 
-# from libs.Sygal.utils.utils import parity
+from libs.Sygal.Box import Box
+from libs.Sygal.GExpr import GExpr
 
 from libs.Sygal.strategies.rl import (rm_id, glom, flatten, unpack, sort, distribute,subs, rebuild)
 from libs.Sygal.strategies.core import (null_safe, exhaust, memoize, condition,chain, tryit, do_one, debug, switch, minimize)
@@ -15,8 +16,6 @@ from libs.Sygal.strategies.traverse import (top_down, bottom_up, bxsall, top_dow
 from libs.Sygal.strategies.tree import treeapply, greedy, allresults, brute
 
 
-from libs.Sygal.Box import Box
-from libs.Sygal.GExpr import GExpr
 
 from libs.Sygal.operators.assop.gadd import gadd
 from libs.Sygal.operators.assop.gextp import gextp
@@ -28,22 +27,24 @@ from libs.Sygal.operators.binop.ginprdct import ginprdct
 from libs.Sygal.operators.binop.grcntrct import grcntrct
 from libs.Sygal.operators.binop.glcntrct import glcntrct
 
-from libs.Sygal.operators.binop.hdef.projection import projection
-
 from libs.Sygal.utils.utils import is_invertible
 
-def projection_expand(expr:"projection")->Optional[Box]:
-  if type(expr) == projection:
-    sub = expr.down
-    obj = expr.up
-    if is_invertible(sub):
-      coeff = Pow((sub<sub),-1)
-      return Box.__new__(Box,(obj<sub)<sub,coeff)
-    else :
-      raise
+# Assuming blade*blade = scalar
+def gmul_simp(expr:"gmul")->Optional[GExpr]:
+  if type(expr) == gmul and len(expr.args)>=2:
+    for i,arg in enumerate(expr.args):
+      if arg == expr.args[i+1] and is_invertible(arg):
+        t = [element for j, element in enumerate(expr.args) if j not in {i,i+1}]
+        t.append((expr.args[i]<expr.args[i+1]))
+        t1 = gmul(*t)
+        if t1.mv == GExpr.nl:
+          return t1.coeff
+        else :
+          return t1.mv
+    return expr 
+
   else :
     return expr
 
-def projectionexpand():
-  projection.gexpand = projection_expand
-
+def gmulsimp():
+  gmul.gsimplifyr = gmul_simp

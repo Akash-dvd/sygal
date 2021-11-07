@@ -150,14 +150,17 @@ class Box(GExpr):
   def mv(self:"Box") -> "GExpr":
     return self.args[0]
 
-  # def gsimplify(self:"Box"):
-  #   return self.mv.gsimplify()
+  def gsimplify(self:"Box"):
+    func = type(self.mv).gsimplify
+    return func(self)
 
-  # def gexpand(self:"Box"):
-  #   return Box.__new__(Box,self.mv.gexpand(),self.coeff)
+  def gexpand(self:"Box"):
+    func = type(self.mv).gexpand
+    return func(self)
 
-  # def ghigher(self:"Box"):
-  #   return self.mv.ghigher()
+  def ghigher(self:"Box"):
+    func = type(self.mv).ghigher
+    return func(self)
 # Standard import style
 from libs.Sygal.operators.assop.gadd import gadd
 # Non standard style

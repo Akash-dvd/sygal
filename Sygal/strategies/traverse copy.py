@@ -29,10 +29,6 @@ def top_down_once(rule, fns=gen_traverse):
   return do_one(rule, lambda expr: bxsall(top_down(rule, fns), fns)(expr))
 
 
-# def bottom_up_once(rule, fns=gen_traverse):
-#   """Apply a rule up a tree - stop on success."""
-#   return do_one(lambda expr: bxsall(bottom_up_once(rule, fns), fns)(expr), rule)
-
 def bottom_up_once(rule, fns=gen_traverse):
   """Apply a rule up a tree - stop on success."""
   return do_one(lambda expr: bxsall(bottom_up(rule, fns), fns)(expr), rule)
@@ -60,7 +56,6 @@ def bxsall(rule, fns=gen_traverse):
             m_argscoeff = argscoeff.coeff
             if(argscoeff.mv != GExpr.nl):
               raise
-          # type(argsmv)==Box is not checked beacause in bo creation it will be handled.
           else :
             m_argscoeff = argscoeff
           m_args = (argsmv , m_argscoeff)    

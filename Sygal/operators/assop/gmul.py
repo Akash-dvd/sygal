@@ -30,9 +30,9 @@ from sympy.strategies.traverse import (top_down, bottom_up, sall, top_down_once,
 from sympy.strategies.tree import treeapply, greedy, allresults, brute
 
 from libs.Sygal.GExpr import GExpr
+from libs.Sygal.operators.assop.assop import assop
 
-
-class gmul(GExpr):
+class gmul(assop):
 
   def __new__(cls, args0:GExpr,*args:Tuple["GExpr"]) -> "Box":
     # gmul(Box,Optional[Box,Box.....])
@@ -170,7 +170,7 @@ class gmul(GExpr):
 #   unpack, rm_id(lambda x: x == 1), flatten,rlGSortArgs
 #   )
 rules = (
-   flatten,lambda x:x
+   flatten,
   )
 
 if is_devmode():
