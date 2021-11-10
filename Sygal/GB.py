@@ -8,8 +8,9 @@ from sympy import (
 )
 
 from libs.Sygal.GExpr import GExpr
-from libs.Sygal.Box import Box
 from sympy.core.cache import cacheit
+from libs.Sygal.Box import Box
+from libs.Sygal.utils.utils import rlGSortArgs,parity,is_unMixedGrade,bx_sift,GSortArgs,is_devmode
 
 
 class GB(GExpr,AtomicExpr):
@@ -75,7 +76,7 @@ class GB(GExpr,AtomicExpr):
     # CAn be better with pattern matching
     
     mv = GExpr.__new__(cls,name,grade,pSC)
-    mv.is_commutative = (grade == {0})
+    # mv.is_commutative = (grade == {0})
     mv.is_atom = True
 
     obj = Box.__new__(Box,mv,coeff)    
@@ -98,6 +99,30 @@ class GB(GExpr,AtomicExpr):
       # Check if hash is not present in the object
     )
 
+  def reversion(self:"GB")->Box:
+    if (len(self.grade)==1):
+      sign2 = next(iter(self.grade))
+      sign1 = sign2*(sign2-1)/2
+      sign = S(-2)*(sign1%2)+1
+      return Box.__new__(Box,self,sign)
+    else :
+      raise NotImplemented
+
+  def grade_involution(self:"GB")->Box:
+    if is_unMixedGrade(self):
+      sign1 = next(iter(self.grade))%2
+      sign  = (S(-2)*sign1)+1
+      return Box.__new__(Box,self,sign)
+    else :
+      raise NotImplemented
+      # return Box.__new__(Box,self)
+  
+  def clifford_conjugation(self:"GB")->Box:
+    t = self.grade_involution()
+    t1 = t.reversion()
+    return t1
+
+
   @property
   def name(self):
     return self.args[0]
@@ -114,7 +139,7 @@ class GB(GExpr,AtomicExpr):
     # For initialization
     # Box.__new__ cannot be called b4 initialization
     mv = GExpr.__new__(cls,name,grade,pSC)
-    mv.is_commutative = (grade == {0})
+    # mv.is_commutative = grade == {0}
     mv.is_atom = True
 
     return Basic.__new__(Box,mv,coeff)

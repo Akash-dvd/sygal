@@ -1,37 +1,4 @@
-from typing import Tuple, TypeVar, Callable, Dict, Sequence, List, Optional, Union
-
-from functools import reduce
-from collections import defaultdict
-from functools import cmp_to_key
-import operator
-
-from sympy.printing.str import StrPrinter
-from libs.Sygal.utils.utils1 import is_devmode
-
-from sympy.core.sympify import sympify
-from sympy.core.basic import Basic
-from sympy.core.singleton import S
-from sympy.core.operations import AssocOp
-from sympy.core.cache import cacheit
-from sympy.core.logic import fuzzy_not, _fuzzy_group, fuzzy_and
-from sympy.core.compatibility import reduce
-from sympy.core.expr import Expr
-from sympy.core.parameters import global_parameters
-
-from sympy import (
-  diff, Rational, Symbol, S, Mul, Add, Expr,Pow,
-  expand, simplify, eye, trigsimp,cos,sin,subsets,
-  symbols, sqrt, Matrix, SympifyError, sympify
-)
-
-from sympy.strategies.rl import (rm_id, glom, flatten, unpack, sort, distribute,subs, rebuild)
-from sympy.strategies.core import (null_safe, exhaust, memoize, condition,chain, tryit, do_one, debug, switch, minimize)
-from sympy.strategies.tools import subs, typed ,canon
-from sympy.strategies.traverse import (top_down, bottom_up, sall, top_down_once,bottom_up_once, basic_fns)
-from sympy.strategies.tree import treeapply, greedy, allresults, brute
-
-from libs.Sygal.GExpr import GExpr
-from libs.Sygal.operators.assop.assop import assop
+from .importshead import *
 
 
 class gextp(assop):
@@ -165,33 +132,31 @@ class gextp(assop):
       self.__hash__() == other.__hash__()
     )
 
-  # def __neg__(self:"gextp") -> Box:
-  #   coeff = Mul(S(-1),self.args[0]).simplify()
-  #   mv = self.args[1]
-  #   return Box.__new__(Box,mv,coeff)
+  def reversion(self:"gextp")->"Box":
+    t = [arg.reversion() for arg in self.args]
+    t.reverse()
+    return gextp(*t)
 
+  def grade_involution(self:"gextp")->"Box":
+    if is_unMixedGrade(self):
+      sign1 = next(iter(self.grade))%2
+      sign  = (S(-2)*sign1)+1
+      return Box.__new__(Box,self,sign)
+    else :
+      raise NotImplemented
+      # return Box.__new__(Box,self)
+  
+  def clifford_conjugation(self:"gextp")->"Box":
+    t = self.grade_involution()
+    t1 = t.reversion()
+    return t1
 
-# rules = (
-#   unpack, rm_id(lambda x: x == 1), flatten,rlGSortArgs
-#   )
-
-from libs.Sygal.Box import Box
-from libs.Sygal.utils.rules import rlGSortArgs
-from libs.Sygal.utils.utils import is_unMixedGrade,parity
-
-
-from libs.Sygal.utils.rules import rlGSortArgs
 
 from libs.Sygal.operators.assop.higher.gextphigher import gextphigher
 from libs.Sygal.operators.assop.simplify.gextpsimp import gextpsimp
 from libs.Sygal.operators.assop.expand.gextpexpand import gextpexpand
 
-if is_devmode():
-  StrPrinter._print_gextp = gextp.sympyrepr
-else :
-  StrPrinter._print_gextp = gextp.sympystr
-
-
+from .importstail import *
 
 rules1 = (
     unpack,flatten
@@ -207,3 +172,10 @@ canonicalize2 = exhaust(typed({gextp: do_one(*rules2)}))
 gextphigher()
 gextpsimp()
 gextpexpand()
+
+
+
+if is_devmode():
+  StrPrinter._print_gextp = gextp.sympyrepr
+else :
+  StrPrinter._print_gextp = gextp.sympystr

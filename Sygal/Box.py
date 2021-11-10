@@ -1,3 +1,5 @@
+import sys
+
 from typing import Tuple, TypeVar, Callable, Dict, Sequence, List, Optional, Union
 
 from sympy import (
@@ -10,7 +12,11 @@ from sympy.strategies.tools import subs as strtSubs
 from sympy.printing.str import StrPrinter
 
 from libs.Sygal.GExpr import GExpr
-from libs.Sygal.utils.utils1 import is_devmode
+
+
+def is_devmode():
+  t = 'pydevd' in sys.modules
+  return t
 
 
 class Box(GExpr):
@@ -81,7 +87,7 @@ class Box(GExpr):
     strcf = self.coeff.__str__()
     strmv = self.mv.__str__()
     istr = "\033[1;37;40m[\033[0;37;40m"
-    mstr = "\033[1;36;40m|\033[0;37;40m"
+    mstr = "\033[1;36;40m!\033[0;37;40m"
     lstr = "\033[1;37;40m]\033[0;37;40m"
 
     if self.coeff == S(1):
@@ -95,7 +101,7 @@ class Box(GExpr):
     strcf = self.coeff.__repr__()
     strmv = self.mv.__repr__()
     istr = "["
-    mstr = "|"
+    mstr = "!"
     lstr = "]"
     if self.coeff == S(1):
       strcf = ""
@@ -161,10 +167,30 @@ class Box(GExpr):
   def ghigher(self:"Box"):
     func = type(self.mv).ghigher
     return func(self)
+
+  def reversion(self:"Box")->"Box":
+    t = self.mv.reversion()
+    return Box.__new__(Box,t,self.coeff)
+
+  def grade_involution(self:"Box")->"Box":
+    t = self.mv.grade_involution()
+    return Box.__new__(Box,t,self.coeff)
+  
+  def clifford_conjugation(self:"Box")->"Box":
+    t = self.mv.clifford_conjugation()
+    return Box.__new__(Box,t,self.coeff)
+  
 # Standard import style
+# These extra imports cause issue with strategies import
 from libs.Sygal.operators.assop.gadd import gadd
-# Non standard style
-# from libs.Sygal.operators import (gadd,ganticomm,gcomm,gextp,ginprdct,glcntrct,gmul,grcntrct)
+# from libs.Sygal.operators.assop.gextp import gextp
+# from libs.Sygal.operators.assop.gmul import gmul
+
+# from libs.Sygal.operators.binop.ganticomm import ganticomm
+# from libs.Sygal.operators.binop.gcomm import gcomm
+# from libs.Sygal.operators.binop.sclrprdct import sclrprdct
+# from libs.Sygal.operators.binop.grcntrct import grcntrct
+# from libs.Sygal.operators.binop.glcntrct import glcntrct
 
 
 

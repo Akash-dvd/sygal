@@ -1,37 +1,4 @@
-from typing import Tuple, TypeVar, Callable, Dict, Sequence, List, Optional, Union,NewType,Type,Any
-
-from collections import defaultdict
-from functools import cmp_to_key
-
-from sympy.printing.str import StrPrinter
-from libs.Sygal.utils.utils1 import is_devmode
-
-from sympy.core.sympify import sympify
-from sympy.core.basic import Basic
-from sympy.core.singleton import S
-from sympy.core.operations import AssocOp
-from sympy.core.cache import cacheit
-from sympy.core.logic import fuzzy_not, _fuzzy_group, fuzzy_and
-from sympy.core.compatibility import reduce
-from sympy.core.expr import Expr
-from sympy.core.parameters import global_parameters
-
-from sympy import (
-  diff, Rational, Symbol, S, Mul, Add, Expr,Pow,
-  expand, simplify, eye, trigsimp,cos,sin,subsets,
-  symbols, sqrt, Matrix, SympifyError, sympify
-)
-
-
-from sympy.strategies.rl import (rm_id, glom, flatten, unpack, sort, distribute,subs, rebuild)
-from sympy.strategies.core import (null_safe, exhaust, memoize, condition,chain, tryit, do_one, debug, switch, minimize)
-from sympy.strategies.tools import subs, typed ,canon
-from sympy.strategies.traverse import (top_down, bottom_up, sall, top_down_once,bottom_up_once, basic_fns)
-from sympy.strategies.tree import treeapply, greedy, allresults, brute
-
-from libs.Sygal.GExpr import GExpr
-from libs.Sygal.operators.assop.assop import assop
-
+from .importshead import *
 
 class gadd(assop):
 
@@ -110,6 +77,20 @@ class gadd(assop):
       self.__hash__() == other.__hash__()
     )
   
+  
+  def reversion(self:"gadd")->"Box":
+    t = [arg.reversion() for arg in self.args]
+    return gadd(*t)
+
+  def grade_involution(self:"gadd")->"Box":
+    t = [arg.grade_involution() for arg in self.args]
+    return gadd(*t)
+  
+  def clifford_conjugation(self:"gadd")->"Box":
+    t = [arg.clifford_conjugation() for arg in self.args]
+    return gadd(*t)
+
+
 def rlgaddFlatten(expr):
   tbx = []
   # Flatten coz of gadd present inside Box
@@ -153,22 +134,19 @@ rules1 = (
 
 canonicalize = exhaust(typed({gadd: do_one(*rules1)}))
 
-if is_devmode():
-  StrPrinter._print_gadd = gadd.sympyrepr
-else :
-  StrPrinter._print_gadd = gadd.sympystr
-
-
-from libs.Sygal.Box import Box
-from libs.Sygal.utils.rules import rlGSortArgs
-from libs.Sygal.utils.utils import is_unMixedGrade,parity,bx_sift
-
 
 from libs.Sygal.operators.assop.higher.gaddhigher import gaddhigher
 from libs.Sygal.operators.assop.simplify.gaddsimp import gaddsimp
 from libs.Sygal.operators.assop.expand.gaddexpand import gaddexpand
 
+
 gaddhigher()
 gaddsimp()
 gaddexpand()
 
+from .importstail import *
+
+if is_devmode():
+  StrPrinter._print_gadd = gadd.sympyrepr
+else :
+  StrPrinter._print_gadd = gadd.sympystr

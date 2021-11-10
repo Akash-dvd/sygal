@@ -1,15 +1,6 @@
-from typing import Tuple, TypeVar, Callable, Dict, Sequence, List, Optional, Union
+from ..importshead import *
+from ..importstail import *
 
-from sympy import (
-  diff, Rational, Symbol, S, Mul, Add, Expr,Pow,
-  expand, simplify, eye, trigsimp,cos,sin,
-  symbols, sqrt, Matrix, SympifyError, sympify
-)
-
-
-from libs.Sygal.GExpr import GExpr
-from libs.Sygal.Box import Box
-from libs.Sygal.utils.utils  import is_invertible
 
 from libs.Sygal.operators.assop.gadd import gadd
 from libs.Sygal.operators.assop.gextp import gextp
@@ -17,13 +8,14 @@ from libs.Sygal.operators.assop.gmul import gmul
 
 from libs.Sygal.operators.binop.ganticomm import ganticomm
 from libs.Sygal.operators.binop.gcomm import gcomm
-from libs.Sygal.operators.binop.ginprdct import ginprdct
+from libs.Sygal.operators.binop.sclrprdct import sclrprdct
 from libs.Sygal.operators.binop.grcntrct import grcntrct
 from libs.Sygal.operators.binop.glcntrct import glcntrct
 
+from libs.Sygal.utils.utils1 import is_invertible,is_blade
+
 from .outermorphic import outermorphic
-from sympy.printing.str import StrPrinter
-from libs.Sygal.utils.utils1 import is_devmode
+
 
 class rejection(outermorphic):
 

@@ -1,23 +1,5 @@
-from typing import Tuple, TypeVar, Callable, Dict, Sequence, List, Optional, Union,NewType,Type,Any
-
-from functools import reduce
-
-from sympy import (
-  diff, Rational, Symbol, S, Mul, Add, Expr,Pow,
-  expand, simplify, eye, trigsimp,cos,sin,subsets,
-  symbols, sqrt, Matrix, SympifyError, sympify
-)
-
-from libs.Sygal.utils.utils import parity
-
-from libs.Sygal.strategies.rl import (rm_id, glom, flatten, unpack, sort, distribute,subs, rebuild)
-from libs.Sygal.strategies.core import (null_safe, exhaust, memoize, condition,chain, tryit, do_one, debug, switch, minimize)
-from libs.Sygal.strategies.tools import subs, typed ,canon
-from libs.Sygal.strategies.traverse import (top_down, bottom_up, bxsall, top_down_once,bottom_up_once)
-from libs.Sygal.strategies.tree import treeapply, greedy, allresults, brute
-
-from libs.Sygal.GExpr import GExpr
-from libs.Sygal.Box import Box
+from ..importshead import *
+from ..importstail import *
 
 from libs.Sygal.operators.assop.gadd import gadd
 from libs.Sygal.operators.assop.gextp import gextp
@@ -25,12 +7,17 @@ from libs.Sygal.operators.assop.gmul import gmul
 
 from libs.Sygal.operators.binop.ganticomm import ganticomm
 from libs.Sygal.operators.binop.gcomm import gcomm
-from libs.Sygal.operators.binop.ginprdct import ginprdct
+from libs.Sygal.operators.binop.sclrprdct import sclrprdct
 from libs.Sygal.operators.binop.grcntrct import grcntrct
 from libs.Sygal.operators.binop.glcntrct import glcntrct
 
+from libs.Sygal.utils.utils1 import is_invertible,is_blade
+
+
+
 def difflist(t1,t2):
   return [ele for ele in t1 if ele not in t2]
+
 
 
 def gmul_expand(expr,A=gmul,grade="all"):
@@ -42,28 +29,13 @@ def gmul_expand(expr,A=gmul,grade="all"):
         j=i+1
         if(j<len(BX.mv.args)):
           lst = list(BX.mv.args)
-          fct1 =  (BX.mv.args[i].grade == {1} ) 
-          fct2 =  (BX.mv.args[j].grade == {1} ) 
-          fct3 =  (type(BX.mv.args[i]) == gextp ) 
-          fct4 =  (type(BX.mv.args[j]) == gextp )
-          if fct3:
-            fct5 = reduce(lambda x, y: x and y, [ele.grade == {1} for ele in BX.mv.args[i].args])
-            
-          if fct4:
-            fct6 = reduce(lambda x, y: x and y, [ele.grade == {1} for ele in BX.mv.args[j].args])
-
-          # Both arguements must be either be of grade 1 or gextp each composed of grade 1 elements
-          if((fct1 or fct5) and (fct2 or fct6)):
+          # check if BX.mv.args[i] and BX.mv.args[j] are blades
+          if(is_blade(BX.mv.args[i]) and is_blade(BX.mv.args[j])):
             lst[i] = mulexpansion(BX.mv.args[i],BX.mv.args[j])
             del lst[j]
             t = gmul(*lst)*cf
             return t
-            # if(t.mv == GExpr.nl):
-            #   return t.coeff
-            # else:
-            #   return t.mv
-        # No else here
-      # Loop ends but no output then return
+
       return expr
     else:
       return expr

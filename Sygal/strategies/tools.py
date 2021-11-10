@@ -44,3 +44,5 @@ def typed(ruletypes):
     >>> remove_idents = typed({Add: rm_zeros, Mul: rm_ones})
     """
     return switch(type, ruletypes)
+
+  

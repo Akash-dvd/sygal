@@ -1,6 +1,5 @@
 from libs.Sygal.GExpr import GExpr
 from libs.Sygal.operators.binop.binop import binop
-
 from libs.Sygal.operators.assop.gextp import gextp
 
 

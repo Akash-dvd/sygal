@@ -14,13 +14,21 @@ from sympy.strategies.tools import subs as strtSubs
 class GExpr(Expr):
   
   grade:Union[set,frozenset] = {}
-  is_commutative:bool = False
+
   is_atom:bool = False
   __slots__ = ()
   coeffs:List["GExpr"] = [S(1)]
   name = "zzzzzGExpr"
   initialized:bool = False
 
+  @property
+  def is_commutative(expr) -> bool:
+    return expr.grade == {0}
+
+  reversion = lambda x:x
+  grade_involution = lambda x:x
+  clifford_conjugation = lambda x:x
+  
   def __add__(self:"GExpr", A:"GExpr") -> "GExpr":
     return gadd(self, A)
 
@@ -52,10 +60,10 @@ class GExpr(Expr):
     return grcntrct(self, dopr)
 
   def __or__(self:"GExpr", dopr:"GExpr") -> "GExpr":  # | inner product
-    return ginprdct(self, dopr)
+    return sclrprdct(self, dopr)
 
   def __ror__(self:"GExpr", dopl:"GExpr") -> "GExpr":  # | inner product
-    return ginprdct(dopl,self)
+    return sclrprdct(dopl,self)
 
   def __lshift__(self:"GExpr", A:"GExpr") -> "GExpr":  # anti-comutator (<<)
     return ganticomm(self, A)
@@ -120,10 +128,10 @@ class GExpr(Expr):
   
   gsimplify = lambda x:x
 
-  @classmethod
-  def gexpand(expr):
-    return expr
-  # gexpand = lambda x:x
+  # @classmethod
+  # def gexpand(expr):
+  #   return expr
+  gexpand = lambda x:x
 
   ghigher = lambda x:x
 
@@ -138,7 +146,7 @@ from libs.Sygal.operators.assop.gmul import gmul
 
 from libs.Sygal.operators.binop.ganticomm import ganticomm
 from libs.Sygal.operators.binop.gcomm import gcomm
-from libs.Sygal.operators.binop.ginprdct import ginprdct
+from libs.Sygal.operators.binop.sclrprdct import sclrprdct
 from libs.Sygal.operators.binop.grcntrct import grcntrct
 from libs.Sygal.operators.binop.glcntrct import glcntrct
 

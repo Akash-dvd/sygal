@@ -1,66 +1,40 @@
-from typing import Tuple, TypeVar, Callable, Dict, Sequence, List, Optional, Union
+from .importshead import *
+
+new = Basic.__new__
+# TODO add new to arguements
+
+def conjugation(rl1,rl2):
+  return chain(rl1,rl2,rl1)
+
+def rlZero(expr:"GExpr",fns=basic_fns) -> "GExpr" :
+  op, new, children, leaf = map(fns.get, ('op', 'new', 'children', 'leaf'))
+  if leaf(expr):
+    return expr
+  elif (S(0) in expr.args):
+    return S(0)
+  else : 
+    return expr
 
 
-from collections import defaultdict
-from functools import cmp_to_key
-import operator
-from sympy.core import facts
+def rlGSortArgs(expr:GExpr,reverse:bool=False) -> GExpr:
+  """
+  Sort Paritioned arguements based on Grades,names
+  Complex arguement are put at last sorted by sum of their weights
+  """
+  newseq = sorted(expr.args,key=lambda ele:(len(ele.grade),next(iter(ele.grade)),ele.name,ele.__hash__()),reverse=reverse)
+  return new(expr.__class__, *newseq)
 
-from sympy import (
-  Basic,diff, Rational, Symbol, S, Mul, Add, Expr,Pow,
-  expand, simplify, eye, trigsimp,cos,sin,subsets,
-  symbols, sqrt, Matrix, SympifyError, sympify
-)
+def GSortArgs(seq:Union[list,tuple],reverse:bool=False) -> Union[list,tuple]:
+  """
+  Sort Paritioned arguements based on Grades,names
+  Complex arguement are put at last sorted by sum of their weights
+  """
 
-
-from sympy.core.sympify import sympify
-from sympy.core.basic import Basic
-from sympy.core.singleton import S
-from sympy.core.operations import AssocOp
-from sympy.core.cache import cacheit
-from sympy.core.logic import fuzzy_not, _fuzzy_group, fuzzy_and
-from sympy.core.compatibility import reduce
-from sympy.core.expr import Expr
-from sympy.core.parameters import global_parameters
-
-from sympy.combinatorics.permutations import Permutation
-
-from sympy.strategies.rl import (rm_id, glom, flatten, unpack, sort, distribute,subs, rebuild)
-from sympy.strategies.core import (null_safe, exhaust, memoize, condition,chain, tryit, do_one, debug, switch, minimize)
-from sympy.strategies.tools import subs, typed ,canon
-from sympy.strategies.traverse import (top_down, bottom_up, sall, top_down_once,bottom_up_once, basic_fns)
-from sympy.strategies.tree import treeapply, greedy, allresults, brute
-
-from libs.Sygal.GExpr import GExpr
-from libs.Sygal.Box import Box
+  newseq = sorted(seq,key=lambda ele:(len(ele.grade),next(iter(ele.grade)),ele.name,ele.__hash__()),reverse=reverse)
+  return newseq
 
 
-# def Boxify(arg:Union[Box,GExpr,Expr])->Box:
-#   """Takes only one arguement at a time"""
-
-#   # Pattern matching for types
-#   fct1 = issubclass(type(arg),GExpr)
-#   # fct2 is for scalar multivectors
-#   fct2 = True if fct1 and (arg.grade == {0}) else False
-#   fct3 = issubclass(type(arg),Box)
-
-
-#   if fct3:
-#     return arg
-#   elif fct2:
-#     return Box.__new__(Box,mv=Box.nl,coeff=arg)
-#   elif fct1:
-#     return Box.__new__(Box,mv=arg)
-#   else :
-#     return Box.__new__(Box,mv=Box.nl,coeff=sympify(arg))
-
-def is_unMixedGrade(args:GExpr)->bool:
-  t = set()
-  t.update((i%2 for i in args.grade))
-  return True if len(t)==1 else False
-
-
-def parity(args1:List["GExpr"],args2:List["GExpr"])->S:
+def parity(args1:List[GExpr],args2:List[GExpr])->S:
   # ASSUMPTIONS
   # both arguements have unmixed grades
   # remove even grades , they are transparent to positional changes
@@ -99,5 +73,11 @@ def bx_sift(seqBx:Tuple[Box], keyfunc:Callable, count:Callable)->List[Box]:
     lst.append(Box.__new__(Box,key,value))
   return lst
 
-def is_invertible(expr):
-  return True
+def is_devmode():
+  t = 'pydevd' in sys.modules
+  return t
+
+def is_unMixedGrade(args:GExpr)->bool:
+  t = set()
+  t.update((i%2 for i in args.grade))
+  return True if len(t)==1 else False

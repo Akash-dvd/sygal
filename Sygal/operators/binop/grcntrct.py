@@ -1,39 +1,4 @@
-from typing import Tuple, TypeVar, Callable, Dict, Sequence, List, Optional, Union
-
-from functools import reduce
-from collections import defaultdict
-from functools import cmp_to_key
-import operator
-
-from sympy.printing.str import StrPrinter
-from libs.Sygal.utils.utils1 import is_devmode
-
-from sympy.core.sympify import sympify
-from sympy.core.basic import Basic
-from sympy.core.singleton import S
-from sympy.core.operations import AssocOp
-from sympy.core.cache import cacheit
-from sympy.core.logic import fuzzy_not, _fuzzy_group, fuzzy_and
-from sympy.core.compatibility import reduce
-from sympy.core.expr import Expr
-from sympy.core.parameters import global_parameters
-
-from sympy import (
-    diff, Rational, Symbol, S, Mul, Add, Expr,Pow,
-    expand, simplify, eye, trigsimp,cos,sin,
-    symbols, sqrt, Matrix, SympifyError, sympify
-)
-
-from sympy.strategies.rl import (rm_id, glom, flatten, unpack, sort, distribute,subs, rebuild)
-from sympy.strategies.core import (null_safe, exhaust, memoize, condition,chain, tryit, do_one, debug, switch, minimize)
-from sympy.strategies.tools import subs, typed ,canon
-from sympy.strategies.traverse import (top_down, bottom_up, sall, top_down_once,bottom_up_once, basic_fns)
-from sympy.strategies.tree import treeapply, greedy, allresults, brute
-
-from libs.Sygal.GExpr import GExpr
-from libs.Sygal.operators.binop.binop import binop
-
-from libs.Sygal.utils.rules import GSortArgs
+from .importshead import *
 
 
 class grcntrct(binop):
@@ -71,7 +36,6 @@ class grcntrct(binop):
       mv = Basic.__new__(grcntrct, *tmvs)
       return(Box.__new__(Box,mv,coeff))
 
-
   @property
   def grade(self:"grcntrct")-> Union[set,frozenset]:
     # Two arguements will always be present
@@ -95,7 +59,7 @@ class grcntrct(binop):
 
   def __str__(self:"grcntrct")->str:
     str = '('+(self.down).__str__()\
-    +'\033[1;33;40m>\033[0;37;40m'\
+    +'\033[1;33;40m\u230A\033[0;37;40m'\
     +(self.up).__str__()+')'
     return str
 
@@ -119,8 +83,7 @@ class grcntrct(binop):
       (type(other) == type(self))  and
       self.__hash__() == other.__hash__()
     )
-  
-  
+
   @property
   def up(self:"grcntrct")->"GExpr":
     return self.args[1]
@@ -129,22 +92,17 @@ class grcntrct(binop):
   def down(self:"grcntrct")->"GExpr":
     return self.args[0]
 
+from .importstail import *
+
+from libs.Sygal.operators.binop.higher.grcntrcthigher import grcntrcthigher
+from libs.Sygal.operators.binop.simplify.grcntrctsimp import grcntrctsimp
+from libs.Sygal.operators.binop.expand.grcntrctexpand import grcntrctexpand
+
 
 if is_devmode():
   StrPrinter._print_grcntrct = grcntrct.sympyrepr
 else :
   StrPrinter._print_grcntrct = grcntrct.sympystr
-
-
-
-from libs.Sygal.Box import Box
-from libs.Sygal.utils.rules import rlGSortArgs
-from libs.Sygal.utils.utils import is_unMixedGrade,parity
-
-
-from libs.Sygal.operators.binop.higher.grcntrcthigher import grcntrcthigher
-from libs.Sygal.operators.binop.simplify.grcntrctsimp import grcntrctsimp
-from libs.Sygal.operators.binop.expand.grcntrctexpand import grcntrctexpand
 
 grcntrcthigher()
 grcntrctsimp()

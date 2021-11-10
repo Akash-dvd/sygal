@@ -1,21 +1,6 @@
-from os import times
-from typing import Tuple, TypeVar, Callable, Dict, Sequence, List, Optional, Union,NewType,Type,Any
-from mpmath.libmp.libmpf import to_int
+from ..importshead import *
+from ..importstail import *
 
-from sympy import (
-  diff, Rational, Symbol, S, Mul, Add, Expr,Pow,
-  expand, simplify, eye, trigsimp,cos,sin,subsets,
-  symbols, sqrt, Matrix, SympifyError, sympify
-)
-
-from libs.Sygal.Box import Box
-from libs.Sygal.GExpr import GExpr
-
-from libs.Sygal.strategies.rl import (rm_id, glom, flatten, unpack, sort, distribute,subs, rebuild)
-from libs.Sygal.strategies.core import (null_safe, exhaust, memoize, condition,chain, tryit, do_one, debug, switch, minimize)
-from libs.Sygal.strategies.tools import subs, typed ,canon
-from libs.Sygal.strategies.traverse import (top_down, bottom_up, bxsall, top_down_once,bottom_up_once)
-from libs.Sygal.strategies.tree import treeapply, greedy, allresults, brute
 
 from libs.Sygal.operators.assop.gadd import gadd
 from libs.Sygal.operators.assop.gextp import gextp
@@ -23,9 +8,11 @@ from libs.Sygal.operators.assop.gmul import gmul
 
 from libs.Sygal.operators.binop.ganticomm import ganticomm
 from libs.Sygal.operators.binop.gcomm import gcomm
-from libs.Sygal.operators.binop.ginprdct import ginprdct
+from libs.Sygal.operators.binop.sclrprdct import sclrprdct
 from libs.Sygal.operators.binop.grcntrct import grcntrct
 from libs.Sygal.operators.binop.glcntrct import glcntrct
+
+from libs.Sygal.utils.utils1 import is_invertible,is_blade
 
 from libs.Sygal.operators.binop.outermorphic.isomorphic.inversion import inversion
 from libs.Sygal.operators.binop.outermorphic.projection import projection
@@ -34,7 +21,7 @@ from libs.Sygal.operators.binop.outermorphic.rejection import rejection
 from libs.Sygal.utils.utils import parity
 
 
-from libs.Sygal.utils.utils import is_invertible,is_blade
+from libs.Sygal.utils.utils1 import is_invertible,is_blade
 
 def gmul_2Inv(expr:"gmul")->Optional[GExpr]:
   if(type(expr)==Box):
@@ -97,8 +84,8 @@ def gmul_2Proj(expr:"gmul")->Optional[GExpr]:
               return Box.__new__(Box,t3)
             elif arg_ == arg.down:
               ti = projection(arg.down,arg.up)*(arg.down<arg.down)
-              t_i = BX.mv.args[:i-1]
-              ti_ = BX.mv.args[i+1:]
+              t_i = BX.mv.args[:i]
+              ti_ = BX.mv.args[i+2:]
               tall = []
               tall.extend(t_i)
               tall.append(ti)
@@ -129,8 +116,8 @@ def gmul_2Proj(expr:"gmul")->Optional[GExpr]:
               return Box.__new__(Box,t3)
             elif arg_ == arg.down:
               ti = projection(arg.down,arg.up)*(arg.down<arg.down)
-              t_i = BX.mv.args[:i-1]
-              ti_ = BX.mv.args[i+1:]
+              t_i = BX.mv.args[:i]
+              ti_ = BX.mv.args[i+2:]
               tall = []
               tall.extend(t_i)
               tall.append(ti)
@@ -149,7 +136,6 @@ def gmul_2Proj(expr:"gmul")->Optional[GExpr]:
   else :
     return expr
 
-
 def gmul_2Rej(expr:"gmul")->Optional[GExpr]:
   if(type(expr)==Box):
     BX = expr
@@ -157,7 +143,6 @@ def gmul_2Rej(expr:"gmul")->Optional[GExpr]:
     if type(BX.mv) == gmul and (len(BX.mv.args)>=2):
       for i,arg in enumerate(BX.mv.args):
         if type(arg) == gextp:
-          # Blade invertible should be of single grade
           if is_invertible(arg) and is_blade(arg):
             _arg = BX.mv.args[i-1] if i!=0 else None
             arg_ = BX.mv.args[i+1] if len(BX.mv.args)>(i+1) else None
@@ -173,9 +158,13 @@ def gmul_2Rej(expr:"gmul")->Optional[GExpr]:
               tall.extend(t_i)
               tall.append(ti)
               tall.extend(ti_)
-              sign1 = (next(iter(BX.mv.args[i-1].grade)))%2
-              sign2 = (next(iter(BX.mv.args[i].grade)))%2
-              sign = S(-2)*(sign1*sign2)+1
+
+              lst = [_arg]
+              lst.extend(arg.args)
+              ind = arg.args.index(_arg)
+              del lst[ind+1]
+              sign = parity(lst,arg.args)
+              
               t3 = gmul(*tall)*cf*sign
               return Box.__new__(Box,t3)            
             elif arg_ in arg.args:
@@ -187,10 +176,23 @@ def gmul_2Rej(expr:"gmul")->Optional[GExpr]:
               tall.extend(t_i)
               tall.append(ti)
               tall.extend(ti_)
-              sign = S(1)
+              
+              lst = list(arg.args)
+              ind = arg.args.index(arg_)
+              del lst[ind]
+              lst.append(arg_)
+              sign = parity(lst,arg.args)
+
               t3 = gmul(*tall)*cf*sign
               return Box.__new__(Box,t3)
             else :
               pass
+      else :
+        return expr
+    else :
+      return expr
+  else :
+    return expr
+
 def gmulhigher():
   gmul.ghigher = exhaust(do_one(gmul_2Inv,gmul_2Proj,gmul_2Rej))
