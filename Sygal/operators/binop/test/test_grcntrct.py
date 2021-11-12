@@ -2,5 +2,5 @@
 import sys
 sys.path.append('/app/solver')
 
-def test_anticomm():
+def test_grcntrct():
   assert True

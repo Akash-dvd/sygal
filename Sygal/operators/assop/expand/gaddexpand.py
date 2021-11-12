@@ -1,7 +1,5 @@
-from ..importshead import *
-from ..importstail import *
-
-
+from libs.Sygal.imports.import1head import *
+from libs.Sygal.imports.import1tail import *
 from libs.Sygal.operators.assop.gadd import gadd
 from libs.Sygal.operators.assop.gextp import gextp
 from libs.Sygal.operators.assop.gmul import gmul
@@ -11,8 +9,13 @@ from libs.Sygal.operators.binop.gcomm import gcomm
 from libs.Sygal.operators.binop.sclrprdct import sclrprdct
 from libs.Sygal.operators.binop.grcntrct import grcntrct
 from libs.Sygal.operators.binop.glcntrct import glcntrct
+from libs.Sygal.imports.import_util2 import *
 
-from libs.Sygal.utils.utils1 import is_invertible,is_blade
+from libs.Sygal.operators.binop.outermorphic.isomorphic.inversion import inversion
+from libs.Sygal.operators.binop.outermorphic.projection import projection
+from libs.Sygal.operators.binop.outermorphic.rejection import rejection
+
+
 
 
 def distriOvr_GAdd(A):
@@ -21,17 +24,24 @@ def distriOvr_GAdd(A):
     if (type(expr)==Box):
       BX = expr
       cf = BX.coeff
-      if isinstance(BX.mv,A):
+      if type(BX.mv)==A:
         for i, arg in enumerate(BX.mv.args):
-          if isinstance(arg, gadd):
-            first, b, tail = BX.mv.args[:i], BX.mv.args[i], BX.mv.args[i+1:]
-            tmplst = [A(*(first + (bx,) + tail))*cf for bx in b.args]
-            t =  gadd(*tmplst)
-            return t
+          # Add here for rotation dilation translation etc
+          if((A == inversion or A == projection) and i==0):
+            continue
+          elif (A == rejection and i==1):
+            continue
+          else:
+            if isinstance(arg, gadd):
+              first, b, tail = BX.mv.args[:i], BX.mv.args[i], BX.mv.args[i+1:]
+              tmplst = [A(*(first + (bx,) + tail))*cf for bx in b.args]
+              t =  gadd(*tmplst)
+              return t
         return expr
       else:
         return expr
     # This will come only when Expr args invoke them
+    # Inversion ,projection rejection,rotation,dilation etc will not appear here
     elif(type(expr)==A):
       for i, arg in enumerate(expr.args):
         if isinstance(arg, gadd):
@@ -68,6 +78,10 @@ def distriOvr_Add(expr):
 gextpDist = distriOvr_GAdd(gextp)
 gmulDist = distriOvr_GAdd(gmul)
 glcntrctDist = distriOvr_GAdd(glcntrct)
+grcntrctDist = distriOvr_GAdd(grcntrct)
+gextpDist = distriOvr_GAdd(inversion)
+gmulDist = distriOvr_GAdd(projection)
+glcntrctDist = distriOvr_GAdd(rejection)
 grcntrctDist = distriOvr_GAdd(grcntrct)
 # for binops different expansion will work
 

@@ -1,4 +1,5 @@
-from .importshead import *
+from libs.Sygal.imports.import1head import *
+from libs.Sygal.operators.assop.assop import assop
 
 class gmul(assop):
 
@@ -154,7 +155,7 @@ gmulhigher()
 gmulsimp()
 gmulexpand()
 
-from .importstail import *
+from libs.Sygal.imports.import1tail import *
 
 if is_devmode():
   StrPrinter._print_gmul = gmul.sympyrepr

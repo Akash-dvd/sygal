@@ -2,5 +2,5 @@
 import sys
 sys.path.append('/app/solver')
 
-def test_commm():
+def test_isomorphism():
   assert True

@@ -1,7 +1,5 @@
-from ...importshead import *
-from ...importstail import *
-
-
+from libs.Sygal.imports.import1head import *
+from libs.Sygal.imports.import1tail import *
 from libs.Sygal.operators.assop.gadd import gadd
 from libs.Sygal.operators.assop.gextp import gextp
 from libs.Sygal.operators.assop.gmul import gmul
@@ -11,10 +9,9 @@ from libs.Sygal.operators.binop.gcomm import gcomm
 from libs.Sygal.operators.binop.sclrprdct import sclrprdct
 from libs.Sygal.operators.binop.grcntrct import grcntrct
 from libs.Sygal.operators.binop.glcntrct import glcntrct
+from libs.Sygal.imports.import_util2 import *
 
-from libs.Sygal.utils.utils1 import is_invertible,is_blade
-
-from .isomorphic import isomorphic
+from libs.Sygal.operators.binop.outermorphic.isomorphic.isomorphic import isomorphic
 
 
 class inversion(isomorphic):
@@ -38,9 +35,7 @@ class inversion(isomorphic):
 
   @property
   def grade(self:"inversion") -> Union[set,frozenset]:
-    return {1}
-    expanded = self.gexpand()
-    return expanded.grade
+    return self.up
 
   def sympystr(self,expr:"inversion") -> str:
     return str(expr)
@@ -94,7 +89,7 @@ from libs.Sygal.operators.binop.outermorphic.isomorphic.higher.inversionhigher i
 from libs.Sygal.operators.binop.outermorphic.isomorphic.simplify.inversionsimp import inversionsimp
 from libs.Sygal.operators.binop.outermorphic.isomorphic.expand.inversionexpand import inversionexpand
 
-from libs.Sygal.utils.utils import is_devmode
+# from libs.Sygal.utils.utils import is_devmode
 
 if is_devmode():
   StrPrinter._print_inversion = inversion.sympyrepr

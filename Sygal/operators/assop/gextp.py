@@ -1,4 +1,5 @@
-from .importshead import *
+from libs.Sygal.imports.import1head import *
+from libs.Sygal.operators.assop.assop import assop
 
 
 class gextp(assop):
@@ -156,7 +157,7 @@ from libs.Sygal.operators.assop.higher.gextphigher import gextphigher
 from libs.Sygal.operators.assop.simplify.gextpsimp import gextpsimp
 from libs.Sygal.operators.assop.expand.gextpexpand import gextpexpand
 
-from .importstail import *
+from libs.Sygal.imports.import1tail import *
 
 rules1 = (
     unpack,flatten

@@ -9,30 +9,16 @@ from libs.Sygal.operators.binop.gcomm import gcomm
 from libs.Sygal.operators.binop.sclrprdct import sclrprdct
 from libs.Sygal.operators.binop.grcntrct import grcntrct
 from libs.Sygal.operators.binop.glcntrct import glcntrct
-from libs.Sygal.imports.import_util2 import *
 
+def is_invertible(expr):
+  return True
 
-def lcntrctconcat_rl(expr):
-  if isinstance(expr,glcntrct):
-    if(type(expr.down)==glcntrct):
-      t1 = expr.up
-      t2 = expr.down.up
-      t3 = expr.down.down
-      t4 = [t1,t2]
-      t5 = gextp(*t4)
-      t6 = glcntrct(t5,t3)
-      if(t6.mv == GExpr.nl):
-        return t6.coeff
-      else :
-        return t6.mv
-    else:
-      return expr
-  else:
-    return expr
-
-def Lcntrct2Rcntrct():
-  pass
-
-
-def glcntrctsimp():
-  glcntrct.gsimplify = lcntrctconcat_rl
+def is_blade(expr):
+  # arguements must be either be of grade 1 or gextp each composed of grade 1 elements
+  # Othercase is not implemented yet
+  if expr.grade == {1}:
+    return True
+  elif type(expr) == gextp:
+    return reduce(lambda x, y: x and y, [ele.grade == {1} for ele in expr.args])
+  else :
+    return False

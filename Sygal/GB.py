@@ -10,7 +10,7 @@ from sympy import (
 from libs.Sygal.GExpr import GExpr
 from sympy.core.cache import cacheit
 from libs.Sygal.Box import Box
-from libs.Sygal.utils.utils import rlGSortArgs,parity,is_unMixedGrade,bx_sift,GSortArgs,is_devmode
+from libs.Sygal.utils.utils1 import rlGSortArgs,parity,is_unMixedGrade,bx_sift,GSortArgs,is_devmode
 
 
 class GB(GExpr,AtomicExpr):

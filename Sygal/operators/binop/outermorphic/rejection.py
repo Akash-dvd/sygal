@@ -1,7 +1,5 @@
-from ..importshead import *
-from ..importstail import *
-
-
+from libs.Sygal.imports.import1head import *
+from libs.Sygal.imports.import1tail import *
 from libs.Sygal.operators.assop.gadd import gadd
 from libs.Sygal.operators.assop.gextp import gextp
 from libs.Sygal.operators.assop.gmul import gmul
@@ -11,8 +9,7 @@ from libs.Sygal.operators.binop.gcomm import gcomm
 from libs.Sygal.operators.binop.sclrprdct import sclrprdct
 from libs.Sygal.operators.binop.grcntrct import grcntrct
 from libs.Sygal.operators.binop.glcntrct import glcntrct
-
-from libs.Sygal.utils.utils1 import is_invertible,is_blade
+from libs.Sygal.imports.import_util2 import *
 
 from .outermorphic import outermorphic
 
@@ -39,9 +36,7 @@ class rejection(outermorphic):
   
   @property
   def grade(self:"rejection") -> Union[set,frozenset]:
-    return {1}
-    expanded = self.gexpand()
-    return expanded.grade
+    return self.up
 
   
   def sympystr(self,expr:"rejection") -> str:

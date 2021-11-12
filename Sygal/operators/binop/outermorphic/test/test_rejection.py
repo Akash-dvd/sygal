@@ -2,5 +2,5 @@
 import sys
 sys.path.append('/app/solver')
 
-def test_extp():
+def test_rejection():
   assert True

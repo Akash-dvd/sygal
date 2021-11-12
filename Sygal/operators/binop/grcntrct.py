@@ -1,4 +1,6 @@
-from .importshead import *
+from libs.Sygal.imports.import1head import *
+from libs.Sygal.operators.binop.binop import binop
+
 
 
 class grcntrct(binop):
@@ -92,7 +94,7 @@ class grcntrct(binop):
   def down(self:"grcntrct")->"GExpr":
     return self.args[0]
 
-from .importstail import *
+from libs.Sygal.imports.import1tail import *
 
 from libs.Sygal.operators.binop.higher.grcntrcthigher import grcntrcthigher
 from libs.Sygal.operators.binop.simplify.grcntrctsimp import grcntrctsimp

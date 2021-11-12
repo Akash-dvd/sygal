@@ -1,4 +1,5 @@
-from .importshead import *
+from libs.Sygal.imports.import1head import *
+from libs.Sygal.operators.binop.binop import binop
 
 class sclrprdct(binop):
   """
@@ -86,7 +87,7 @@ class sclrprdct(binop):
   def down(self:"sclrprdct")->"GExpr":
     return self.args[1]
 
-from .importstail import *
+from libs.Sygal.imports.import1tail import *
 
 if is_devmode():
   StrPrinter._print_sclrprdct = sclrprdct.sympyrepr

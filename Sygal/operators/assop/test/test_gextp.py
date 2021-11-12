@@ -2,49 +2,28 @@
 import sys
 sys.path.append('/app/solver')
 
+from libs.Sygal.initial import *
+
+
 from functools import reduce
 from operator import and_
 
-from libs.Sygal.simplifications.simplify import concat
-from libs.Sygal.GV import GV
-from libs.Sygal.GExpr import GExpr
-from libs.Sygal.operators import (add,anticomm,comm,extp,
-inprdct,lcntrct,mul,rcntrct)
+from libs.Sygal.operators.assop.simplify.gextpsimp import concat
 
-from sympy.strategies.rl import (rm_id, glom, flatten, unpack, sort, distribute,subs, rebuild)
-from sympy.strategies.core import (null_safe, exhaust, memoize, condition,chain, tryit, do_one, debug, switch, minimize)
-from sympy.strategies.tools import subs, typed ,canon
-from sympy.strategies.traverse import (top_down, bottom_up, sall, top_down_once,bottom_up_once, basic_fns)
-from sympy.strategies.tree import treeapply, greedy, allresults, brute
-
-a1 = GV('a_1')
-a2 = GV('a_2')
-a3 = GV('a_3')
-b1 = GV('b_1')
-b2 = GV('b_2')
-b3 = GV('b_3')
-c1 = GV('c_1')
-c2 = GV('c_2')
-c3 = GV('c_3')
-d1 = GV('d_1')
-d2 = GV('d_2')
-d3 = GV('d_3')
-rx = GV._rx
-oo = GV._oo
 
 
 def test_aggregator():
-  a = GV("a")
-  b = GV("b")
-  c = GV("c")
+
   # lst = [(rx, 0), (rx, 1), (oo, 2),(oo,3),(rx,4)]
-  lst = [(a,0),(a,1),(b,2),(c,3),(c,4),(b,5),(a,6),(c,7),(b,8)]
+  lst = [(a1,0),(a1,1),(b1,2),(c1,3),(c1,4),(b1,5),(a1,6),(c1,7),(b1,8)]
   lst1 = concat.aggregator(lst)
   # print(lst1)
-  assert(lst1 == [(a, 0, 1, 6), (b, 2, 5, 8), (c, 3, 4, 7)])
+  assert(lst1 == [(a1, 0, 1, 6), (b1, 2, 5, 8), (c1, 3, 4, 7)])
 
 def test_0():  
-  assert( a1^a2 == a2^a1 )
+  assert( (a1^a2).mv == (a2^a1).mv 
+  and ((a1^a2).coeff + (a2^a1).coeff) == 0 
+  )
 
 
 # TODO SORT FOR EQUALITY
@@ -74,7 +53,7 @@ a1<(a2^a3^b2^b3^(rx<(a1^a2)))),
 ]
 
 def test_sandhi():
-    assert reduce(and_, [concat.sandhi(x) == y for x, y in test_cases])
+  assert reduce(and_, [concat.sandhi(x) == y for x, y in test_cases])
 
 
 

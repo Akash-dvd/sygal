@@ -117,14 +117,26 @@ class GExpr(Expr):
     else :
       raise
   
-  def inversion(self:"GExpr", A:"GExpr") -> "GExpr":
-    return  ginversion(self,A)
+  # Definitions links inside GExpr
+  @staticmethod
+  def inversion() -> "GExpr":
+    return  ginversion
   
-  def rejection(self:"GExpr", A:"GExpr") -> "GExpr":
-    return  grejection(self,A)
-  
-  def projection(self:"GExpr", A:"GExpr") -> "GExpr":
-    return  gprojection(self,A)
+  @staticmethod
+  def rejection() -> "GExpr":
+    return  grejection
+  @staticmethod
+  def projection() -> "GExpr":
+    return  gprojection
+
+  @staticmethod
+  def isomorphic() -> "GExpr":
+    return  gisomorphic
+
+  @staticmethod
+  def outermorphic() -> "GExpr":
+    return  goutermorphic
+
   
   gsimplify = lambda x:x
 
@@ -154,6 +166,9 @@ from libs.Sygal.operators.binop.outermorphic.outermorphic import outermorphic
 from libs.Sygal.operators.binop.outermorphic.isomorphic.inversion import inversion as ginversion
 from libs.Sygal.operators.binop.outermorphic.projection import projection as gprojection
 from libs.Sygal.operators.binop.outermorphic.rejection import rejection as grejection 
+
+from libs.Sygal.operators.binop.outermorphic.isomorphic.isomorphic import isomorphic as gisomorphic
+from libs.Sygal.operators.binop.outermorphic.outermorphic import outermorphic as goutermorphic
 
 
 # This style causes errors

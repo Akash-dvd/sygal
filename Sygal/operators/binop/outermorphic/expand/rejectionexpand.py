@@ -1,7 +1,5 @@
-from ...importshead import *
-from ...importstail import *
-
-
+from libs.Sygal.imports.import1head import *
+from libs.Sygal.imports.import1tail import *
 from libs.Sygal.operators.assop.gadd import gadd
 from libs.Sygal.operators.assop.gextp import gextp
 from libs.Sygal.operators.assop.gmul import gmul
@@ -12,23 +10,30 @@ from libs.Sygal.operators.binop.sclrprdct import sclrprdct
 from libs.Sygal.operators.binop.grcntrct import grcntrct
 from libs.Sygal.operators.binop.glcntrct import glcntrct
 
-from libs.Sygal.utils.utils1 import is_invertible,is_blade
+from libs.Sygal.imports.import_util2 import *
 
+from libs.Sygal.operators.binop.outermorphic.isomorphic.inversion import inversion
+from libs.Sygal.operators.binop.outermorphic.projection import projection
 from libs.Sygal.operators.binop.outermorphic.rejection import rejection
 
 
 
 def rejection_expand(expr:"rejection")->Optional[Box]:
-  if type(expr) == rejection:
-    sub = expr.down
-    obj = expr.up
-    if is_invertible(sub):
-      coeff = Pow((sub<sub),-1)
-      return Box.__new__(Box,(obj^sub)>(sub),coeff)
+  if (type(expr)==Box):
+    BX = expr
+    cf = BX.coeff
+    if type(BX.mv) == projection:
+      sub = BX.mv.down
+      obj = BX.mv.up
+      if is_invertible(sub):
+        coeff = Pow((sub<sub),-1)
+        return Box.__new__(Box,(obj^sub)>(sub),coeff*cf)
+      else :
+        raise
     else :
-      raise
+      return expr
   else :
-    return expr
+    return expr  
 
 def rejectionexpand():
   rejection.gexpand = rejection_expand

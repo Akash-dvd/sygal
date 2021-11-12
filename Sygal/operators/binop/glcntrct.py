@@ -1,4 +1,5 @@
-from .importshead import *
+from libs.Sygal.imports.import1head import *
+from libs.Sygal.operators.binop.binop import binop
 
 class glcntrct(binop):
   """
@@ -89,7 +90,7 @@ class glcntrct(binop):
   def down(self:"glcntrct")->"GExpr":
     return self.args[1]
 
-from .importstail import *
+from libs.Sygal.imports.import1tail import *
 
 if is_devmode():
   StrPrinter._print_glcntrct = glcntrct.sympyrepr
