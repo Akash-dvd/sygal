@@ -4,7 +4,7 @@ from libs.Sygal.operators.assop.assop import assop
 
 class gadd(assop):
 
-  def __new__(cls, args0:GExpr,*args:Tuple["GExpr"]) -> "Box":
+  def __new__(cls, args0:GExpr,*args:Tuple[GExpr]) -> "Box":
     # gadd(Box,Optional[Box,Box.....])
 
     # Pattern Matching for # of args for associative op

@@ -45,7 +45,7 @@ class dilation(transforms):
 
   @property
   def grade(self:"dilation") -> Union[set,frozenset]:
-    return self.up
+    return self.up.grade
 
 
   def sympystr(self,expr:"dilation") -> str:

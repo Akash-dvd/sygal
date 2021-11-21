@@ -10,7 +10,11 @@ from libs.Sygal.operators.binop.sclrprdct import sclrprdct
 from libs.Sygal.operators.binop.grcntrct import grcntrct
 from libs.Sygal.operators.binop.glcntrct import glcntrct
 from libs.Sygal.imports.import_util2 import *
-from libs.Sygal.imports.import3 import *
+
+from libs.Sygal.operators.binop.outermorphic.isomorphic.inversion import inversion
+from libs.Sygal.operators.binop.outermorphic.projection import projection
+from libs.Sygal.operators.binop.outermorphic.rejection import rejection
+
 
 # Assuming blade*blade = scalar
 

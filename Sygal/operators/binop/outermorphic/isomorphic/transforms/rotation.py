@@ -46,7 +46,7 @@ class rotation(transforms):
 
   @property
   def grade(self:"rotation") -> Union[set,frozenset]:
-    return self.up
+    return self.up.grade
 
 
   def sympystr(self,expr:"rotation") -> str:

@@ -23,9 +23,13 @@ def projection_expand(expr:Box)->Optional[Box]:
     if type(BX.mv) == projection:
       sub = BX.mv.down
       obj = BX.mv.up
-      if is_invertible(sub):
-        coeff = Pow((sub<sub),-1)
-        return Box.__new__(Box,(obj<sub)<sub,coeff*cf)
+      if is_invertiblePair(sub,sub.reversion()):
+        t = expand_iter(gmul)((sub*(sub.reversion())))  
+        if t.mv == GExpr.nl:
+          coeff = Pow(t.coeff,-1)
+          return ((obj<sub)<sub)*coeff
+        else :
+          raise ValueError("Couldn't reduce coeff to scalar")
       else :
         raise
     else :

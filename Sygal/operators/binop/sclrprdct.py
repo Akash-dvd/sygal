@@ -3,34 +3,27 @@ from libs.Sygal.operators.binop.binop import binop
 
 class sclrprdct(binop):
   """
-  Scalar Product of two multi-vectors
+  Inner Product of two equal single graded MVs
   """
 
-  # Currently both arguements should be boxed! extp/GB
   def __new__(cls, args0:GExpr,args1:GExpr) -> "Box":
-    # Already matched pattern for binary op
-    
-    # 
 
-    t = (args0,args1.reversion())
+    t = (args0,args1)
     t1 = tuple(map(lambda x:Box.__new__(Box,x),t))
-    # Coz simplify gexpand etc work only on boxes
-    tbxs = [Box.__new__(Box,t1[0].mv),Box.__new__(Box,t1[1].mv)]
-    coeff = Mul(t1[0].coeff,t1[1].coeff).simplify()
-    tmvs = [tbxs[0].mv,tbxs[1].mv]
-    # Not completely implemented
-
-    t2 =  (tbxs[0].gexpand()<tbxs[1].gexpand())
-    t3 = t2.gdistribute()
+    tmvs = [t1[0].mv,t1[1].mv]
+    coeff = Mul(t1[0].coeff,t1[1].coeff)
     
-    if(t3.grade=={0}):
-      mv = Basic.__new__(sclrprdct, *tmvs)
-      return(Box.__new__(Box,mv,coeff))
-
-    else :
-      return GExpr.Znl
-    # Pattern match for grade value
-    # Check for scalars
+    if( len(tmvs[0].grade) == 1 and len(tmvs[1].grade) == 1):
+      if tmvs[0].grade == tmvs[1].grade:
+        if tmvs[0].grade == {0}:
+          return GExpr.Onl*coeff
+        else :
+          mv = Basic.__new__(sclrprdct, *GSortArgs(tmvs))
+          return(Box.__new__(Box,mv,coeff))
+      else:
+        raise ValueError("Both args must be of single equal grade")
+    else:
+      raise ValueError("Both args must be of single grade")
 
   @property
   def grade(self:"sclrprdct")->Union[set,frozenset]:
@@ -60,7 +53,7 @@ class sclrprdct(binop):
 
   def __repr__(self:"sclrprdct")->str:
     str = '('+(self.up).__repr__()\
-    +'<'\
+    +'|'\
     +(self.down).__repr__()+')'
     return str
 
@@ -93,3 +86,11 @@ if is_devmode():
   StrPrinter._print_sclrprdct = sclrprdct.sympyrepr
 else :
   StrPrinter._print_sclrprdct = sclrprdct.sympystr
+
+from libs.Sygal.operators.binop.higher.sclrprdcthigher import sclrprdcthigher
+from libs.Sygal.operators.binop.simplify.sclrprdctsimp import sclrprdctsimp
+from libs.Sygal.operators.binop.expand.sclrprdctexpand import sclrprdctexpand
+
+sclrprdcthigher()
+sclrprdctsimp()
+sclrprdctexpand()

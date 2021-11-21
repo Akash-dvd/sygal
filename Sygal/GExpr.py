@@ -1,6 +1,6 @@
 from operator import inv
 from typing import Tuple, TypeVar, Callable, Dict, Sequence, List, Optional, Union
-
+from collections import Iterable,defaultdict
 from sympy import (
   Basic,diff, Rational, Symbol, S, Mul, Add, Expr,
   expand, simplify, eye, trigsimp,
@@ -20,6 +20,8 @@ class GExpr(Expr):
   coeffs:List["GExpr"] = [S(1)]
   name = "zzzzzGExpr"
   initialized:bool = False
+
+  dotdict = defaultdict(lambda:None)
 
   @property
   def is_commutative(expr) -> bool:
@@ -147,7 +149,7 @@ class GExpr(Expr):
 
   ghigher = lambda x:x
 
-  gdistribute = lambda x:x
+  # gdistribute = lambda x:x
   # def gsimplify(self):
   #   return gsimplification(self)
 

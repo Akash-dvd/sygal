@@ -1,2 +1,111 @@
+from libs.Sygal.imports.import1head import *
+from libs.Sygal.imports.import1tail import *
+
+from libs.Sygal.operators.assop.gadd import gadd
+from libs.Sygal.operators.assop.gextp import gextp
+from libs.Sygal.operators.assop.gmul import gmul
+
+from libs.Sygal.operators.binop.ganticomm import ganticomm
+from libs.Sygal.operators.binop.gcomm import gcomm
+from libs.Sygal.operators.binop.sclrprdct import sclrprdct
+from libs.Sygal.operators.binop.grcntrct import grcntrct
+from libs.Sygal.operators.binop.glcntrct import glcntrct
+from libs.Sygal.operators.binop.sclrprdct import sclrprdct
+
+from libs.Sygal.imports.import_util2 import *
+
+from libs.Sygal.operators.binop.outermorphic.isomorphic.inversion import inversion
+from libs.Sygal.operators.binop.outermorphic.projection import projection
+from libs.Sygal.operators.binop.outermorphic.rejection import rejection
+
+
+def grcntrct_2Proj(expr:Expr)->Union[Expr,Box]:
+  if(type(expr)==Box):
+    BX = expr
+    cf = BX.coeff
+    if type(BX.mv) == grcntrct:
+      tu = BX.mv.up #MV
+      td = BX.mv.down
+
+      if type(tu) ==  grcntrct:
+        tuu = tu.up
+        tud = tu.down
+        
+        if(td == tud):
+          if not is_perpendicularPair(td,tud) and is_vecBlade(td):
+            coeff = sclrprdct(td,td)*cf
+            mv = projection(td,tuu)
+            return mv*coeff
+          elif is_perpendicularPair(td,tud) and is_vecBlade(td):
+            raise ValueError("MAybe answer is GExpr.Znl")
+          else :
+            return expr 
+        else :
+          return expr
+
+      elif type(tu) ==  glcntrct:
+        tuu = tu.up # MV
+        tud = tu.down # Blade
+        
+        if(td == tud):
+          if not is_perpendicularPair(td,tud) and is_vecBlade(td):
+            coeff = sclrprdct(td,td)*cf
+            mv = projection(td,tuu)
+            # if( is_unMixedGrade(tu) and is_unMixedGrade(td)):
+            # no need to check for is_unMixedGrade coz of is_vecBlade
+            sign1 = next(iter(tuu.grade))%2
+            sign2 = (next(iter(tud.grade))-1)%2
+            sign = S(-2)*((sign1*sign2))+1
+            return mv*coeff*sign
+          elif is_perpendicularPair(td,tud) and is_vecBlade(td):
+            raise ValueError("MAybe answer is GExpr.Znl")
+          else :
+            return expr 
+        else :
+          return expr     
+      else :
+        return expr
+    else :
+      return expr
+  else :
+    return expr
+
+
+def grcntrct_2Rej(expr:Expr)->Union[Expr,Box]:
+  if(type(expr)==Box):
+    BX = expr
+    cf = BX.coeff
+    if type(BX.mv) == grcntrct :
+      tu = BX.mv.up # Blade
+      td = BX.mv.down # Blade + MV
+
+      # if type(td) == gextp and is_vecBlade(tu) and not is_perpendicularPair(tu,tu):
+      if type(td) == gextp and is_vecBlade(tu):
+        tu_set = {tu} if tu.grade == {1} else set(tu.args)
+        td_set = set(td.args)
+        if(tu_set == tu_set.intersection(td_set)):
+          if(not is_perpendicularPair(tu,tu)):
+            coeff = (sclrprdct(tu,tu)*cf)
+            tmv1 = list(td_set - tu_set)
+            tmv2 = gextp(*tmv1)
+
+            td1 = ([tu] if tu.grade == {1} else list(tu.args))
+            tmv1.extend(td1) 
+            sign = parity(tmv1,td.args)
+
+            return rejection(tu,tmv2)*coeff*sign  
+          elif(is_perpendicularPair(tu,tu)):
+            raise NotImplementedError
+          else :
+            return expr
+        else:
+          return expr
+      else :
+        return expr
+    else :
+      return expr
+  else :
+    return expr
+
 def grcntrcthigher():
-  pass
+  grcntrct.ghigher = exhaust(do_one(grcntrct_2Proj,grcntrct_2Rej))

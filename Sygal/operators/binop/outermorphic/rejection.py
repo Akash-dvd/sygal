@@ -36,9 +36,8 @@ class rejection(outermorphic):
   
   @property
   def grade(self:"rejection") -> Union[set,frozenset]:
-    return self.up
+    return self.up.grade
 
-  
   def sympystr(self,expr:"rejection") -> str:
     return str(expr)
 

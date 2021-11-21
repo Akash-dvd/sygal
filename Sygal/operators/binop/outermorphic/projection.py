@@ -35,7 +35,7 @@ class projection(outermorphic):
 
   @property
   def grade(self:"projection") -> Union[set,frozenset]:
-    return self.up
+    return self.up.grade
   
   def sympystr(self,expr:"projection") -> str:
     return str(expr)

@@ -10,7 +10,26 @@ from operator import and_
 
 from libs.Sygal.operators.assop.simplify.gextpsimp import concat
 
-
+"""
+1)  Check anti-commutivity
+2)  Check sorting ,hash order independent
+3)  Check concatenation mv
+4)  Check concatenation correct coefficient
+5)  Check pseudoscalar 
+6)  Check local pseudoscalar 
+7)  Check simplification for inv,pro,rej
+8)  Check for concatenated <,> -> ^ 
+9)  Check for grade zero symplification \
+    a>(b^c)^a -> a<(b^c^a)
+10) Check for local pseudoscalar concat symp \
+    a>(c^d)^b<(e^f) -> a^b<(c^d^e^f) when a|e,f = b|c,d = 0 
+11) Check for proj^proj^proj ... simplification
+11) Check for rej^rej^rej ... simplification
+TODO
+1) ((a1^a2..a_r)<((b1..br)^(c1..cm)))^((a1..a_r)<((b1..br)^(d1..dn))) ==
+(a1^a2..a_r)<((b1..br)^(c1..cm)^(d1..dn))
+Will be done after implementing dot product and multiplication.
+"""
 
 def test_aggregator():
 

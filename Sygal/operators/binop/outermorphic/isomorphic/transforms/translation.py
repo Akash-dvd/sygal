@@ -45,7 +45,7 @@ class translation(transforms):
 
   @property
   def grade(self:"translation") -> Union[set,frozenset]:
-    return self.up
+    return self.up.grade
 
 
   def sympystr(self,expr:"translation") -> str:

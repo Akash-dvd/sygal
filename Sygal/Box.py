@@ -156,6 +156,10 @@ class Box(GExpr):
   def mv(self:"Box") -> "GExpr":
     return self.args[0]
 
+  # def gdistribute(self:"Box"):
+  #   func = GExpr.gdistribute
+  #   return func(self)
+
   def gsimplify(self:"Box"):
     func = type(self.mv).gsimplify
     return func(self)
@@ -179,6 +183,10 @@ class Box(GExpr):
   def clifford_conjugation(self:"Box")->"Box":
     t = self.mv.clifford_conjugation()
     return Box.__new__(Box,t,self.coeff)
+  
+  @property
+  def dotdict(self:"Box")->Dict:
+    return self.mv.dotdict
   
 # Standard import style
 # These extra imports cause issue with strategies import

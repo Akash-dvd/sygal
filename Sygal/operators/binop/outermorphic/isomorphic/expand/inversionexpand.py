@@ -26,17 +26,29 @@ def inversion_expand(expr:"Box")->Optional[Box]:
       sub = BX.mv.down
       obj = BX.mv.up
       #  But while creating this was checked
-      if is_invertible(sub):
-        if(type(sub)==gmul):
-          coeff = Pow((sub<(sub.reversion())),-1)
-          return Box.__new__(Box,(sub.reversion())*obj*sub,coeff)
-        elif (sub.grade=={1}):
-          coeff = Pow((sub<sub),-1)
-          return Box.__new__(Box,sub*obj*sub,coeff*cf)
-        else:
-          raise NotImplemented
+      if(type(sub) in [gmul,gextp]):  
+        if is_invertiblePair(sub,sub.reversion()):
+          t = expand_iter(gmul)((sub*(sub.reversion())))
+          if t.mv == GExpr.nl:
+            coeff = Pow(t.coeff,-1)
+            return (sub.reversion())*obj*sub*coeff
+          else :
+            raise ValueError("Couldn't reduce coeff to scalar")
+        else :
+          raise ValueError("INV with null base")
+      elif type(sub) == projection:
+        subu = sub.up
+        subd = sub.down
+        if subu == obj and is_invertiblePair(subd,subd.reversion()):
+          coeff = Pow((subd<(subd.reversion())),-1)
+          return (subd.reversion())*obj*subd*coeff
+        else :
+          return expr
+      elif (sub.grade=={1}):
+        coeff = Pow((sub<sub),-1)
+        return sub*obj*sub*coeff*cf
       else :
-        raise NotImplemented
+        return expr
     else :
       return expr
   else :

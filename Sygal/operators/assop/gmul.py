@@ -3,7 +3,7 @@ from libs.Sygal.operators.assop.assop import assop
 
 class gmul(assop):
 
-  def __new__(cls, args0:GExpr,*args:Tuple["GExpr"]) -> "Box":
+  def __new__(cls, args0:GExpr,*args:Tuple[GExpr]) -> "Box":
     # gmul(Box,Optional[Box,Box.....])
 
 

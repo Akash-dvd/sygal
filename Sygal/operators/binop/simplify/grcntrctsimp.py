@@ -12,28 +12,60 @@ from libs.Sygal.operators.binop.glcntrct import glcntrct
 from libs.Sygal.imports.import_util2 import *
 
 
-
 def rcntrctconcat_rl(expr):
-  if isinstance(expr,grcntrct):
-    if(type(expr.down)==grcntrct):
-      t1 = expr.up
-      t2 = expr.down.up
-      t3 = expr.down.down
-      t4 = [t2,t1]
-      t5 = gextp(*t4)
-      t6 = grcntrct(t3,t5)
-      if(t6.mv == GExpr.nl):
-        return t6.coeff
+  if(type(expr)==Box):
+    BX = expr
+    cf = BX.coeff
+    if isinstance(BX.mv,grcntrct):
+      if(type(BX.mv.down)==grcntrct):
+        tu = BX.mv.up
+        tdu = BX.mv.down.up
+        tdd = BX.mv.down.down
+        t1 = [tdu,tu]
+        t2 = gextp(*t1)
+        t3 = grcntrct(tdd,t2)
+        return t3*cf
+      elif(type(BX.mv.down)==glcntrct):
+        tu = BX.mv.up
+        tdu = BX.mv.down.up
+        tdd = BX.mv.down.down
+        if( is_unMixedGrade(tdu) and is_unMixedGrade(tdd)):
+          t1 = [tdu,tu]
+          t2 = gextp(*t1)
+          t3 = grcntrct(tdd,t2)
+          sign1 = next(iter(tdu.grade))%2
+          sign2 = (next(iter(tdd.grade))-1)%2
+          sign = S(-2)*((sign1*sign2))+1
+          return t3*sign*cf
+        else:
+          return BX
       else :
-        return t6.mv
+        return BX
     else:
-      return expr
+      return BX
+  else:
+    return expr
+
+def Rcntrct2Lcntrct(expr):
+  if(type(expr)==Box):
+    BX = expr
+    cf = BX.coeff
+    if(type(BX.mv.down)==grcntrct):
+      tu = BX.mv.up
+      td = BX.mv.down.up
+      if( is_unMixedGrade(tu) and is_unMixedGrade(td)):
+        t1 = glcntrct(tu,td)
+        sign1 = next(iter(tu.grade))%2
+        sign2 = (next(iter(td.grade))-1)%2
+        sign = S(-2)*((sign1*sign2))+1
+        return t1*sign*cf
+      else:
+        return BX
+    else:
+      return BX
   else:
     return expr
 
 
-def Rcntrct2Lcntrct(expr):
-  return expr
-
 def grcntrctsimp():
-  grcntrct.gsimplify = rcntrctconcat_rl
+  grcntrct.gsimplify = exhaust(do_one(Rcntrct2Lcntrct,rcntrctconcat_rl))

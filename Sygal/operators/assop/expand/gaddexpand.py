@@ -15,49 +15,57 @@ from libs.Sygal.operators.binop.outermorphic.isomorphic.inversion import inversi
 from libs.Sygal.operators.binop.outermorphic.projection import projection
 from libs.Sygal.operators.binop.outermorphic.rejection import rejection
 
+from libs.Sygal.operators.binop.outermorphic.isomorphic.transforms.transforms import transforms
+from libs.Sygal.operators.binop.outermorphic.isomorphic.transforms.dilation import dilation
+from libs.Sygal.operators.binop.outermorphic.isomorphic.transforms.rotation import rotation
+from libs.Sygal.operators.binop.outermorphic.isomorphic.transforms.translation import translation
 
 
 
-def distriOvr_GAdd(A):
-# Notice multiple returns otherwise null is returned causing errors
-  def distribute_rl(expr):
-    if (type(expr)==Box):
-      BX = expr
-      cf = BX.coeff
-      if type(BX.mv)==A:
-        for i, arg in enumerate(BX.mv.args):
-          # Add here for rotation dilation translation etc
-          if((A == inversion or A == projection) and i==0):
-            continue
-          elif (A == rejection and i==1):
-            continue
-          else:
-            if isinstance(arg, gadd):
-              first, b, tail = BX.mv.args[:i], BX.mv.args[i], BX.mv.args[i+1:]
-              tmplst = [A(*(first + (bx,) + tail))*cf for bx in b.args]
-              t =  gadd(*tmplst)
-              return t
-        return expr
-      else:
-        return expr
-    # This will come only when Expr args invoke them
-    # Inversion ,projection rejection,rotation,dilation etc will not appear here
-    elif(type(expr)==A):
-      for i, arg in enumerate(expr.args):
-        if isinstance(arg, gadd):
-          first, b, tail = expr.args[:i], expr.args[i], expr.args[i+1:]
-          tmplst = [A(*(first + (bx,) + tail)) for bx in b.args]
-          t =  gadd(*tmplst)
-          # CHANGED HERE
-          if(t.mv==GExpr.nl):
-            return t.coeff
-          else:
-            return t.mv
+
+def distriOvr_GAdd(expr):
+  if (type(expr)==Box):
+    BX = expr
+    cf = BX.coeff
+    # if type(BX.mv)==A:
+    if(issubclass(type(BX.mv),GExpr) and not BX.mv.is_atom):
+      for i, arg in enumerate(BX.mv.args):
+        # Case for inversion, rotation dilation translation etc
+        if((issubclass(type(BX.mv),inversion) or type(BX.mv) == projection) and i==0):
+          continue
+        elif (type(BX.mv) == rejection and i==1):
+          continue
+        else:
+          if isinstance(arg, gadd):
+            first, b, tail = BX.mv.args[:i], BX.mv.args[i], BX.mv.args[i+1:]
+            tmplst = [type(BX.mv)(*(first + (bx,) + tail))*cf for bx in b.args]
+            t =  gadd(*tmplst)
+            return t
       return expr
-    else :
+    else:
       return expr
+  # This will come only when Expr args invoke them
+  # Inversion ,projection rejection,rotation,dilation etc will not appear here
 
-  return distribute_rl
+  # THey can appear there
+  # Like aINVb1+b2<cINVd1+d2
+  # ###############
+  elif(issubclass(type(expr),GExpr) and not expr.is_atom):
+    for i, arg in enumerate(expr.args):
+      if isinstance(arg, gadd):
+        first, b, tail = expr.args[:i], expr.args[i], expr.args[i+1:]
+        tmplst = [type(expr)(*(first + (bx,) + tail)) for bx in b.args]
+        t =  gadd(*tmplst)
+        # CHANGED HERE
+        if(t.mv==GExpr.nl):
+          return t.coeff
+        else:
+          return t.mv
+    return expr
+  else :
+    return expr
+
+
 
 
 def distriOvr_Add(expr):
@@ -74,21 +82,9 @@ def distriOvr_Add(expr):
     return expr
 
     
-
-gextpDist = distriOvr_GAdd(gextp)
-gmulDist = distriOvr_GAdd(gmul)
-glcntrctDist = distriOvr_GAdd(glcntrct)
-grcntrctDist = distriOvr_GAdd(grcntrct)
-gextpDist = distriOvr_GAdd(inversion)
-gmulDist = distriOvr_GAdd(projection)
-glcntrctDist = distriOvr_GAdd(rejection)
-grcntrctDist = distriOvr_GAdd(grcntrct)
-# for binops different expansion will work
-
-canonicalize11 = (bottom_up_once(gextpDist))
-canonicalize12 = exhaust(bottom_up_once(do_one(gextpDist,gmulDist,glcntrctDist,grcntrctDist,distriOvr_Add)))
-
+canonicalize = exhaust(bottom_up_once(do_one(distriOvr_GAdd,distriOvr_Add)))
 
 
 def gaddexpand():
-  GExpr.gdistribute = canonicalize12
+  GExpr.gdistribute = canonicalize
+  gadd.gexpand = canonicalize

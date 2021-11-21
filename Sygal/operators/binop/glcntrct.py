@@ -1,5 +1,6 @@
 from libs.Sygal.imports.import1head import *
 from libs.Sygal.operators.binop.binop import binop
+from libs.Sygal.operators.binop.sclrprdct import sclrprdct
 
 class glcntrct(binop):
   """
@@ -27,9 +28,9 @@ class glcntrct(binop):
     elif(t1[1].mv==Box.nl):
       return Box.Znl
 
-    # Check if zero grade .. Then call arguement sort
-    elif (len(tmvs[0].grade)==len(tmvs[1].grade)==1 and (next(iter(tmvs[0].grade))-next(iter(tmvs[0].grade))==0)):
-      mv = Basic.__new__(glcntrct, *GSortArgs(tmvs))
+    # Check if zero grade .. Then call sclrprdct
+    elif ((len(tmvs[0].grade)==len(tmvs[1].grade)) and ((next(iter(tmvs[0].grade))-next(iter(tmvs[1].grade))==0)) and (len(tmvs[0].grade) == 1 )):
+      mv = Basic.__new__(sclrprdct, *GSortArgs(tmvs))
       return(Box.__new__(Box,mv,coeff))
     else:
       mv = Basic.__new__(glcntrct, *tmvs)

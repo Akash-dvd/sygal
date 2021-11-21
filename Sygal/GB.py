@@ -1,5 +1,6 @@
 from typing import Tuple, TypeVar, Callable, Dict, Sequence, List, Optional, Union
 
+from collections import Iterable,defaultdict
 
 from sympy import (
   Basic,diff, Rational, Symbol, S, Mul, Add, Expr,
@@ -15,7 +16,7 @@ from libs.Sygal.utils.utils1 import rlGSortArgs,parity,is_unMixedGrade,bx_sift,G
 
 class GB(GExpr,AtomicExpr):
 
-  def __new__(cls, name:str,grade:Union[int,List[int],Tuple[int]],pSC:Box=lambda :GExpr.I13,coeff:Expr=S(1), dotdict:Dict={}) -> "Box":
+  def __new__(cls, name:str,grade:Union[int,List[int],Tuple[int]],pSC:Box=lambda :GExpr.I13,coeff:Expr=S(1), dotdict:Dict=defaultdict(lambda :None)) -> "Box":
     # name = name:str 
     # grade = grade:Union[int,List[int]]
     # pSC = pseudoscalar:Union[callable,gextp]
@@ -60,10 +61,27 @@ class GB(GExpr,AtomicExpr):
 
     nargs = (name,grade_1,pSC_1,coeff)
     
+    # BOX INITIALIZER
     bx = GB.__xnew_cached_(GB, *nargs)
-    bx.mv.dotdict = dotdict
-    
+
+    # DICT INITIALIZER
+    GB.dict_initializer(bx,dotdict)
+  
     return bx
+
+  def dict_initializer(bx,t_dotdict):
+    dotdict = defaultdict(lambda:None)
+
+    for k,v in t_dotdict.items():
+      if k =="self":
+        dotdict[bx.mv] = v
+      elif type(k) == Box:
+        dotdict[k.mv] = v
+      elif issubclass(k,GExpr):
+        dotdict[k] = v
+      else :
+        raise NotImplemented
+    bx.mv.dotdict = dotdict
 
   def __new_stage2__(cls, name,grade,pSC,coeff) -> Box:
     
@@ -198,19 +216,19 @@ class GB(GExpr,AtomicExpr):
       
       # rel_dot = [[_o,_oo,m1],[_x,_x,p1],[_y,_y,p1],_rx,_rx,m1],[_oo,_o,m1],[_x1,_x1,p1],_x2,_x2,p1],[_x3,_x3,p1],[_x4,_x4,p1],[_x5,_x5,p1],[_x6,_x6,p1],[_x7,_x7,p1],[_x8,_x8,p1]]
 
-      accu_dotdict = {}
-      tmpdict = {}
+      accu_def_dotdict = defaultdict(lambda :None)
+      tmpdict = defaultdict(lambda :None)
       
       for bx in prim:
         tmpdict[bx.mv] = S(0)
       for bx in prim:
         newtmpdict = tmpdict.copy()
-        accu_dotdict[bx.mv] = newtmpdict
+        accu_def_dotdict[bx.mv] = newtmpdict
 
       for bx1,bx2,ele3 in rel_dot:
-        accu_dotdict[bx1.mv][bx2.mv] = ele3
+        accu_def_dotdict[bx1.mv][bx2.mv] = ele3
       for bx in prim:
-        bx.mv.dotdict = accu_dotdict[bx.mv]
+        bx.mv.dotdict = accu_def_dotdict[bx.mv]
 
       #######################
           

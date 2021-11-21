@@ -19,7 +19,7 @@ from libs.Sygal.operators.binop.outermorphic.rejection import rejection
 
 
 
-def gmul_2Inv(expr:"gmul")->Optional[GExpr]:
+def gmul_2Inv(expr:Expr)->Union[Expr,Box]:
   if(type(expr)==Box):
     BX = expr
     cf = BX.coeff
@@ -49,7 +49,7 @@ def gmul_2Inv(expr:"gmul")->Optional[GExpr]:
   else :
       return expr
 
-def gmul_2Proj(expr:"gmul")->Optional[GExpr]:
+def gmul_2Proj(expr:Expr)->Union[Expr,Box]:
   if(type(expr)==Box):
     BX = expr
     cf = BX.coeff
@@ -57,7 +57,7 @@ def gmul_2Proj(expr:"gmul")->Optional[GExpr]:
       for i,arg in enumerate(BX.mv.args):
         if type(arg) == glcntrct:
           # Blade invertible should be of single grade
-          if is_invertible(arg.down) and is_blade(arg.down):
+          if is_invertible(arg.down) and is_vecBlade(arg.down):
             # This pattern matching for preceding and ahead arguement will check only one indexed element
             # Either leaf or gextp will be present
             _arg = BX.mv.args[i-1] if i!=0 else None
@@ -93,7 +93,7 @@ def gmul_2Proj(expr:"gmul")->Optional[GExpr]:
               pass
 
         elif type(arg) == grcntrct:
-          if is_invertible(arg.down) and is_blade(arg.down):
+          if is_invertible(arg.down) and is_vecBlade(arg.down):
             _arg = BX.mv.args[i-1] if i!=0 else None
             arg_ = BX.mv.args[i+1] if len(BX.mv.args)>(i+1) else None
             
@@ -132,14 +132,14 @@ def gmul_2Proj(expr:"gmul")->Optional[GExpr]:
   else :
     return expr
 
-def gmul_2Rej(expr:"gmul")->Optional[GExpr]:
+def gmul_2Rej(expr:Expr)->Union[Expr,Box]:
   if(type(expr)==Box):
     BX = expr
     cf = BX.coeff
     if type(BX.mv) == gmul and (len(BX.mv.args)>=2):
       for i,arg in enumerate(BX.mv.args):
         if type(arg) == gextp:
-          if is_invertible(arg) and is_blade(arg):
+          if is_invertible(arg) and is_vecBlade(arg):
             _arg = BX.mv.args[i-1] if i!=0 else None
             arg_ = BX.mv.args[i+1] if len(BX.mv.args)>(i+1) else None
             

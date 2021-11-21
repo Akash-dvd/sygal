@@ -8,10 +8,13 @@ def outermorphicExpander(expr):
   if (type(expr)==Box):
     BX = expr
     cf = BX.coeff
-    if(type(BX.mv.up)==gextp):
-      new = type(BX.mv)
-      t = [new(BX.mv.down,arg) for arg in BX.mv.up.args]
-      return Box.__new__(Box,gextp(*t),cf)
+    if issubclass(type(BX.mv),outermorphic):
+      if(type(BX.mv.up)==gextp):
+        new = type(BX.mv)
+        t = [new(BX.mv.down,arg) for arg in BX.mv.up.args]
+        return gextp(*t)*cf
+      else :
+        return expr
     else :
       return expr
   else :

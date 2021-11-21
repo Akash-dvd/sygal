@@ -4,7 +4,7 @@ from libs.Sygal.operators.assop.assop import assop
 
 class gextp(assop):
 
-  def __new__(cls, args0:GExpr,*args:Tuple["GExpr"],**kwargs) -> "Box":
+  def __new__(cls, args0:GExpr,*args:Tuple[GExpr],**kwargs) -> "Box":
     # gextp(Box,Optional[Box,Box.....])
 
     # Pattern Matching for # of args for associative op# Pattern Matching for # of args for associative op

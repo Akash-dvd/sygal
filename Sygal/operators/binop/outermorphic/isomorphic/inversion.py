@@ -35,7 +35,7 @@ class inversion(isomorphic):
 
   @property
   def grade(self:"inversion") -> Union[set,frozenset]:
-    return self.up
+    return self.up.grade
 
   def sympystr(self,expr:"inversion") -> str:
     return str(expr)

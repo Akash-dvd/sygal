@@ -61,7 +61,7 @@ def bxsall(rule, fns=gen_traverse):
             m_argscoeff = argscoeff.coeff
             if(argscoeff.mv != GExpr.nl):
               raise
-          # type(argsmv)==Box is not checked beacause in bo creation it will be handled.
+          # type(argsmv)==Box is not checked beacause in box creation it will be handled.
           else :
             m_argscoeff = argscoeff
           m_args = (argsmv , m_argscoeff)    
@@ -73,6 +73,7 @@ def bxsall(rule, fns=gen_traverse):
             raise
           else:
             # CHANGED HERE
+            # sclrprdct works here
             if(t.mv==GExpr.nl):
               return t.coeff
             else:

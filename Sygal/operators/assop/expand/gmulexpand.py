@@ -18,7 +18,7 @@ def difflist(t1,t2):
 
 def gmul_expand(expr,A=gmul,grade="all"):
   if(type(expr)==Box):
-    BX = expr
+    BX = GExpr.gdistribute(expr)
     cf = BX.coeff
     if(type(BX.mv)==A):
       for i,ele in enumerate(BX.mv.args):
@@ -26,15 +26,16 @@ def gmul_expand(expr,A=gmul,grade="all"):
         if(j<len(BX.mv.args)):
           lst = list(BX.mv.args)
           # check if BX.mv.args[i] and BX.mv.args[j] are blades
-          if(is_blade(BX.mv.args[i]) and is_blade(BX.mv.args[j])):
+          if(is_vecBlade(BX.mv.args[i]) and is_vecBlade(BX.mv.args[j])):
             lst[i] = mulexpansion(BX.mv.args[i],BX.mv.args[j])
             del lst[j]
             t = gmul(*lst)*cf
-            return t
+            t1 = GExpr.gdistribute(t)
+            return t1
 
-      return expr
+      return BX
     else:
-      return expr
+      return BX
   else :
     return expr
 
@@ -59,7 +60,7 @@ def mulexpansion(A,B):
         cpydiffB.extend(Bset)
         cpydiffB.extend(diffB)
         signB = parity(B_args,cpydiffB)
-        coeff = signA*signB
+        sign = signA*signB
         if Aset:
           up = gextp(*Aset)
           low = gextp(*Bset)
@@ -69,11 +70,11 @@ def mulexpansion(A,B):
         diffA.extend(diffB)
         if diffA:
           mv = gextp(*diffA)
-          bx = Box.__new__(Box,mv,Mul(coeff,coeff1))
+          bx = Box.__new__(Box,mv,Mul(sign,coeff1))
           lst.append(bx)
         else :
           # bx = Box.__new__(Box,GExpr.Onl*Mul(coeff,coeff1))
-          bx = Box.__new__(Box,GExpr.nl,Mul(coeff,coeff1))
+          bx = Box.__new__(Box,GExpr.nl,Mul(sign,coeff1))
           lst.append(bx)
   t = gadd(*lst)
   return t
