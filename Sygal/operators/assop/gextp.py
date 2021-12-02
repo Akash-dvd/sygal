@@ -40,12 +40,12 @@ class gextp(assop):
       if ((len(expr2.args)-len(set(expr2.args))) > 0):  
         return GExpr.Znl
 
-      # # pseudoscalar check
+      # pseudoscalar check
 
-      # ele.pSC() for ele in bx.args
+      ele.pSC() for ele in bx.args
 
-      # if all(not isinstance(i, GExpr) for i in t1):
-      #   pass
+      if all(not isinstance(i, GExpr) for i in t1):
+        pass
 
       if(is_unMixedGrade(expr2)):
         # For signed sorting
