@@ -162,7 +162,15 @@ class GB(GExpr,AtomicExpr):
 
     return Basic.__new__(Box,mv,coeff)
 
+  def pseudo(i):
+    return lambda :{GExpr.prim[i]}
 
+
+  # def pseudo(i):
+  #   if i == 0 or i == 4:
+  #     return lambda :{GExpr.prim[0]^GExpr.prim[4]}
+  #   else :
+  #     return lambda :{GExpr.prim[i]}
 
   def _preprocess():
     if GExpr.initialized:
@@ -188,7 +196,8 @@ class GB(GExpr,AtomicExpr):
       for i,name in enumerate(names):
         name = name
         grade = frozenset({1})
-        pSC = lambda i:GExpr.prim[i]
+        # pSC= lambda i:GExpr.prim[i]
+        pSC = GB.pseudo(i) 
         coeff = S(1)
         nargs = (name,grade,pSC,coeff)
         bx = GB.__xnew_cached_(GB, *nargs)      

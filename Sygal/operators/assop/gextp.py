@@ -16,7 +16,7 @@ class gextp(assop):
     # Here Altering with args so pattern matching is required
     tmvs = [bx.mv for bx in t1 if bx.mv!=Box.nl]
     cfs = [bx.coeff for bx in t1]
-    cf = Mul(*cfs).simplify()
+    cf = Mul(*cfs)
     
     # Pattern Matching for # of args for associative op
     if tmvs == []:
@@ -40,6 +40,13 @@ class gextp(assop):
       if ((len(expr2.args)-len(set(expr2.args))) > 0):  
         return GExpr.Znl
 
+      # # pseudoscalar check
+
+      # ele.pSC() for ele in bx.args
+
+      # if all(not isinstance(i, GExpr) for i in t1):
+      #   pass
+
       if(is_unMixedGrade(expr2)):
         # For signed sorting
         expr3 = canonicalize2(expr2)
@@ -49,23 +56,19 @@ class gextp(assop):
         # to arrive here
           raise ValueError
 
-        cf1 = Mul(parity(expr2.args,expr3.args),cf).simplify()
+        cf1 = Mul(parity(expr2.args,expr3.args),cf)
       else :
         expr3 = expr2
         cf1 = cf
       bx = Box.__new__(Box,mv=expr3,coeff=cf1)
       
+ 
 
-
-
-      if all(not isinstance(i, GExpr) for i in t1):
-        pass
-        # pseudoscalar check
+        
 
 
       
       return bx
-
 
   @property
   def grade(self:"gextp") -> Union[set,frozenset]:
@@ -87,13 +90,11 @@ class gextp(assop):
           t1.update(t2)
     return t2
 
-
   def sympystr(self,expr:"gextp") -> str:
     return str(expr)
 
   def sympyrepr(self,expr:"gextp") -> str:
     return expr.__repr__()
-
 
   def __str__(self:"gextp") -> str:
     tup_head = self.args[:-1]
@@ -163,7 +164,7 @@ rules1 = (
     unpack,flatten
   )
 rules2 = (
-    unpack,rlGSortArgs
+    rlGSortArgs,
   )
 
 

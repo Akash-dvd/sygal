@@ -24,7 +24,8 @@ from libs.Sygal.operators.assop.simplify.gextpsimp import concat
 10) Check for local pseudoscalar concat symp \
     a>(c^d)^b<(e^f) -> a^b<(c^d^e^f) when a|e,f = b|c,d = 0 
 11) Check for proj^proj^proj ... simplification
-11) Check for rej^rej^rej ... simplification
+12) Check for rej^rej^rej ... simplification
+13) Check unmixed grade ordering a1^(a2*a3)^a4
 TODO
 1) ((a1^a2..a_r)<((b1..br)^(c1..cm)))^((a1..a_r)<((b1..br)^(d1..dn))) ==
 (a1^a2..a_r)<((b1..br)^(c1..cm)^(d1..dn))

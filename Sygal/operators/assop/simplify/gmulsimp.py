@@ -26,12 +26,14 @@ def gmul_simp(expr:"gmul")->Optional[GExpr]:
       # loop before the last element
       for i,arg in enumerate(BX.mv.args[:-1]):
         # check if the adjacent element leads to scalar
-        t = expand_iter(gmul)(arg*BX.mv.args[i+1])
-        if (t).grade == {0}:
+        t = is_scalarPair(arg,BX.mv.args[i+1])
+        if t:
           t1 = [element for j, element in enumerate(BX.mv.args) if j not in {i,i+1}]
-          t1.append((BX.mv.args[i]<BX.mv.args[i+1]))
-          t2 = gmul(*t1)
-          return t2
+          coeff = expand_iter(sclrprdct)(BX.mv.args[i]<BX.mv.args[i+1])
+          if t1:
+            return gmul(*t1)*cf*coeff
+          else :
+            return coeff*cf
       return expr
     else :
       return expr 

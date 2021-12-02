@@ -28,7 +28,7 @@ def inversion_higher(expr:"Box")->Optional[Box]:
       if type(obj) == inversion:
         obju = obj.up
         objd = obj.down
-        return inversion((sub*objd).reversion(),obju)*cf
+        return inversion((objd*sub),obju)*cf
       else :
         return expr
     else :

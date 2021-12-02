@@ -27,7 +27,7 @@ class inversion(isomorphic):
     if(coeff==S(0)):
       return(GExpr.Znl)
 
-    if (is_invertible(tmvs[0])):
+    if (is_nzScalarPair(tmvs[0],tmvs[0].reversion())):
       obj = GExpr.__new__(inversion,tmvs[0],tmvs[1])
     else :
       raise ValueError

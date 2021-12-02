@@ -12,13 +12,27 @@ from libs.Sygal.operators.binop.grcntrct import grcntrct
 from libs.Sygal.operators.binop.glcntrct import glcntrct
 
 def appendtoDict(eleBX,dict):
-  for k,v in dict.items():
-    if type(k) == Box:
-      eleBX.dotdict[k.mv] = v
-    elif issubclass(k,GExpr):
-      eleBX.dotdict[k] = v
-    else :
-      raise NotImplemented
+  if issubclass(type(eleBX),GExpr):
+    # Unbox
+    ele_mv = eleBX.mv if type(eleBX) == Box else eleBX
+    for k,v in dict.items():
+      if issubclass(type(k),GExpr):
+        # Unbox
+        k_mv = k.mv if type(k) == Box else k
+        ele_mv.dotdict[k_mv] = v
+        # Making symmetric changes
+        if k_mv.dotdict[ele_mv] == v:
+          continue
+        elif k_mv.dotdict[ele_mv] == None:
+          k_mv.dotdict[ele_mv] = v
+        else :
+          raise ValueError("Inrprdct Values unsymmetic")
+      else :
+        raise ValueError("Element must be from GExpr decent.")      
+  else :
+    raise ValueError("Element must be from GExpr decent.")
+
+
 
 
 def is_vecPerpendicularPair(args0:Union[Expr,GExpr],args1:Union[Expr,GExpr])->bool:
@@ -33,8 +47,9 @@ def is_vecPerpendicularPair(args0:Union[Expr,GExpr],args1:Union[Expr,GExpr])->bo
 def is_perpendicularPair(args0:Union[Expr,GExpr],args1:Union[Expr,GExpr])->bool:
   t = args0*args1
   t1 = expand_iter(gmul)(t)
-  if t1.grade == {0}:
-    return t1.coeff == S(0)
+  t2 = sclrprdct.gexpand1(t1)
+  if t2.grade == {0}:
+    return t2.coeff == S(0)
   else:
     return False
 
@@ -54,16 +69,21 @@ def is_null(expr:Union[Expr,GExpr])->bool:
   else :
     return False
 
-def is_invertiblePair(args0:Union[Expr,GExpr],args1:Union[Expr,GExpr])->bool:
+def is_nzScalarPair(args0:Union[Expr,GExpr],args1:Union[Expr,GExpr])->bool:
   t = args0*args1
   t1 = expand_iter(gmul)(t)
-  if t1.grade == {0}:
-    return t1.coeff != S(0)
+  t2 = sclrprdct.gexpand1(t1)
+  if t2.grade == {0}:
+    return t2.coeff != S(0)
   else:
     return False
 
-def is_invertible(expr:Union[Expr,GExpr])->bool:
-  return True
+def is_scalarPair(args0:Union[Expr,GExpr],args1:Union[Expr,GExpr])->bool:
+  t = args0*args1
+  t1 = expand_iter(gmul)(t)
+  t2 = sclrprdct.gexpand1(t1)
+  if t2.grade == {0}:
+    return True
 
 def is_blade(expr:Union[Expr,GExpr])->bool:
   raise NotImplemented
@@ -71,14 +91,17 @@ def is_blade(expr:Union[Expr,GExpr])->bool:
 def is_vecBlade(arg:Union[Expr,GExpr])->bool:
   # arguements must be either be of grade 1 or gextp each composed of grade 1 elements
   # Othercase is not implemented yet
-  if(type(arg)==Box):
-    expr = arg.mv
-  else :
-    expr = arg
-  if expr.grade == {1}:
-    return True
-  elif type(expr) == gextp:
-    return reduce(lambda x, y: x and y, [ele.grade == {1} for ele in expr.args])
+  if issubclass(type(arg),GExpr):
+    if(type(arg)==Box):
+      expr = arg.mv
+    else :
+      expr = arg
+    if expr.grade == {1}:
+      return True
+    elif type(expr) == gextp:
+      return reduce(lambda x, y: x and y, [ele.grade == {1} for ele in expr.args])
+    else :
+      return False
   else :
     return False
 
@@ -119,8 +142,11 @@ def get_grade(expr:GExpr,r:Union[int,set,frozenset,List[int]]) -> Union[Expr,GEx
         return GExpr.Znl
     elif(type(BX.mv)==gadd):
       # BX.coeff will be S(1)
-      t = [arg for arg in BX.mv if arg.grade in grd]
-      return gadd(*t)
+      t = [arg for arg in BX.mv.args if arg.grade in grd]
+      if t:
+        return gadd(*t)
+      else : 
+        return GExpr.Znl
     else:
       return GExpr.Znl
   else :

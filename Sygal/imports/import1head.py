@@ -30,7 +30,7 @@ from libs.Sygal.strategies.core import (null_safe, exhaust, memoize, condition,c
 from libs.Sygal.strategies.tools import subs, typed ,canon
 from libs.Sygal.strategies.traverse import (top_down, bottom_up, bxsall, top_down_once,bottom_up_once,spe_traverse,gen_traverse)
 from libs.Sygal.strategies.tree import treeapply, greedy, allresults, brute
-from libs.Sygal.strategies.iters import higher_iter,simplify_iter ,expand_iter
+from libs.Sygal.strategies.iters import bx_typed,higher_iter,simplify_iter ,expand_iter
 
 
 

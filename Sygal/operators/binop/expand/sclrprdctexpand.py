@@ -74,9 +74,48 @@ def sclprdct_expand(expr:Expr)->Union[Expr,Box]:
   else:
     return expr
 
+def sclprdct_expand1(expr:Expr)->Union[Expr,Box]:
+  # ###### HERE BOX IS NOT POSSIBLE
+
+  if(type(expr)==sclrprdct):
+    up = expr.up
+    down = expr.down
+    if is_vecBlade(up) and is_vecBlade(down):
+      if(up.is_atom):#down will also be atom
+        t1 = up.dotdict[down]
+        t2 = down.dotdict[up]
+        if t1 != None and t2 != None:
+          if t1 == t2:
+            return t1
+          else :
+            raise ValueError("Two different values for innerproduct")
+        elif t1!= None:
+          return t1
+        elif t2!=None:
+          return t2
+        else :
+          return expr
+      else:
+        lst = list(up.args)
+        down_1 = down
+
+        for ele in reversed(lst):
+          t4 =  expand_iter(glcntrct)(ele<down_1)
+          down_1 = t4 
+
+        return GExpr.gdistribute(down_1)
+        
+    else :
+      return expr
+  else:
+    return expr
+
 
 
 
 def sclrprdctexpand():
   sclrprdct.gexpand = exhaust(do_one(sclprdct_expand,))
-
+  sclrprdct.gexpand1 = exhaust(bottom_up(do_one(typed({sclrprdct:sclprdct_expand1}))))
+  
+  # sclrprdct.gexpand1 = exhaust(bottom_up(bx_typed({sclrprdct: sclprdct_expand1}),gen_traverse))
+  # sclrprdct.gexpand1 = sclprdct_expand1

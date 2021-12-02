@@ -25,8 +25,8 @@ def rejection_expand(expr:"rejection")->Optional[Box]:
     if type(BX.mv) == rejection:
       sub = BX.mv.down
       obj = BX.mv.up
-      if is_invertiblePair(sub,sub.reversion()):
-        t = expand_iter(gmul)((sub*(sub.reversion())))  
+      if is_nzScalarPair(sub,sub.reversion()):
+        t = expand_iter(gmul)((sub*sub))  
         if t.mv == GExpr.nl:
           coeff = Pow(t.coeff,-1)
           return (sub<(sub^obj))*coeff

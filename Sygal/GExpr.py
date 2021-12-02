@@ -139,7 +139,7 @@ class GExpr(Expr):
   def outermorphic() -> "GExpr":
     return  goutermorphic
 
-  
+
   gsimplify = lambda x:x
 
   # @classmethod

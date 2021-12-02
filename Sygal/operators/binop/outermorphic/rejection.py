@@ -21,14 +21,14 @@ class rejection(outermorphic):
     t = (sub,obj)
     t1 = tuple(map(lambda x:Box.__new__(Box,x),t))
     tmvs = [t1[0].mv,t1[1].mv]
-    coeff = Mul(t1[0].coeff,t1[1].coeff).simplify()
+    coeff = Mul(t1[0].coeff,t1[1].coeff)
     
     # Pattern match for grade value
     # Check for scalars
     if(coeff==S(0)):
       return(GExpr.Znl)
 
-    if (is_invertible(tmvs[0])):
+    if is_nzScalarPair(tmvs[0],tmvs[0].reversion()):
       obj = GExpr.__new__(rejection,tmvs[0],tmvs[1])
     else :
       raise ValueError

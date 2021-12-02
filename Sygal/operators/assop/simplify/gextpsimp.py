@@ -16,9 +16,11 @@ from libs.Sygal.operators.binop.outermorphic.projection import projection
 from libs.Sygal.operators.binop.outermorphic.rejection import rejection
 
 
+
 new = gextp.__new__
 
 """
+7)  Check simplification for inv,pro,rej
 TODO
 TODO
 TODO
@@ -217,9 +219,9 @@ def inv_gextp(expr):
   else :
     return expr
 
-
+# sign issues
 def proj_gextp(expr):
-  # (obj<sub)<sub/(sub<sub),
+  # DproU^D -> 0
   if(type(expr)==Box):
     BX = expr
     cf = BX.coeff
@@ -239,9 +241,9 @@ def proj_gextp(expr):
   else :
     return expr
 
-
+# sign issues
 def rej_gextp(expr):
-  # (obj^sub)>(sub)/(sub<sub)
+  # DrejU^D -> 
   if(type(expr)==Box):
     BX = expr
     cf = BX.coeff
@@ -265,4 +267,4 @@ def rej_gextp(expr):
 
 
 def gextpsimp():
-  gmul.gsimplify = exhaust(do_one(concat.sandhi,inv_gextp,proj_gextp,rej_gextp))
+  gextp.gsimplify = exhaust(do_one(concat.sandhi,inv_gextp,proj_gextp,rej_gextp))

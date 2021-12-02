@@ -16,7 +16,7 @@ class grcntrct(binop):
     t = (args0,args1)
     t1 = tuple(map(lambda x:Box.__new__(Box,x),t))
     tmvs = [t1[0].mv,t1[1].mv]
-    coeff = Mul(t1[0].coeff,t1[1].coeff).simplify()
+    coeff = Mul(t1[0].coeff,t1[1].coeff)
     
     # Pattern match
     # Check for scalars
@@ -24,7 +24,7 @@ class grcntrct(binop):
       if(t1[1].coeff==S(0)):
         return(GExpr.Znl)
       else :
-        return(Box.__new__(Box,t1[0].mv,Mul(t1[0].coeff,t1[1].coeff).simplify()))
+        return(Box.__new__(Box,t1[0].mv,Mul(t1[0].coeff,t1[1].coeff)))
     
     elif(t1[0].mv==Box.nl):
       return Box.Znl

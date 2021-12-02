@@ -20,7 +20,7 @@ def is_devmode():
 
 
 class Box(GExpr):
-
+  # Chnage here for S(0) coeff
   def __new__(cls,mv:"GExpr"=S(1),coeff:Expr=S(1))->"Box":
     if(type(coeff)==Box):
       raise ValueError
@@ -122,11 +122,17 @@ class Box(GExpr):
   def __eq__(self:"Box", other:"Box")->Tuple[bool]:
     # returns a tuple of values (#,#) 
     # ( cf, mv )
-    return (
-      other.__hash__() == self.__hash__() and
-      other.__class__ == self.__class__
-    )
-
+    if type(self) == type(other):
+      if self.coeff == S(0):
+        return other.coeff == S(0)
+      else :
+        return (
+          other.coeff == self.coeff 
+          and
+          other.mv == self.mv 
+        )
+    else :
+      return False
   def __eq1__(self:"Box", other:"Box")->Tuple[bool]:
     # returns a tuple of values (#,#) 
     # ( cf, mv )

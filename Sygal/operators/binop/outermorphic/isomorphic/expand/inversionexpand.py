@@ -27,7 +27,7 @@ def inversion_expand(expr:"Box")->Optional[Box]:
       obj = BX.mv.up
       #  But while creating this was checked
       if(type(sub) in [gmul,gextp]):  
-        if is_invertiblePair(sub,sub.reversion()):
+        if is_nzScalarPair(sub,sub.reversion()):
           t = expand_iter(gmul)((sub*(sub.reversion())))
           if t.mv == GExpr.nl:
             coeff = Pow(t.coeff,-1)
@@ -39,7 +39,7 @@ def inversion_expand(expr:"Box")->Optional[Box]:
       elif type(sub) == projection:
         subu = sub.up
         subd = sub.down
-        if subu == obj and is_invertiblePair(subd,subd.reversion()):
+        if subu == obj and is_nzScalarPair(subd,subd.reversion()):
           coeff = Pow((subd<(subd.reversion())),-1)
           return (subd.reversion())*obj*subd*coeff
         else :
