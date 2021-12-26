@@ -18,61 +18,54 @@ class gmul(assop):
     # cf = Mul(*cfs).simplify()
     cf = Mul(*cfs)
     
+    if cf == S(0):
+      return(GExpr.Znl)
+
     # Pattern Matching for # of args for associative op
     if tmvs == []:
       return Box.__new__(Box,mv=Box.nl,coeff=cf)
     elif len(tmvs)==1:
       return Box.__new__(Box,mv=tmvs[0],coeff=cf)
     else:
-      expr1 = Basic.__new__(gmul, *tmvs)
+      MV1 = Basic.__new__(gmul, *tmvs)
       # Here Altering with args so pattern matching is required
       # But this canocalize doesn't reduce the args ever
-      expr2 = canonicalize(expr1)
+      MV2 = canonicalize(MV1)
       
+
       # More patternmatching
-      if(len(expr2.args)<=1):
+      if(len(MV2.args)<=1):
         # Not possible
         # to arrive here
         raise ValueError
       
-      
-      bx = Box.__new__(Box,mv=expr2,coeff=cf)
-      
-      # if ((len(args)-len(set(args))) == 0):  
-      #   obj = Basic.__new__(cls, *t1)
-      # else :
-      #   t3 = super().Znl
-      #   return Basic.__new__(cls, *t3)
+      MV3 = meta_treatment(MV2)
+      if MV3 == GExpr.Znl:
+        return GExpr.Znl
+      else :
+        MV3.rlDt = defaultdict(lambda:None)
+        bx = Box.__new__(Box,mv=MV3,coeff=cf)
+        return bx
 
 
-      if all(not isinstance(i, GExpr) for i in t1):
-        pass
-        # append to appendage for grade 0
-
-
-      
-      return bx
-
-
-  @property
-  def grade(self:"gmul") -> Union[set,frozenset]:
-    if(len(self.args)==1):
-      return self.args[0].grade
-    else:
-      t1 = set()
-      t2 = set()
-      t1.update(self.args[0].grade)
-      for i,argi in enumerate(self.args):
-        j=i+1
-        if(j<len(self.args)):
-          t2.clear()
-          arg2 = self.args[j].grade
-          for elem1 in t1:
-            for elem2 in arg2:
-              t2.update(list(range(abs(elem2-elem1),(elem2+elem1+1),2)))
-          t1.clear()
-          t1.update(t2)
-    return t2
+  # @property
+  # def grade(self:"gmul") -> Union[set,frozenset]:
+  #   if(len(self.args)==1):
+  #     return self.args[0].grade
+  #   else:
+  #     t1 = set()
+  #     t2 = set()
+  #     t1.update(self.args[0].grade)
+  #     for i,argi in enumerate(self.args):
+  #       j=i+1
+  #       if(j<len(self.args)):
+  #         t2.clear()
+  #         arg2 = self.args[j].grade
+  #         for elem1,elem2 in product(t1,arg2):
+  #           t2.update(set(range(abs(elem2-elem1),(elem2+elem1+1),2)))
+  #         t1.clear()
+  #         t1.update(t2)
+  #   return t2
 
 
   def sympystr(self,expr:"gmul") -> str:
@@ -138,6 +131,194 @@ class gmul(assop):
     t = self.grade_involution()
     t1 = t.reversion()
     return t1
+
+def meta_treatment(expr:gmul)->gmul:
+
+  Zval = grd(0,0)
+  acc_spc_lst = spclst([])
+  spc_lst = spclst([])
+  spc_lst.extend(expr.args[0].mtDt)
+  for arg in expr.args[1:]:
+    
+    acc_spc_lst.clear()
+    for pre_dct,post_dct in product(spc_lst,arg.mtDt):
+      # [(a,),(a,b)] 
+
+      # Add ^ to lst 
+      acc_spc_lst.append(pre_dct+post_dct)
+
+      pre_keys_tup = subsets(pre_dct)
+      next(pre_keys_tup)
+      # [(a,),(a,b)]
+      post_keys_tup = subsets(post_dct)
+      next(post_keys_tup)
+      # (a,b,c) , (a,b)
+
+      for tup1,tup2 in product(pre_keys_tup,post_keys_tup):
+        tup1_grd = reduce(lambda x,y:x+y,[pre_dct[k].value for k in tup1])
+        tup2_grd = reduce(lambda x,y:x+y,[post_dct[k].value for k in tup2])
+
+        ceil_size = min(tup1_grd,tup2_grd)
+        flr_size  = max(len(tup1),len(tup2))
+
+
+        for size in range(flr_size,ceil_size+1):  
+        
+          part1 = kbin_distri(size,len(tup1))
+          part2 = kbin_distri(size,len(tup2))
+
+          # part1 = [[1,2,1],[3,1]]
+          # part2 = [[1,2,1],[3,1]]
+          # p1 = [1,2,1]
+          # p2 = [1,3]
+
+          for p1,p2 in product(part1,part2):
+            t1 = all([pre_dct[k]>=p1[i] for i,k in enumerate(tup1)])
+            t2 = all([post_dct[k]>=p2[i] for i,k in enumerate(tup2)])
+
+            if t1 and t2:
+
+              t_dct1  = spcdct({})
+              t_dct11 = spcdct({})
+              t_dct2  = spcdct({})
+              t_dct21 = spcdct({})
+              
+
+              t_dct1.update({k:grd(p1[i],pre_dct[k].limit) for i,k in enumerate(tup1)})
+
+              for k,v in pre_dct.items():
+                t3 = pre_dct[k].value-(t_dct1.get(k,Zval)).value
+                t_dct11.update({k:grd(t3,pre_dct[k].limit)})
+            
+
+              t_dct2.update({k:grd(p2[i],post_dct[k].limit) for i,k in enumerate(tup2)})
+
+              for k,v in post_dct.items():
+                t4 = post_dct[k].value-(t_dct2.get(k,Zval)).value
+                t_dct21.update({k:grd(t4,post_dct[k].limit)})
+              
+
+              if t_dct1|t_dct2 :
+                acc_spc_lst.append(t_dct11+t_dct21)
+
+            
+            else :
+              continue
+    
+    
+    spc_lst.clear()
+    if bool(acc_spc_lst):
+      spc_lst.extend(acc_spc_lst)
+    else :
+      break
+  
+  if bool(spc_lst):
+    expr.mtDt = spc_lst
+    return expr
+  else :
+    return GExpr.Znl
+
+
+def meta_treatment1(expr:gmul)->gmul:
+
+  Zval = grd(0,0)
+  acc_spc_lst = spclst([])
+  spc_lst = spclst([])
+  spc_lst.extend(expr.args[0].mtDt)
+  for arg in expr.args[1:]:
+    
+    acc_spc_lst.clear()
+    for pre_dct,post_dct in product(spc_lst,arg.mtDt):
+      # [(a,),(a,b)] 
+
+      # Add ^ to lst 
+      acc_spc_lst.append(pre_dct+post_dct)
+
+      pre_keys_tup = subsets(pre_dct)
+      next(pre_keys_tup)
+      # [(a,),(a,b)]
+      post_keys_tup = subsets(post_dct)
+      next(post_keys_tup)
+      # (a,b,c) , (a,b)
+
+      for tup1,tup2 in product(pre_keys_tup,post_keys_tup):
+        tup1_grd = reduce(lambda x,y:x+y,[pre_dct[k].value for k in tup1])
+        tup2_grd = reduce(lambda x,y:x+y,[post_dct[k].value for k in tup2])
+
+        ceil_size = min(tup1_grd,tup2_grd)
+        flr_size  = max(len(tup1),len(tup2))
+
+
+        for size in range(flr_size,ceil_size+1):  
+        
+          part1 = kbin_distri(size,len(tup1))
+          part2 = kbin_distri(size,len(tup2))
+
+          # part1 = [[1,2,1],[3,1]]
+          # part2 = [[1,2,1],[3,1]]
+          # p1 = [1,2,1]
+          # p2 = [1,3]
+
+          for p1,p2 in product(part1,part2):
+            t1 = all([pre_dct[k]>=p1[i] for i,k in enumerate(tup1)])
+            t2 = all([post_dct[k]>=p2[i] for i,k in enumerate(tup2)])
+
+            if t1 and t2:
+
+              t_dct1  = spcdct({})
+              t_dct11 = spcdct({})
+              t_dct2  = spcdct({})
+              t_dct21 = spcdct({})
+              
+
+              t_dct1.update({k:grd(p1[i],pre_dct[k].limit) for i,k in enumerate(tup1)})
+
+              for k,v in pre_dct.items():
+                t3 = pre_dct[k].value-(t_dct1.get(k,Zval)).value
+                if t3 :
+                  t_dct11.update({k:grd(t3,pre_dct[k].limit)})
+              
+              if t_dct11:
+                pass
+              else :
+                t_dct11.update({GExpr.Onl:grd(0,0)})
+
+              t_dct2.update({k:grd(p2[i],post_dct[k].limit) for i,k in enumerate(tup2)})
+
+              for k,v in post_dct.items():
+                t4 = post_dct[k].value-(t_dct2.get(k,Zval)).value
+                if t4 :
+                  t_dct21.update({k:grd(t4,post_dct[k].limit)})
+              
+              if t_dct21:
+                pass
+              else :
+                t_dct21.update({GExpr.Onl:grd(0,0)})
+
+              t5 = t_dct1|t_dct2
+              if t5 :
+                t6 = t_dct11+t_dct21
+                if bool(t6):
+                  acc_spc_lst.append(t_dct11+t_dct21)
+                else:
+                  acc_spc_lst.append(spcdct({GExpr.Onl:grd(0,0)}))
+            
+            else :
+              continue
+    
+    
+    spc_lst.clear()
+    if bool(acc_spc_lst):
+      spc_lst.extend(acc_spc_lst)
+    else :
+      break
+  
+  if bool(spc_lst):
+    expr.mtDt = spc_lst
+    return expr
+  else :
+    return GExpr.Znl
+
 
 
 rules = (

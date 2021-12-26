@@ -28,12 +28,20 @@ class rejection(outermorphic):
     if(coeff==S(0)):
       return(GExpr.Znl)
 
+
     if is_nzScalarPair(tmvs[0],tmvs[0].reversion()):
-      obj = GExpr.__new__(rejection,tmvs[0],tmvs[1])
+      MV1 = GExpr.__new__(rejection,tmvs[0],tmvs[1])
+      MV2 = meta_treatment(MV1)
+      if MV2 == GExpr.Znl:
+        return GExpr.Znl
+      else :
+        MV2.rlDt = defaultdict(lambda:None)
+        bx = Box.__new__(Box,mv=MV2,coeff=coeff)
+        return bx
+
     else :
-      raise ValueError
-    return Box.__new__(Box,obj,coeff)
-  
+      raise ValueError("Non-Invertible base of rejection")
+
   @property
   def grade(self:"rejection") -> Union[set,frozenset]:
     return self.up.grade
@@ -80,6 +88,63 @@ class rejection(outermorphic):
   @property
   def up(self:"rejection")->"GExpr":
     return self.args[1]
+
+def meta_treatment(expr:rejection)->rejection:
+  
+  up = expr.up
+  down = expr.down
+  Zval = grd(0,0)
+  t_spc_lst = spclst([])
+  
+  t_spc_lst.extend([dct1+dct2 for dct1,dct2 in product(up.mtDt,down.mtDt)])
+
+  spc_lst = spclst([])
+
+  for up_dct,down_dct in product(down.mtDt,t_spc_lst):
+
+    up_dct_grd = 0
+    down_dct_grd = 0
+
+    for k,v in up_dct.items():
+      up_dct_grd+=v.value
+    
+    for k,v in down_dct.items():
+      down_dct_grd+=v.value
+    
+    if up_dct_grd>down_dct_grd:
+      continue
+
+    down_dct_keys_tup = subsets(down_dct)
+    next(down_dct_keys_tup)
+    for tup in down_dct_keys_tup:
+      if up_dct_grd>=len(tup):
+        part1 = kbin_distri(up_dct_grd,len(tup))
+        for p1 in part1:
+          t_dct1 = spcdct({})
+          t_dct11 = spcdct({})
+          t = all([down_dct[k]>=p1[i] for i,k in enumerate(tup)])
+
+          if t :
+            t_dct1.update({k:grd(p1[i],down_dct[k].limit) for i,k in enumerate(tup)})
+
+            for k,v in down_dct.items():
+              t1 = down_dct[k].value-(t_dct1.get(k,Zval)).value
+              t_dct11.update({k:grd(t1,down_dct[k].limit)})
+            
+            if up_dct|t_dct1 :
+              spc_lst.append(t_dct11)
+
+          else:
+            continue
+      else:
+        break
+  
+  if bool(spc_lst):
+    expr.mtDt = spc_lst
+    return expr
+  else :
+    return GExpr.Znl
+
 
 if is_devmode():
   StrPrinter._print_rejection = rejection.sympyrepr

@@ -4,12 +4,19 @@ from sympy.strategies.util import basic_fns
 from libs.Sygal.GExpr import GExpr
 from libs.Sygal.Box import Box
 
+"""
+USAGE --
+
+ALLOWED    - GMUL, GADD, GLCNTRCT ETC
+NOTALLOWED - GEXPR, BOX  
+"""
 
 new = Basic.__new__
 # TODO add new to arguements
 
 def conjugation(rl1,rl2):
   return chain(rl1,rl2,rl1)
+
 
 def rlZero(expr:"GExpr",fns=basic_fns) -> "GExpr" :
   op, new, children, leaf = map(fns.get, ('op', 'new', 'children', 'leaf'))
@@ -28,6 +35,7 @@ def rlGSortArgs(expr:GExpr,reverse:bool=False) -> GExpr:
   """
   newseq = sorted(expr.args,key=lambda ele:(len(ele.grade),next(iter(ele.grade)),ele.name,ele.__hash__()),reverse=reverse)
   return new(expr.__class__, *newseq)
+
 
 def GSortArgs(seq:Union[list,tuple],reverse:bool=False) -> Union[list,tuple]:
   """
@@ -66,6 +74,7 @@ def parity(args1:List[GExpr],args2:List[GExpr])->S:
 
   return S((p.parity()*-2)+1)
 
+
 def bx_sift(seqBx:Tuple[Box], keyfunc:Callable, count:Callable)->List[Box]:
 
   m = defaultdict(lambda:S(0))
@@ -78,11 +87,35 @@ def bx_sift(seqBx:Tuple[Box], keyfunc:Callable, count:Callable)->List[Box]:
     lst.append(Box.__new__(Box,key,value))
   return lst
 
+
 def is_devmode():
   t = 'pydevd' in sys.modules
   return t
+
 
 def is_unMixedGrade(args:GExpr)->bool:
   t = set()
   t.update((i%2 for i in args.grade))
   return True if len(t)==1 else False
+
+
+def is_primitive(arg:"GExpr")->bool:
+  if type(arg) == Box:
+    return arg in GExpr.prim
+  elif issubclass(type(arg),GExpr):
+    bx = Box.__new__(Box,arg)
+    return bx in GExpr.prim
+  else :
+    return False
+
+
+def is_pSC(arg:"GExpr")->bool:
+  return arg in GExpr.pSC
+
+
+def is_singleGrade(expr:Union[Expr,GExpr])->bool:
+  if issubclass(type(expr),GExpr):
+    gd = expr.grade
+    return len(gd) == 1
+  else:
+    return False

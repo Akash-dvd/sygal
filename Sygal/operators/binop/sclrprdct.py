@@ -13,31 +13,38 @@ class sclrprdct(binop):
     tmvs = [t1[0].mv,t1[1].mv]
     coeff = Mul(t1[0].coeff,t1[1].coeff)
     
+    if coeff == S(0):
+      return(GExpr.Znl)
+      
     if( len(tmvs[0].grade) == 1 and len(tmvs[1].grade) == 1):
       if tmvs[0].grade == tmvs[1].grade:
         if tmvs[0].grade == {0}:
           return GExpr.Onl*coeff
         else :
-          mv = Basic.__new__(sclrprdct, *GSortArgs(tmvs))
-          return(Box.__new__(Box,mv,coeff))
+          MV = Basic.__new__(sclrprdct, *GSortArgs(tmvs))
+          MV.mtDt = spclst([{GExpr.Onl:grd(0,0)}])
+          MV.rlDt = defaultdict(lambda x:None)
+          t = (Box.__new__(Box,MV,coeff))
+          return t
+
       else:
         raise ValueError("Both args must be of single equal grade")
     else:
       raise ValueError("Both args must be of single grade")
 
-  @property
-  def grade(self:"sclrprdct")->Union[set,frozenset]:
-    # Two arguements will always be present
+  # @property
+  # def grade(self:"sclrprdct")->Union[set,frozenset]:
+  #   # Two arguements will always be present
  
-    t = set()
-    arg1 = self.args[0].grade
-    arg2 = self.args[1].grade
+  #   t = set()
+  #   arg1 = self.args[0].grade
+  #   arg2 = self.args[1].grade
 
-    for elem1 in arg1:
-      for elem2 in arg2:
-        if((elem2-elem1)>=0): 
-          t.add((elem2-elem1))
-    return t
+  #   for elem1 in arg1:
+  #     for elem2 in arg2:
+  #       if((elem2-elem1)>=0): 
+  #         t.add((elem2-elem1))
+  #   return t
 
   def sympystr(self,expr:"sclrprdct") -> str:
     return str(expr)

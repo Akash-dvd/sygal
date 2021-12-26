@@ -27,11 +27,18 @@ class inversion(isomorphic):
     if(coeff==S(0)):
       return(GExpr.Znl)
 
-    if (is_nzScalarPair(tmvs[0],tmvs[0].reversion())):
-      obj = GExpr.__new__(inversion,tmvs[0],tmvs[1])
+    if is_nzScalarPair(tmvs[0],tmvs[0].reversion()):
+      MV1 = GExpr.__new__(inversion,tmvs[0],tmvs[1])
+      MV2 = meta_treatment(MV1)
+      if MV2 == GExpr.Znl:
+        return GExpr.Znl
+      else :
+        MV2.rlDt = defaultdict(lambda:None)
+        bx = Box.__new__(Box,mv=MV2,coeff=coeff)
+        return bx
+
     else :
-      raise ValueError
-    return Box.__new__(Box,obj,coeff)
+      raise ValueError("Non-Invertible base of inversion")
 
   @property
   def grade(self:"inversion") -> Union[set,frozenset]:
@@ -80,7 +87,25 @@ class inversion(isomorphic):
   def up(self:"inversion")->"GExpr":
     return self.args[1]
 
+def meta_treatment(expr:inversion)->inversion:
 
+  # if null list extend -> null list
+  # if null dict update -> null dict
+  up = expr.up
+  down = expr.down
+  spc_lst = spclst([])
+  spc_lst.extend(up.mtDt)
+  
+  if True:
+    spc_lst.extend(down.mtDt)
+  else :
+    pass
+
+  if bool(spc_lst):
+    expr.mtDt = spc_lst
+    return expr
+  else :
+    return GExpr.Znl
 
 
 

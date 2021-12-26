@@ -1,3 +1,4 @@
+from collections import defaultdict
 import sys
 
 from typing import Tuple, TypeVar, Callable, Dict, Sequence, List, Optional, Union
@@ -12,11 +13,9 @@ from sympy.strategies.tools import subs as strtSubs
 from sympy.printing.str import StrPrinter
 
 from libs.Sygal.GExpr import GExpr
+from libs.Sygal.pSC import spclst
 
 
-def is_devmode():
-  t = 'pydevd' in sys.modules
-  return t
 
 
 class Box(GExpr):
@@ -29,7 +28,7 @@ class Box(GExpr):
     # Pattern matching for types
     fct1 = issubclass(type(mv),GExpr)
     # fct2 is for scalar multivectors
-    fct2 = True if fct1 and (mv.grade == {0}) else False
+    fct2 = fct1 and (mv.grade == {0})
     fct3 = issubclass(type(mv),Box)
     fct4 = fct3 and fct2
     
@@ -40,7 +39,10 @@ class Box(GExpr):
       # Here well formed Box must have nl as mv
       if(BX.mv!=GExpr.nl):
         raise
-      return new(Box,GExpr.nl,Mul(coeff,BX.coeff))
+      t = new(Box,GExpr.nl,Mul(coeff,BX.coeff))
+      t.mv.mtDt = GExpr.Onl.mtDt
+      t.mv.rlDt = defaultdict(lambda:None)
+      return t
     elif fct3:
       BX = mv
       # Check if the arrived box encloses gadd
@@ -49,33 +51,54 @@ class Box(GExpr):
         if(BX.coeff!=S(1)):
           raise
         t = [new(Box,bx.mv,Mul(bx.coeff,coeff)) for bx in BX.mv.args]
-        return new(Box,new(gadd,*t),S(1))
+        t1 = new(Box,new(gadd,*t),S(1))
+        t1.mv.mtDt = BX.mv.mtDt.copy()
+        t1.mv.rlDt = BX.mv.rlDt.copy()
+        return t1
       else:
-        return new(Box,BX.mv,Mul(coeff,BX.coeff))
+        t = new(Box,BX.mv,Mul(coeff,BX.coeff))
+        t.mv.mtDt = BX.mv.mtDt.copy()
+        t.mv.rlDt = BX.mv.rlDt.copy()
+        return t
     
     # Not box mvs
     # Zero grade
     elif fct2:
       # NO need to check for gadd
       if(mv == GExpr.nl):
-        return new(Box,GExpr.nl,coeff)
+        t = new(Box,GExpr.nl,coeff)
+        t.mv.mtDt = GExpr.Onl.mtDt
+        t.mv.rlDt = defaultdict(lambda:None)
+        return t
       else:
-        return new(Box,GExpr.nl,Mul(mv,coeff))
+        t = new(Box,GExpr.nl,Mul(mv,coeff))
+        t.mv.mtDt = GExpr.Onl.mtDt
+        t.mv.rlDt = defaultdict(lambda:None)
+        return t
     # Non Zero grade
     elif fct1:
       if(type(mv)==gadd):
         # t = [new(Box,bx.mv,Mul(bx.coeff,coeff).simplify()) for bx in mv.args]
         t = [new(Box,bx.mv,Mul(bx.coeff,coeff)) for bx in mv.args]
-        return new(Box,new(gadd,*t),S(1))
+        t1 = new(Box,new(gadd,*t),S(1))
+        t1.mv.mtDt = mv.mtDt.copy()
+        t1.mv.rlDt = mv.rlDt.copy()
+        return t1
       else:
-        return new(Box,mv,coeff)
+        t = new(Box,mv,coeff)
+        t.mv.mtDt = mv.mtDt.copy()
+        t.mv.rlDt = mv.rlDt.copy()    
+        return t
     
     # Scalars boxing
     else :
       # Here only mv is supplied as scalar
       if(coeff!=S(1)):
         raise
-      return new(Box,GExpr.nl,sympify(mv))
+      t = new(Box,GExpr.nl,sympify(mv))
+      t.mv.mtDt = GExpr.Onl.mtDt
+      t.mv.rlDt = defaultdict(lambda:None)
+      return t
 
   def sympystr(self,expr:"Box") -> str:
     return str(expr)
@@ -133,6 +156,7 @@ class Box(GExpr):
         )
     else :
       return False
+  
   def __eq1__(self:"Box", other:"Box")->Tuple[bool]:
     # returns a tuple of values (#,#) 
     # ( cf, mv )
@@ -147,12 +171,20 @@ class Box(GExpr):
     return Box.__new__(Box,mv=self.mv,coeff=Mul(self.coeff,S(-1)))
 
   @property
-  def grade(self:"Box") -> set:
-    return self.mv.grade
+  def pSC(self:"GExpr") -> set:
+    return self.mv.pSC
 
   @property
-  def pSC(self:"Box") -> "GExpr":
-    return self.mv.pSC
+  def grade(self:"GExpr") -> set:
+    return self.mv.grade
+  
+  @property
+  def mtDt(self:"Box")->spclst:
+    return self.mv.mtDt
+
+  @property
+  def rlDt(self:"Box")->defaultdict:
+    return self.mv.rlDt
 
   @property
   def coeff(self:"Box") -> "GExpr":
@@ -161,10 +193,6 @@ class Box(GExpr):
   @property
   def mv(self:"Box") -> "GExpr":
     return self.args[0]
-
-  # def gdistribute(self:"Box"):
-  #   func = GExpr.gdistribute
-  #   return func(self)
 
   def gsimplify(self:"Box"):
     func = type(self.mv).gsimplify
@@ -190,9 +218,6 @@ class Box(GExpr):
     t = self.mv.clifford_conjugation()
     return Box.__new__(Box,t,self.coeff)
   
-  @property
-  def dotdict(self:"Box")->Dict:
-    return self.mv.dotdict
   
 # Standard import style
 # These extra imports cause issue with strategies import
@@ -207,8 +232,49 @@ from libs.Sygal.operators.assop.gadd import gadd
 # from libs.Sygal.operators.binop.glcntrct import glcntrct
 
 
+def is_devmode():
+  t = 'pydevd' in sys.modules
+  return t
+
 
 if is_devmode():
   StrPrinter._print_Box = Box.sympyrepr
 else :
   StrPrinter._print_Box = Box.sympystr
+
+
+def rej_mtDt(expr):
+  return
+  ################
+  # replace or merge when ceiling is touched
+  # {I3:3,I41:1} -> replace with I3
+  # {I3:2,I41:2} -> {I41:4}
+  if(type(expr)==Box):
+    BX = expr
+    cf = BX.coeff
+    for i,k,v in enumerate(BX.mv.mtDt.items()):
+      if not k == GExpr.Onl:
+        if v == set(len(k.mv.args)):
+          lst = [ele for ele in BX.mv.args if ele.mtDt[k] and len(ele.mtDt)==1 and len(ele.mtDt[k])==1]
+          if len(k.mv.args) == reduce(lambda x,y:x.mv.mtDt[k]+y.mv.mtDt[k],lst) :
+            diffA = [ele for ele in BX.mv.args if ele not in lst]
+            cpydiffA = []
+            cpydiffA.extend(diffA)
+            cpydiffA.extend(lst)
+            sign1 = parity(BX.mv.args,cpydiffA)
+            cpydiffB = []
+            cpydiffB.extend(diffA)
+            cpydiffB.extend(k.mv.args)
+            t_lst = gextp(*lst)
+            iFrame = GExpr.pSCiFrmlst(GExpr.pSClst.index(k))
+            bx = gextp(*cpydiffB)*(t_lst|iFrame)*sign1*cf
+            bx.mv.mtDt = defaultdict(lambda:None)
+            bx.mv.rlDt = defaultdict(lambda:None)
+            return bx
+  
+        else :
+          pass
+      else:
+        pass
+  else :
+    return expr

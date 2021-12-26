@@ -5,6 +5,10 @@ from typing import Tuple, TypeVar, Callable, Dict, Sequence, List, Optional, Uni
 from collections import defaultdict
 from functools import cmp_to_key,reduce
 
+from libs.Sygal.utils.util import *
+from itertools import product
+ 
+
 from sympy.printing.str import StrPrinter
 from collections import Iterable,defaultdict
 
@@ -25,6 +29,8 @@ from sympy import (
   symbols, sqrt, Matrix, SympifyError, sympify
 )
 
+from sympy.utilities.iterables import partitions,multiset_partitions,kbins
+
 from libs.Sygal.strategies.rl import (rm_id, glom, flatten, unpack, sort, distribute,subs, rebuild)
 from libs.Sygal.strategies.core import (null_safe, exhaust, memoize, condition,chain, tryit, do_one, debug, switch, minimize)
 from libs.Sygal.strategies.tools import subs, typed ,canon
@@ -35,4 +41,7 @@ from libs.Sygal.strategies.iters import bx_typed,higher_iter,simplify_iter ,expa
 
 
 from libs.Sygal.GExpr import GExpr
+from libs.Sygal.pSC.grd import grd
+from libs.Sygal.pSC.spcdct import spcdct
+from libs.Sygal.pSC.spclst import spclst
 

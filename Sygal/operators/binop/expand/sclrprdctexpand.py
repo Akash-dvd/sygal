@@ -31,8 +31,8 @@ def sclprdct_expand(expr:Expr)->Union[Expr,Box]:
     down = expr.down
     if is_vecBlade(up) and is_vecBlade(down):
       if(up.is_atom):#down will also be atom
-        t1 = up.dotdict[down]
-        t2 = down.dotdict[up]
+        t1 = up.rlDt[down]
+        t2 = down.rlDt[up]
         if t1 != None and t2 != None:
           if t1 == t2:
             return t1
@@ -47,7 +47,7 @@ def sclprdct_expand(expr:Expr)->Union[Expr,Box]:
       else:
         lst = []
         for i,u_ele in enumerate(up.args):
-          t3 = list(filter(lambda x:x is not None,[d_ele.dotdict[u_ele] for d_ele in down.args]))
+          t3 = list(filter(lambda x:x is not None,[d_ele.rlDt[u_ele] for d_ele in down.args]))
           if t3:
             lst.append(u_ele)
         down_1 = down
@@ -82,8 +82,10 @@ def sclprdct_expand1(expr:Expr)->Union[Expr,Box]:
     down = expr.down
     if is_vecBlade(up) and is_vecBlade(down):
       if(up.is_atom):#down will also be atom
-        t1 = up.dotdict[down]
-        t2 = down.dotdict[up]
+        bx_down = Basic.__new__(Box,down,S(1))
+        bx_up = Basic.__new__(Box,up,S(1))
+        t1 = up.rlDt[bx_down]
+        t2 = down.rlDt[bx_up]
         if t1 != None and t2 != None:
           if t1 == t2:
             return t1
@@ -110,6 +112,41 @@ def sclprdct_expand1(expr:Expr)->Union[Expr,Box]:
   else:
     return expr
 
+# def sclprdct_expand1(expr:Expr)->Union[Expr,Box]:
+#   # ###### HERE BOX IS NOT POSSIBLE
+
+#   if(type(expr)==sclrprdct):
+#     up = expr.up
+#     down = expr.down
+#     if is_vecBlade(up) and is_vecBlade(down):
+#       if(up.is_atom):#down will also be atom
+#         t1 = up.rlDt[down]
+#         t2 = down.rlDt[up]
+#         if t1 != None and t2 != None:
+#           if t1 == t2:
+#             return t1
+#           else :
+#             raise ValueError("Two different values for innerproduct")
+#         elif t1!= None:
+#           return t1
+#         elif t2!=None:
+#           return t2
+#         else :
+#           return expr
+#       else:
+#         lst = list(up.args)
+#         down_1 = down
+
+#         for ele in reversed(lst):
+#           t4 =  expand_iter(glcntrct)(ele<down_1)
+#           down_1 = t4 
+
+#         return GExpr.gdistribute(down_1)
+        
+#     else :
+#       return expr
+#   else:
+#     return expr
 
 
 

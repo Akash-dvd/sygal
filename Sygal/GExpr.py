@@ -12,25 +12,15 @@ from sympy.strategies.tools import subs as strtSubs
 
 
 class GExpr(Expr):
-  
-  grade:Union[set,frozenset] = {}
 
   is_atom:bool = False
-  __slots__ = ()
-  coeffs:List["GExpr"] = [S(1)]
   name = "zzzzzGExpr"
   initialized:bool = False
-
-  dotdict = defaultdict(lambda:None)
 
   @property
   def is_commutative(expr) -> bool:
     return expr.grade == {0}
 
-  reversion = lambda x:x
-  grade_involution = lambda x:x
-  clifford_conjugation = lambda x:x
-  
   def __add__(self:"GExpr", A:"GExpr") -> "GExpr":
     return gadd(self, A)
 
@@ -79,29 +69,62 @@ class GExpr(Expr):
   def __rrshift__(self:"GExpr", A:"GExpr") -> "GExpr":  # comutator (>>)
     return gcomm(A,self)
 
+  ###########################
+  @property
+  def pSC(self:"GExpr") -> set:
+    t = set()
+    for spdt in self.mtDt:
+      for k,v in spdt.items():
+        t.add(k)
+    return t
+
+  @property
+  def grade(self:"GExpr") -> set:
+    t = set()
+    for spdt in self.mtDt:
+      t1 = 0
+      for k,v in spdt.items():
+        t1 += v.value
+      t.add(t1)
+    return t
+
+  
+  reversion = lambda x:x
+  grade_involution = lambda x:x
+  clifford_conjugation = lambda x:x
+  
+
+  gsimplify = lambda x:x
+
+  gexpand = lambda x:x
+
+  ghigher = lambda x:x
+  ###########################
+
   def sSubs(self:"GExpr", args):
-    def replace(old,new):
-      if new is None:
-        exprlst.remove(old)
-      else:
-        for index, item in enumerate(exprlst):
-	        if item == old:
-		        exprlst[index] = new
+    raise NotImplemented
+    # def replace(old,new):
+    #   if new is None:
+    #     exprlst.remove(old)
+    #   else:
+    #     for index, item in enumerate(exprlst):
+	  #       if item == old:
+		#         exprlst[index] = new
 
-    exprlst = list(self.args)
-    if isinstance(args,list):
+    # exprlst = list(self.args)
+    # if isinstance(args,list):
 
-      for elem in args:
-        replace(*elem)
-      rv = self.func(*tuple(exprlst))
-      return rv
+    #   for elem in args:
+    #     replace(*elem)
+    #   rv = self.func(*tuple(exprlst))
+    #   return rv
       
-    elif isinstance(args,tuple):
-      replace(*args)
-      rv = self.func(*tuple(exprlst))
-      return rv
-    else :
-      raise
+    # elif isinstance(args,tuple):
+    #   replace(*args)
+    #   rv = self.func(*tuple(exprlst))
+    #   return rv
+    # else :
+    #   raise
 
   def subs(self:"GExpr",map) -> "GExpr":
     if isinstance(map,list):
@@ -119,39 +142,27 @@ class GExpr(Expr):
     else :
       raise
   
-  # Definitions links inside GExpr
-  @staticmethod
-  def inversion() -> "GExpr":
-    return  ginversion
+  # # Definitions links inside GExpr
+  # @staticmethod
+  # def inversion() -> "GExpr":
+  #   return  ginversion
   
-  @staticmethod
-  def rejection() -> "GExpr":
-    return  grejection
-  @staticmethod
-  def projection() -> "GExpr":
-    return  gprojection
+  # @staticmethod
+  # def rejection() -> "GExpr":
+  #   return  grejection
+  # @staticmethod
+  # def projection() -> "GExpr":
+  #   return  gprojection
 
-  @staticmethod
-  def isomorphic() -> "GExpr":
-    return  gisomorphic
+  # @staticmethod
+  # def isomorphic() -> "GExpr":
+  #   return  gisomorphic
 
-  @staticmethod
-  def outermorphic() -> "GExpr":
-    return  goutermorphic
+  # @staticmethod
+  # def outermorphic() -> "GExpr":
+  #   return  goutermorphic
 
 
-  gsimplify = lambda x:x
-
-  # @classmethod
-  # def gexpand(expr):
-  #   return expr
-  gexpand = lambda x:x
-
-  ghigher = lambda x:x
-
-  # gdistribute = lambda x:x
-  # def gsimplify(self):
-  #   return gsimplification(self)
 
 
 from libs.Sygal.operators.assop.gadd import gadd
@@ -165,15 +176,12 @@ from libs.Sygal.operators.binop.grcntrct import grcntrct
 from libs.Sygal.operators.binop.glcntrct import glcntrct
 
 from libs.Sygal.operators.binop.outermorphic.outermorphic import outermorphic
-from libs.Sygal.operators.binop.outermorphic.isomorphic.inversion import inversion as ginversion
-from libs.Sygal.operators.binop.outermorphic.projection import projection as gprojection
-from libs.Sygal.operators.binop.outermorphic.rejection import rejection as grejection 
+from libs.Sygal.operators.binop.outermorphic.projection import projection 
+from libs.Sygal.operators.binop.outermorphic.rejection import rejection  
 
-from libs.Sygal.operators.binop.outermorphic.isomorphic.isomorphic import isomorphic as gisomorphic
-from libs.Sygal.operators.binop.outermorphic.outermorphic import outermorphic as goutermorphic
+from libs.Sygal.operators.binop.outermorphic.isomorphic.isomorphic import isomorphic
+from libs.Sygal.operators.binop.outermorphic.isomorphic.inversion import inversion  
 
-
-# This style causes errors
-# from libs.Sygal.operators import (gadd,ganticomm,gcomm,gextp,ginprdct,glcntrct,gmul,grcntrct)
-
-# from libs.Sygal.operators.hdef import hdef,inversion as ginversion,projection as gprojection,rejection as grejection
+from libs.Sygal.operators.binop.outermorphic.isomorphic.transforms.dilation import dilation 
+from libs.Sygal.operators.binop.outermorphic.isomorphic.transforms.translation import translation 
+from libs.Sygal.operators.binop.outermorphic.isomorphic.transforms.rotation import rotation

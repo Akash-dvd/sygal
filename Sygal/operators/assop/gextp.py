@@ -1,6 +1,7 @@
 from libs.Sygal.imports.import1head import *
 from libs.Sygal.operators.assop.assop import assop
 
+# defDic = defaultdict(lambda x:None)
 
 class gextp(assop):
 
@@ -17,6 +18,9 @@ class gextp(assop):
     tmvs = [bx.mv for bx in t1 if bx.mv!=Box.nl]
     cfs = [bx.coeff for bx in t1]
     cf = Mul(*cfs)
+
+    if cf == S(0):
+      return(GExpr.Znl)
     
     # Pattern Matching for # of args for associative op
     if tmvs == []:
@@ -24,70 +28,78 @@ class gextp(assop):
     elif len(tmvs)==1:
       return Box.__new__(Box,mv=tmvs[0],coeff=cf)
     else:
-      expr1 = Basic.__new__(gextp, *tmvs)
+      MV1 = Basic.__new__(gextp, *tmvs)
+      
+
       # For flattening
       # Here Altering with args so pattern matching is required
       # But this canocalize doesn't reduce the args ever
-      expr2 = canonicalize1(expr1)
+      MV2 = canonicalize1(MV1)
       
       # More patternmatching
-      if(len(expr2.args)<=1):
+      if(len(MV2.args)<=1):
         # Not possible
         # to arrive here
-        raise ValueError
+        raise ValueError("How did u arrive here for gextp")
       
       # Repitition Check
-      if ((len(expr2.args)-len(set(expr2.args))) > 0):  
+      ###########################
+      if ((len(MV2.args)-len(set(MV2.args))) > 0):  
         return GExpr.Znl
 
-      # pseudoscalar check
 
-      ele.pSC() for ele in bx.args
-
-      if all(not isinstance(i, GExpr) for i in t1):
-        pass
-
-      if(is_unMixedGrade(expr2)):
+      # ordering
+      ###########################
+      if(is_unMixedGrade(MV2)):
         # For signed sorting
-        expr3 = canonicalize2(expr2)
+        MV3 = canonicalize2(MV2)
         # More patternmatching
-        if(len(expr3.args)<=1):
+        if(len(MV3.args)<=1):
         # Not possible
         # to arrive here
           raise ValueError
 
-        cf1 = Mul(parity(expr2.args,expr3.args),cf)
+        cf1 = Mul(parity(MV2.args,MV3.args),cf)
       else :
-        expr3 = expr2
+        MV3 = MV2
         cf1 = cf
-      bx = Box.__new__(Box,mv=expr3,coeff=cf1)
+
+
+      # pseudoscalar and rlDt check
+      ###########################
       
- 
-
-        
-
-
+      # prim check
+      # TODO remove it from here
+      # t2 = all([is_primitive(ele) for ele in MV3.args])
+      # if t2:
+      #   bx = Basic.__new__(Box,MV3,cf1)
+      #   bx_1 = primeta_treatment(bx)
+      #   bx_1.mv.rlDt = defaultdict(lambda:None)
+      #   return bx_1
       
-      return bx
+      # else:
+      MV4 = meta_treatment(MV3)
+      if MV4 == GExpr.Znl:
+        return GExpr.Znl
+      else :
+        MV4.rlDt = defaultdict(lambda:None)
+        bx = Box.__new__(Box,mv=MV4,coeff=cf1)
+        return bx
 
   @property
   def grade(self:"gextp") -> Union[set,frozenset]:
-    if(len(self.args)==1):
-      return self.args[0].grade
-    else:
-      t1 = set()
-      t2 = set()
-      t1.update(self.args[0].grade)
-      for i,argi in enumerate(self.args):
-        j=i+1
-        if(j<len(self.args)):
-          t2.clear()
-          arg2 = self.args[j].grade
-          for elem1 in t1:
-            for elem2 in arg2:
-              t2.add((elem2+elem1))
-          t1.clear()
-          t1.update(t2)
+    t1 = set()
+    t2 = set()
+    t1.update(self.args[0].grade)
+    for i,argi in enumerate(self.args):
+      j=i+1
+      if(j<len(self.args)):
+        t2.clear()
+        arg2 = self.args[j].grade
+        for elem1,elem2 in product(t1,arg2):
+          t2.add((elem2+elem1))
+        t1.clear()
+        t1.update(t2)
     return t2
 
   def sympystr(self,expr:"gextp") -> str:
@@ -153,6 +165,41 @@ class gextp(assop):
     t1 = t.reversion()
     return t1
 
+# def primeta_treatment(bx:"Box")->"Box":
+#   bx.mv.mtDt = spclst([])
+#   t1 = len(bx.mv.args)
+#   t2 = grd(t1,t1)
+#   bx.mv.mtDt.extend([spcdct({bx:t2})])
+#   return bx
+
+def meta_treatment(expr:gextp)->gextp:
+  
+
+  # if null list extend -> null list
+  # if null dict update -> null dict
+  acc_mtDt = spclst([])
+  spc_lst = spclst([])
+  spc_lst.extend(expr.args[0].mtDt)
+
+  for arg in expr.args[1:]:
+    # TODO
+    # Iterate over only the upere half on product    
+    acc_mtDt.extend([dct1+dct2 for dct1,dct2 in product(spc_lst,arg.mtDt)])
+
+    if bool(acc_mtDt):
+      spc_lst.clear()
+      spc_lst.extend(acc_mtDt)
+      acc_mtDt.clear()
+   
+    else:
+      return GExpr.nl
+  
+  if bool(spc_lst):
+    expr.mtDt = spc_lst
+    return expr
+  else :
+    return GExpr.Znl
+
 
 from libs.Sygal.operators.assop.higher.gextphigher import gextphigher
 from libs.Sygal.operators.assop.simplify.gextpsimp import gextpsimp
@@ -161,10 +208,10 @@ from libs.Sygal.operators.assop.expand.gextpexpand import gextpexpand
 from libs.Sygal.imports.import1tail import *
 
 rules1 = (
-    unpack,flatten
+  unpack,flatten
   )
 rules2 = (
-    rlGSortArgs,
+  rlGSortArgs,
   )
 
 

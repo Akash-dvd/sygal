@@ -7,6 +7,8 @@ from sympy import (
 from functools import reduce
 from collections import Iterable,defaultdict
 
+from libs.Sygal.utils.util import *
+
 from libs.Sygal.strategies.rl import (rm_id, glom, flatten, unpack, sort, distribute,subs, rebuild)
 from libs.Sygal.strategies.core import (null_safe, exhaust, memoize, condition,chain, tryit, do_one, debug, switch, minimize)
 from libs.Sygal.strategies.tools import subs, typed ,canon
@@ -14,7 +16,7 @@ from libs.Sygal.strategies.traverse import (top_down, bottom_up, bxsall, top_dow
 from libs.Sygal.strategies.tree import treeapply, greedy, allresults, brute
 from libs.Sygal.strategies.iters import higher_iter,simplify_iter ,expand_iter,bx_typed
 
-from libs.Sygal.GB import GB,GExpr,Box
+from libs.Sygal.GAtom import GAtom,GExpr,Box
 
 from libs.Sygal.operators.assop.gadd import gadd
 from libs.Sygal.operators.assop.gextp import gextp
@@ -66,35 +68,46 @@ i = sqrt(-1)
 (B1,B2,B3,B4,B5,B6) = symbols('B1 B2 B3 B4 B5 B6', commutative=False)
 
 
-a1 = GB("a1",1,pSC=lambda:GB.I41,dotdict={GB._oo:S(-1)})
-a2 = GB("a2",1,pSC=lambda:GB.I41,dotdict={GB._oo:S(-1)})
-a3 = GB("a3",1,pSC=lambda:GB.I41,dotdict={GB._oo:S(-1)})
-a4 = GB("a4",1,pSC=lambda:GB.I41,dotdict={GB._oo:S(-1)})
-b1 = GB("b1",1,pSC=lambda:GB.I41,dotdict={GB._oo:S(-1)})
-b2 = GB("b2",1,pSC=lambda:GB.I41,dotdict={GB._oo:S(-1)})
-b3 = GB("b3",1,pSC=lambda:GB.I41,dotdict={GB._oo:S(-1)})
-b4 = GB("b4",1,pSC=lambda:GB.I41,dotdict={GB._oo:S(-1)})
-c1 = GB("c1",1,pSC=lambda:GB.I41,dotdict={GB._oo:S(-1)})
-c2 = GB("c2",1,pSC=lambda:GB.I41,dotdict={GB._oo:S(-1)})
-c3 = GB("c3",1,pSC=lambda:GB.I41,dotdict={GB._oo:S(-1)})
-c4 = GB("c4",1,pSC=lambda:GB.I41,dotdict={GB._oo:S(-1)})
-d1 = GB("d1",1,pSC=lambda:GB.I41,dotdict={GB._oo:S(-1)})
-d2 = GB("d2",1,pSC=lambda:GB.I41,dotdict={GB._oo:S(-1)})
-d3 = GB("d3",1,pSC=lambda:GB.I41,dotdict={GB._oo:S(-1)})
-d4 = GB("d4",1,pSC=lambda:GB.I41,dotdict={GB._oo:S(-1)})
+
+mtDt = {GExpr.I41:1}
+rlDt = defaultdict(lambda x:None)
+rlDt.update({GExpr._oo:S(-1)})
+rlDt_n = defaultdict(lambda x:None)
+rlDt_n.update({GExpr._oo:S(-1),"self":S(0)})
+
+
+
+a1 = GAtom("a1",mtDt,rlDt)
+a2 = GAtom("a2",mtDt,rlDt)
+a3 = GAtom("a3",mtDt,rlDt)
+a4 = GAtom("a4",mtDt,rlDt)
+b1 = GAtom("b1",mtDt,rlDt)
+b2 = GAtom("b2",mtDt,rlDt)
+b3 = GAtom("b3",mtDt,rlDt)
+b4 = GAtom("b4",mtDt,rlDt)
+c1 = GAtom("c1",mtDt,rlDt)
+c2 = GAtom("c2",mtDt,rlDt)
+c3 = GAtom("c3",mtDt,rlDt)
+c4 = GAtom("c4",mtDt,rlDt)
+d1 = GAtom("d1",mtDt,rlDt)
+d2 = GAtom("d2",mtDt,rlDt)
+d3 = GAtom("d3",mtDt,rlDt)
+d4 = GAtom("d4",mtDt,rlDt)
+
+o = GExpr.prim[0]
 rx = GExpr._rx
 oo = GExpr._oo
 
-na1 = GB("na1",1,pSC=lambda:GB.I41,dotdict={GB._oo:S(-1),'self':S(0)})
-na2 = GB("na2",1,pSC=lambda:GB.I41,dotdict={GB._oo:S(-1),'self':S(0)})
-na3 = GB("na3",1,pSC=lambda:GB.I41,dotdict={GB._oo:S(-1),'self':S(0)})
-nb1 = GB("nb1",1,pSC=lambda:GB.I41,dotdict={GB._oo:S(-1),'self':S(0)})
-nb2 = GB("nb2",1,pSC=lambda:GB.I41,dotdict={GB._oo:S(-1),'self':S(0)})
-nb3 = GB("nb3",1,pSC=lambda:GB.I41,dotdict={GB._oo:S(-1),'self':S(0)})
-nc1 = GB("nc1",1,pSC=lambda:GB.I41,dotdict={GB._oo:S(-1),'self':S(0)})
-nc2 = GB("nc2",1,pSC=lambda:GB.I41,dotdict={GB._oo:S(-1),'self':S(0)})
-nc3 = GB("nc3",1,pSC=lambda:GB.I41,dotdict={GB._oo:S(-1),'self':S(0)})
-nd1 = GB("nd1",1,pSC=lambda:GB.I41,dotdict={GB._oo:S(-1),'self':S(0)})
-nd2 = GB("nd2",1,pSC=lambda:GB.I41,dotdict={GB._oo:S(-1),'self':S(0)})
-nd3 = GB("nd3",1,pSC=lambda:GB.I41,dotdict={GB._oo:S(-1),'self':S(0)})
+na1 = GAtom("na1",mtDt,rlDt_n)
+na2 = GAtom("na2",mtDt,rlDt_n)
+na3 = GAtom("na3",mtDt,rlDt_n)
+nb1 = GAtom("nb1",mtDt,rlDt_n)
+nb2 = GAtom("nb2",mtDt,rlDt_n)
+nb3 = GAtom("nb3",mtDt,rlDt_n)
+nc1 = GAtom("nc1",mtDt,rlDt_n)
+nc2 = GAtom("nc2",mtDt,rlDt_n)
+nc3 = GAtom("nc3",mtDt,rlDt_n)
+nd1 = GAtom("nd1",mtDt,rlDt_n)
+nd2 = GAtom("nd2",mtDt,rlDt_n)
+nd3 = GAtom("nd3",mtDt,rlDt_n)
 

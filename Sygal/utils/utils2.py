@@ -11,29 +11,34 @@ from libs.Sygal.operators.binop.sclrprdct import sclrprdct
 from libs.Sygal.operators.binop.grcntrct import grcntrct
 from libs.Sygal.operators.binop.glcntrct import glcntrct
 
-def appendtoDict(eleBX,dict):
-  if issubclass(type(eleBX),GExpr):
-    # Unbox
-    ele_mv = eleBX.mv if type(eleBX) == Box else eleBX
-    for k,v in dict.items():
-      if issubclass(type(k),GExpr):
-        # Unbox
-        k_mv = k.mv if type(k) == Box else k
-        ele_mv.dotdict[k_mv] = v
-        # Making symmetric changes
-        if k_mv.dotdict[ele_mv] == v:
-          continue
-        elif k_mv.dotdict[ele_mv] == None:
-          k_mv.dotdict[ele_mv] = v
-        else :
-          raise ValueError("Inrprdct Values unsymmetic")
-      else :
-        raise ValueError("Element must be from GExpr decent.")      
-  else :
-    raise ValueError("Element must be from GExpr decent.")
+"""
+USAGE --
+
+ALLOWED    - PROJECTION, INVERSION, DILATION
+NOTALLOWED - GMUL, GADD, GLCNTRCT ETC  
+"""
 
 
-
+# def appendtoDict(eleBX,dict):
+#   if issubclass(type(eleBX),GExpr):
+#     # Unbox
+#     ele_mv = eleBX.mv if type(eleBX) == Box else eleBX
+#     for k,v in dict.items():
+#       if issubclass(type(k),GExpr):
+#         # Unbox
+#         k_mv = k.mv if type(k) == Box else k
+#         ele_mv.dotdict[k_mv] = v
+#         # Making symmetric changes
+#         if k_mv.dotdict[ele_mv] == v:
+#           continue
+#         elif k_mv.dotdict[ele_mv] == None:
+#           k_mv.dotdict[ele_mv] = v
+#         else :
+#           raise ValueError("Inrprdct Values unsymmetic")
+#       else :
+#         raise ValueError("Element must be from GExpr decent.")      
+#   else :
+#     raise ValueError("Element must be from GExpr decent.")
 
 def is_vecPerpendicularPair(args0:Union[Expr,GExpr],args1:Union[Expr,GExpr])->bool:
   # vec can be gadd(a1,a2) also
@@ -86,7 +91,7 @@ def is_scalarPair(args0:Union[Expr,GExpr],args1:Union[Expr,GExpr])->bool:
     return True
 
 def is_blade(expr:Union[Expr,GExpr])->bool:
-  raise NotImplemented
+  raise NotImplementedError
 
 def is_vecBlade(arg:Union[Expr,GExpr])->bool:
   # arguements must be either be of grade 1 or gextp each composed of grade 1 elements

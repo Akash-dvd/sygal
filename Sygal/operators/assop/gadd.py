@@ -16,16 +16,21 @@ class gadd(assop):
       return t1[0]
     else :
       
-      expr = canonicalize(Basic.__new__(gadd, *t1))
+      MV = canonicalize(Basic.__new__(gadd, *t1))
 
       # Here Altering with args so pattern matching is required
-      if(len(expr.args)>1):
-        return Box.__new__(Box,expr)
-      elif (len(expr.args)==1):
-        singarg = expr.args[0]
-        return Box.__new__(Box,singarg)
+      if(len(MV.args)>1):
+        MV1 = meta_treatment(MV)
+        MV1.rlDt = defaultdict(lambda:None)
+        t2 = Box.__new__(Box,MV1)
+        return t2
+      elif (len(MV.args)==1):
+        singarg = MV.args[0]
+        return singarg
       else:
         return Box.Znl
+      
+
 
   @property
   def grade(self:"gadd") -> Union[set,frozenset]:
@@ -124,6 +129,13 @@ def rlgaddgroupsort(expr):
   Sortedseq = sorted(filtered,key=lambda bx:(len(bx.mv.grade),next(iter(bx.mv.grade)),bx.mv.name,bx.mv.__hash__()))
 
   return Basic.__new__(gadd, *Sortedseq)
+
+def meta_treatment(expr:gadd)->gadd:
+  
+  expr.mtDt = spclst([]) 
+  for arg in expr.args:
+    expr.mtDt.extend(arg.mv.mtDt)
+  return expr
 
 rules1 = (
   rlgaddFlatten,rlgaddgroupsort
