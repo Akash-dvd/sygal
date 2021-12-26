@@ -14,6 +14,7 @@ from sympy.printing.str import StrPrinter
 
 from libs.Sygal.GExpr import GExpr
 from libs.Sygal.pSC import spclst
+from libs.Sygal.utils.util import relDt
 
 
 
@@ -40,8 +41,8 @@ class Box(GExpr):
       if(BX.mv!=GExpr.nl):
         raise
       t = new(Box,GExpr.nl,Mul(coeff,BX.coeff))
-      t.mv.mtDt = GExpr.Onl.mtDt
-      t.mv.rlDt = defaultdict(lambda:None)
+      t.mv.mtDt = GExpr.nl.mtDt
+      t.mv.rlDt = relDt()
       return t
     elif fct3:
       BX = mv
@@ -67,13 +68,13 @@ class Box(GExpr):
       # NO need to check for gadd
       if(mv == GExpr.nl):
         t = new(Box,GExpr.nl,coeff)
-        t.mv.mtDt = GExpr.Onl.mtDt
-        t.mv.rlDt = defaultdict(lambda:None)
+        t.mv.mtDt = GExpr.nl.mtDt
+        t.mv.rlDt = relDt()
         return t
       else:
         t = new(Box,GExpr.nl,Mul(mv,coeff))
-        t.mv.mtDt = GExpr.Onl.mtDt
-        t.mv.rlDt = defaultdict(lambda:None)
+        t.mv.mtDt = GExpr.nl.mtDt
+        t.mv.rlDt = relDt()
         return t
     # Non Zero grade
     elif fct1:
@@ -96,8 +97,8 @@ class Box(GExpr):
       if(coeff!=S(1)):
         raise
       t = new(Box,GExpr.nl,sympify(mv))
-      t.mv.mtDt = GExpr.Onl.mtDt
-      t.mv.rlDt = defaultdict(lambda:None)
+      t.mv.mtDt = GExpr.nl.mtDt
+      t.mv.rlDt = relDt()
       return t
 
   def sympystr(self,expr:"Box") -> str:
@@ -183,7 +184,7 @@ class Box(GExpr):
     return self.mv.mtDt
 
   @property
-  def rlDt(self:"Box")->defaultdict:
+  def rlDt(self:"Box")->relDt:
     return self.mv.rlDt
 
   @property
@@ -253,7 +254,7 @@ def rej_mtDt(expr):
     BX = expr
     cf = BX.coeff
     for i,k,v in enumerate(BX.mv.mtDt.items()):
-      if not k == GExpr.Onl:
+      if not k == GExpr.nl:
         if v == set(len(k.mv.args)):
           lst = [ele for ele in BX.mv.args if ele.mtDt[k] and len(ele.mtDt)==1 and len(ele.mtDt[k])==1]
           if len(k.mv.args) == reduce(lambda x,y:x.mv.mtDt[k]+y.mv.mtDt[k],lst) :
@@ -268,8 +269,8 @@ def rej_mtDt(expr):
             t_lst = gextp(*lst)
             iFrame = GExpr.pSCiFrmlst(GExpr.pSClst.index(k))
             bx = gextp(*cpydiffB)*(t_lst|iFrame)*sign1*cf
-            bx.mv.mtDt = defaultdict(lambda:None)
-            bx.mv.rlDt = defaultdict(lambda:None)
+            bx.mv.mtDt = relDt()
+            bx.mv.rlDt = relDt()
             return bx
   
         else :

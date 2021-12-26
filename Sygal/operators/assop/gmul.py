@@ -43,7 +43,7 @@ class gmul(assop):
       if MV3 == GExpr.Znl:
         return GExpr.Znl
       else :
-        MV3.rlDt = defaultdict(lambda:None)
+        MV3.rlDt = relDt()
         bx = Box.__new__(Box,mv=MV3,coeff=cf)
         return bx
 
@@ -275,34 +275,20 @@ def meta_treatment1(expr:gmul)->gmul:
 
               for k,v in pre_dct.items():
                 t3 = pre_dct[k].value-(t_dct1.get(k,Zval)).value
-                if t3 :
-                  t_dct11.update({k:grd(t3,pre_dct[k].limit)})
+                t_dct11.update({k:grd(t3,pre_dct[k].limit)})
               
-              if t_dct11:
-                pass
-              else :
-                t_dct11.update({GExpr.Onl:grd(0,0)})
 
               t_dct2.update({k:grd(p2[i],post_dct[k].limit) for i,k in enumerate(tup2)})
 
               for k,v in post_dct.items():
                 t4 = post_dct[k].value-(t_dct2.get(k,Zval)).value
-                if t4 :
-                  t_dct21.update({k:grd(t4,post_dct[k].limit)})
+                t_dct21.update({k:grd(t4,post_dct[k].limit)})
               
-              if t_dct21:
-                pass
-              else :
-                t_dct21.update({GExpr.Onl:grd(0,0)})
 
               t5 = t_dct1|t_dct2
               if t5 :
-                t6 = t_dct11+t_dct21
-                if bool(t6):
-                  acc_spc_lst.append(t_dct11+t_dct21)
-                else:
-                  acc_spc_lst.append(spcdct({GExpr.Onl:grd(0,0)}))
-            
+                acc_spc_lst.append(t_dct11+t_dct21)
+
             else :
               continue
     

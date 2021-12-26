@@ -33,8 +33,8 @@ class grcntrct(binop):
     # Check if zero grade .. Then call sclrprdct
     elif (is_singleGrade(tmvs[0])) and (tmvs[0].grade == tmvs[1].grade):
       MV = Basic.__new__(sclrprdct, *GSortArgs(tmvs))
-      MV.mtDt = spclst([{GExpr.Onl:grd(0,0)}])
-      MV.rlDt = defaultdict(lambda x:None)
+      MV.mtDt = spclst([{GExpr.nl:grd(0,0)}])
+      MV.rlDt = relDt()
       return(Box.__new__(Box,MV,coeff))
     else:
       MV = Basic.__new__(grcntrct, *tmvs)
@@ -44,7 +44,7 @@ class grcntrct(binop):
       if MV1 == GExpr.Znl:
         return GExpr.Znl
       else :
-        MV1.rlDt = defaultdict(lambda:None)
+        MV1.rlDt = relDt()
         bx = Box.__new__(Box,mv=MV1,coeff=coeff)
         return bx
 

@@ -34,7 +34,7 @@ class projection(outermorphic):
       if MV2 == GExpr.Znl:
         return GExpr.Znl
       else :
-        MV2.rlDt = defaultdict(lambda:None)
+        MV2.rlDt = relDt()
         bx = Box.__new__(Box,mv=MV2,coeff=coeff)
         return bx
 
@@ -137,7 +137,7 @@ def meta_treatment(expr:projection)->projection:
       
   # Special handling for t_spc_lst = [{[ॐ]: <0|0>}]
 
-  if t_spc_lst == spclst([spcdct({GExpr.Onl:grd(0,0)})]):
+  if t_spc_lst == spclst([spcdct({GExpr.nl:grd(0,0)})]):
     spc_lst.extend(down.mtDt)
   else :
     for up_dct,down_dct in product(t_spc_lst,down.mtDt):

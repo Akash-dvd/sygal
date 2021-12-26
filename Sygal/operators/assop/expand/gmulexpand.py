@@ -73,7 +73,6 @@ def mulexpansion(A,B):
           bx = Box.__new__(Box,mv,Mul(sign,coeff1))
           lst.append(bx)
         else :
-          # bx = Box.__new__(Box,GExpr.Onl*Mul(coeff,coeff1))
           bx = Box.__new__(Box,GExpr.nl,Mul(sign,coeff1))
           lst.append(bx)
   t = gadd(*lst)

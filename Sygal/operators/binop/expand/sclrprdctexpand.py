@@ -82,10 +82,10 @@ def sclprdct_expand1(expr:Expr)->Union[Expr,Box]:
     down = expr.down
     if is_vecBlade(up) and is_vecBlade(down):
       if(up.is_atom):#down will also be atom
-        bx_down = Basic.__new__(Box,down,S(1))
-        bx_up = Basic.__new__(Box,up,S(1))
-        t1 = up.rlDt[bx_down]
-        t2 = down.rlDt[bx_up]
+        # bx_down = Basic.__new__(Box,down,S(1))
+        # bx_up = Basic.__new__(Box,up,S(1))
+        t1 = up.rlDt[down]
+        t2 = down.rlDt[up]
         if t1 != None and t2 != None:
           if t1 == t2:
             return t1

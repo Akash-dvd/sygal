@@ -280,7 +280,7 @@ def rej_mtDt(expr):
     BX = expr
     cf = BX.coeff
     for i,k,v in enumerate(BX.mv.mtDt.items()):
-      if not k == GExpr.Onl:
+      if not k == GExpr.nl:
         if v == set(len(k.mv.args)):
           lst = [ele for ele in BX.mv.args if ele.mtDt[k] and len(ele.mtDt)==1 and len(ele.mtDt[k])==1]
           if len(k.mv.args) == reduce(lambda x,y:x.mv.mtDt[k]+y.mv.mtDt[k],lst) :
@@ -295,8 +295,8 @@ def rej_mtDt(expr):
             t_lst = gextp(*lst)
             iFrame = GExpr.pSCiFrmlst(GExpr.pSClst.index(k))
             bx = gextp(*cpydiffB)*(t_lst|iFrame)*sign1*cf
-            bx.mv.mtDt = defaultdict(lambda:None)
-            bx.mv.rlDt = defaultdict(lambda:None)
+            bx.mv.mtDt = relDt()
+            bx.mv.rlDt = relDt()
             return bx
   
         else :

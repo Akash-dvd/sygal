@@ -22,8 +22,8 @@ class sclrprdct(binop):
           return GExpr.Onl*coeff
         else :
           MV = Basic.__new__(sclrprdct, *GSortArgs(tmvs))
-          MV.mtDt = spclst([{GExpr.Onl:grd(0,0)}])
-          MV.rlDt = defaultdict(lambda x:None)
+          MV.mtDt = spclst([{GExpr.nl:grd(0,0)}])
+          MV.rlDt = relDt()
           t = (Box.__new__(Box,MV,coeff))
           return t
 

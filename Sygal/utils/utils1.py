@@ -99,12 +99,12 @@ def is_unMixedGrade(args:GExpr)->bool:
   return True if len(t)==1 else False
 
 
-def is_primitive(arg:"GExpr")->bool:
+def is_primitive(arg:"Box")->bool:
   if type(arg) == Box:
-    return arg in GExpr.prim
+    return arg in GExpr.primbx
   elif issubclass(type(arg),GExpr):
     bx = Box.__new__(Box,arg)
-    return bx in GExpr.prim
+    return bx in GExpr.primmv
   else :
     return False
 

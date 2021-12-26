@@ -70,9 +70,9 @@ i = sqrt(-1)
 
 
 mtDt = {GExpr.I41:1}
-rlDt = defaultdict(lambda x:None)
+rlDt = relDt()
 rlDt.update({GExpr._oo:S(-1)})
-rlDt_n = defaultdict(lambda x:None)
+rlDt_n = relDt()
 rlDt_n.update({GExpr._oo:S(-1),"self":S(0)})
 
 
@@ -94,7 +94,7 @@ d2 = GAtom("d2",mtDt,rlDt)
 d3 = GAtom("d3",mtDt,rlDt)
 d4 = GAtom("d4",mtDt,rlDt)
 
-o = GExpr.prim[0]
+o = GExpr.primbx[0]
 rx = GExpr._rx
 oo = GExpr._oo
 

@@ -26,17 +26,16 @@ from libs.Sygal.operators.assop.gextp import gextp
 
 def pextp(*args) -> "Box":
   coeff = args[0]
-  tmv = [arg.mv for arg in args[1:]]
-  MV1 = Basic.__new__(gextp, *tmv)
-  bx = Basic.__new__(Box,MV1,coeff)
-  MV1.mtDt = spclst([])
+  tmvs = [arg.mv for arg in args[1:]]
+  MV = Basic.__new__(gextp, *tmvs)
+  MV.mtDt = spclst([])
   grdval = len(args)-1
   grade = grd(grdval,grdval)
   dct = spcdct({})
-  dct.sup_update({bx:grade})
-  MV1.mtDt.append(dct)
-  MV1.rlDt = defaultdict(lambda:None)
-  
+  dct.sup_update({MV:grade})
+  MV.mtDt.append(dct)
+  MV.rlDt = relDt()
+  bx = Basic.__new__(Box,MV,coeff)
   return bx
 
 class GAtom(GExpr,AtomicExpr):
@@ -58,12 +57,12 @@ class GAtom(GExpr,AtomicExpr):
 
     # Pattern match for rlDt -> dict
     if not rlDt:
-      rlDt = defaultdict(lambda x:None)
+      rlDt = relDt()
       rlDt.update({GExpr._oo:S(-1)})
     
     # Scalar Check
     if mtDt:
-      if mtDt == [{GExpr.Onl:grd(0,0)}]:
+      if mtDt == [{GExpr.nl:grd(0,0)}]:
         return GExpr.Onl
       else :
         pass
@@ -79,25 +78,22 @@ class GAtom(GExpr,AtomicExpr):
     return bx
 
   def dict_initializer(bx,t_rlDt):
-    rlDt = defaultdict(lambda:None)
+    rlDt = relDt()
 
     for k,v in t_rlDt.items():
       if k =="self":
-        rlDt[bx] = v
-      elif type(k) == Box:
-        rlDt[k] = v
+        rlDt.update({bx:v})
+      elif issubclass(type(k),GExpr):
+        rlDt.update({k:v})
       else :
         raise NotImplemented
-    bx.mv.rlDt.update(rlDt)
+    bx.mv.rlDt = rlDt
 
   def __new_stage2__(cls, name) -> Box:
     
     mv = GExpr.__new__(GAtom,name)
     mv.is_atom = True
 
-    mv.mtDt = defaultdict(lambda:None)
-    mv.rlDt = defaultdict(lambda:None)
-    
     bx = Basic.__new__(Box,mv,S(1))   
     return bx
 
@@ -131,31 +127,35 @@ class GAtom(GExpr,AtomicExpr):
       # t_grd._value = 0
       GExpr.Onl = GAtom.__xnew_cached_(GAtom,"\u0950")
       t_dct = dict.__new__(spcdct)
-      t_dct.sup_update({GExpr.Onl:grd(0,0)})
+      t_dct.sup_update({GExpr.Onl.mv:grd(0,0)})
       GExpr.Onl.mv.mtDt = spclst([t_dct])
-      GExpr.Onl.mv.rlDt = defaultdict(lambda x:None)
-      # GExpr.Onl.mv.mtDt = spclst([{GExpr.Onl:t_grd}])
+      GExpr.Onl.mv.rlDt = relDt()
+      # GExpr.Onl.mv.mtDt = spclst([{GExpr.nl:t_grd}])
       # GExpr.Onl.mv.rlDt = defDic derived from GExpr
 
+      GExpr.nl = GExpr.Onl.mv
+
       # To make sure Both Znl and Onl share same _nl
-      GExpr.Znl = Basic.__new__(Box,GExpr.Onl.mv,S(0)) 
+      GExpr.Znl = Basic.__new__(Box,GExpr.nl,S(0)) 
       GExpr.Znl.mv.mtDt = spclst([t_dct])
-      GExpr.Znl.mv.rlDt = defaultdict(lambda x:None)
+      GExpr.Znl.mv.rlDt = relDt()
       
-      GExpr.nl = GExpr.Znl.mv
+      
       
       #######################
 
       names = ['_o','_x','_y','_rx','_oo','_x1','_x2','_x3','_x4','_x5','_x6','_x7','_x8']
       
       prim = []
+      primmv = []
       
       for name in names:
         bx = GAtom.__xnew_cached_(GAtom, name)
         t_dct1 = dict.__new__(spcdct)
-        t_dct1.sup_update({bx:grd(1,1)})
+        t_dct1.sup_update({bx.mv:grd(1,1)})
         bx.mv.mtDt = spclst([t_dct1])
         prim.append(bx)
+        primmv.append(bx.mv)
 
       #######################
       _o  = prim[0]
@@ -174,17 +174,17 @@ class GAtom(GExpr,AtomicExpr):
       
       rel_dot = [[_o,_oo,S(-1)],[_x,_x,S(1)],[_y,_y,S(1)],[_rx,_rx,S(-1)],[_oo,_o,S(-1)],[_x1,_x1,S(1)],[_x2,_x2,S(1)],[_x3,_x3,S(1)],[_x4,_x4,S(1)],[_x5,_x5,S(1)],[_x6,_x6,S(1)],[_x7,_x7,S(1)],[_x8,_x8,S(1)]]
       
-      accu_def_rlDt = defaultdict(lambda :None)
-      tmpdict = defaultdict(lambda :None)
+      accu_def_rlDt = relDt()
+      tmpdict = relDt()
       
       for bx in prim:
-        tmpdict[bx] = S(0)
+        tmpdict.update({bx:S(0)})
       for bx in prim:
         newtmpdict = tmpdict.copy()
-        accu_def_rlDt[bx] = newtmpdict
+        accu_def_rlDt.update({bx:newtmpdict})
 
       for bx1,bx2,cf in rel_dot:
-        accu_def_rlDt[bx1][bx2] = cf
+        accu_def_rlDt[bx1].update({bx2:cf})
       for bx in prim:
         bx.mv.rlDt = accu_def_rlDt[bx]
 
@@ -193,19 +193,9 @@ class GAtom(GExpr,AtomicExpr):
       GExpr._oo = _oo 
       GExpr._rx = _rx
       
-      GExpr.prim = prim
-
-      # GExpr.I31 = _x^_y^_oo
-      # GExpr.I32 = _o^_x^_y
-      # GExpr.I41 = _o^_x^_y^_oo
-      # GExpr.I42 = _x^_y^_rx^_oo
-      # GExpr.I43 = _o^_x^_y^_rx
-      # GExpr.I5 = _o^_x^_y^_rx^_oo
-
-
-      # GExpr.I8 = _x1^_x2^_x3^_x4^_x5^_x6^_x7^_x8
-      # GExpr.I13 = GExpr.I5^GExpr.I8
-
+      GExpr.primbx = prim
+      GExpr.primmv = primmv
+      
       GExpr.I31 = pextp(S(1),_oo,_x,_y)
       GExpr.I32 = pextp(S(1),_o,_x,_y)
       GExpr.I41 = pextp(S(1),_o,_oo,_x,_y)
@@ -218,8 +208,15 @@ class GAtom(GExpr,AtomicExpr):
       GExpr.I13 = pextp(S(-1),_o,_oo,_rx,_x,_x1,_x2,_x3,_x4,_x5,_x6,_x7,_x8,_y)
 
 
-      GExpr.pSClst = [GExpr.Onl,_oo,_x,_y,GExpr.I31,_o,GExpr.I32,GExpr.I41,_rx,GExpr.I42,GExpr.I43,GExpr.I5,_x1,_x2,_x3,_x4,_x5,_x6,_x7,_x8,GExpr.I8,GExpr.I13]
+      GExpr.pSClst = [GExpr.nl,_oo.mv,_x.mv,_y.mv,GExpr.I31.mv,_o.mv,GExpr.I32.mv,GExpr.I41.mv,_rx.mv,GExpr.I42.mv,GExpr.I43.mv,GExpr.I5.mv,_x1.mv,_x2.mv,_x3.mv,_x4.mv,_x5.mv,_x6.mv,_x7.mv,_x8.mv,GExpr.I8.mv,GExpr.I13.mv]
+
       GExpr.pSCiFrmlst = [GExpr.Onl,_o*S(-1),_x,_y,GExpr.I32,_oo*S(-1),GExpr.I31,GExpr.I41*S(-1),_rx*S(-1),GExpr.I43*S(-1),GExpr.I42*S(-1),GExpr.I5,_x1,_x2,_x3,_x4,_x5,_x6,_x7,_x8,GExpr.I8,GExpr.I13]
+
+
+      GExpr.x = [GExpr.Onl,_oo,_x,_y,GExpr.I31,_o,GExpr.I32,GExpr.I41,_rx,GExpr.I42,GExpr.I43,GExpr.I5,_x1,_x2,_x3,_x4,_x5,_x6,_x7,_x8,GExpr.I8,GExpr.I13]
+      
+      GExpr.y = [GExpr.Onl,_o*S(-1),_x,_y,GExpr.I32,_oo*S(-1),GExpr.I31,GExpr.I41*S(-1),_rx*S(-1),GExpr.I43*S(-1),GExpr.I42*S(-1),GExpr.I5,_x1,_x2,_x3,_x4,_x5,_x6,_x7,_x8,GExpr.I8,GExpr.I13]
+
 
       GExpr.grdlmt = [
         # replace 9 by infinity

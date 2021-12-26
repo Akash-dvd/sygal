@@ -13,14 +13,26 @@ class spcdct(dict):    # -> Union[spcdct,None]
     if type(arg) == spcdct:
       super().__init__(arg)
     elif issubclass(type(arg),dict):
-      t = spcdct.standardize(arg)
+      t_arg = {}
+      for k,v in arg.items():
+        if (type(k).__name__ == "Box"):
+          k1 = k.mv
+        else :
+          k1 = k
+        t_arg.update({k1:v})
+
+      t = spcdct.standardize(t_arg)
       super().__init__(t)
     else :
       raise ValueError("Dict required as arguement")
 
-  def __getitem__(self, items):
-    if items in GExpr.pSClst:
-      return self.get(items,None)
+  def __getitem__(self, key):
+    if type(key).__name__ == "Box":
+      key1 = key.mv
+    else:
+      key1 = key
+    if key1 in GExpr.pSClst:
+      return self.get(key1,None)
     else :
       raise ValueError("Illegal pSC key")
 
@@ -55,8 +67,14 @@ class spcdct(dict):    # -> Union[spcdct,None]
   # TODO check grade-wise compatability 
   def __or__(self:"spcdct",other:"spcdct") -> bool:
     if type(other) == spcdct:
-      t1 = reduce(lambda x,y:x.value+y.value,self.values())
-      t2 = reduce(lambda x,y:x.value+y.value,other.values())
+      t1 = 0
+      for k,v in self.items():
+        t1 += v.value
+      t2 = 0
+      for k,v in self.items():
+        t2 += v.value
+      # t1 = reduce(lambda T1,T2:(T1.value)+(T2.value),list(self.values()))
+      # t2 = reduce(lambda T1,T2:T1.value+T2.value,list(other.values()))
       if t1 == t2:
         for k1,v1 in self.items():
           t_sum = 0
@@ -90,8 +108,13 @@ class spcdct(dict):    # -> Union[spcdct,None]
   def update(self:"spcdct",arg:Union[dict,"spcdct"]) -> None:
     if issubclass(type(arg), dict):
       t_dct = {}
+      for k,v in arg.items():
+        if (type(k).__name__ == "Box"):
+          k1 = k.mv
+        else :
+          k1 = k
+        t_dct.update({k1:v})
       t_dct.update(self)
-      t_dct.update(arg)
       t_dct1 = spcdct.standardize(t_dct)
       super().clear()
       super().update(t_dct1)
@@ -155,7 +178,7 @@ class spcdct(dict):    # -> Union[spcdct,None]
           t_dct.update({k:v})
 
       elif type(v) == int:
-        t_v = grd(v,len(k.mv.args))
+        t_v = grd(v,len(k.args))
         if t_v.value == None:
           return {}
         else:
@@ -174,7 +197,7 @@ class spcdct(dict):    # -> Union[spcdct,None]
       else:
         t_dct11.update({k:v})
     if not bool(t_dct11) and fct :
-      t_dct11.update({GExpr.Onl:grd(0,0)})
+      t_dct11.update({GExpr.nl:grd(0,0)})
       
     t_dct1.update(t_dct11)
     
@@ -188,11 +211,11 @@ class spcdct(dict):    # -> Union[spcdct,None]
     # {oo:1,o:1,I41:1} -> {I41:3}
     t_dct3 = {}
     for i,(k,v) in enumerate(t_dct2.items()):
-      if k not in GExpr.prim:
+      if k not in GExpr.primmv:
         t_dct3.update({k:v})
-      elif k in GExpr.prim:
+      elif k in GExpr.primmv:
         for j,(k1,v1) in enumerate(list(t_dct2.items())[i+1:]):
-          if k1 not in GExpr.prim and k in k1.mv.args:
+          if k1 not in GExpr.primmv and k in k1.args:
             v1.add(1)
             if v1.value == None:
               return {}

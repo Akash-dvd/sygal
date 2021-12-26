@@ -82,7 +82,7 @@ class gextp(assop):
       if MV4 == GExpr.Znl:
         return GExpr.Znl
       else :
-        MV4.rlDt = defaultdict(lambda:None)
+        MV4.rlDt = relDt()
         bx = Box.__new__(Box,mv=MV4,coeff=cf1)
         return bx
 

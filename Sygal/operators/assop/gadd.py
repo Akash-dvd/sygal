@@ -21,7 +21,7 @@ class gadd(assop):
       # Here Altering with args so pattern matching is required
       if(len(MV.args)>1):
         MV1 = meta_treatment(MV)
-        MV1.rlDt = defaultdict(lambda:None)
+        MV1.rlDt = relDt()
         t2 = Box.__new__(Box,MV1)
         return t2
       elif (len(MV.args)==1):
