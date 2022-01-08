@@ -28,7 +28,7 @@ inversion(a1,a2)),
 ]
 
 def test_is_invertiblePair():
-  assert reduce(lambda x, y: x and y, [is_invertiblePair(ele1, ele2) for ele1,ele2 in test_cases1])
+  assert all([is_scalarPair(ele1, ele2) for ele1,ele2 in test_cases1])
 
 
 test_cases2 = [
@@ -44,7 +44,7 @@ a1*a2),
 ]
 
 def test_is_not_invertiblePair():
-  assert not reduce(lambda x, y: x and y, [is_invertiblePair(ele1, ele2) for ele1,ele2 in test_cases2])
+  assert not reduce(lambda x, y: x and y, [is_scalarPair(ele1, ele2) for ele1,ele2 in test_cases2])
 
 
 def test_is_null():

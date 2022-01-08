@@ -14,7 +14,7 @@ from libs.Sygal.strategies.core import (null_safe, exhaust, memoize, condition,c
 from libs.Sygal.strategies.tools import subs, typed ,canon
 from libs.Sygal.strategies.traverse import (top_down, bottom_up, bxsall, top_down_once,bottom_up_once,spe_traverse,gen_traverse)
 from libs.Sygal.strategies.tree import treeapply, greedy, allresults, brute
-from libs.Sygal.strategies.iters import higher_iter,simplify_iter ,expand_iter,bx_typed
+from libs.Sygal.strategies.iters import higher_iter,canon_iter ,expand_iter,bx_typed
 
 from libs.Sygal.GAtom import GAtom,GExpr,Box
 
@@ -111,3 +111,21 @@ nd1 = GAtom("nd1",mtDt,rlDt_n)
 nd2 = GAtom("nd2",mtDt,rlDt_n)
 nd3 = GAtom("nd3",mtDt,rlDt_n)
 
+mtDt1 = {GExpr.I13:1}
+
+A1 = GAtom("A1",mtDt1,rlDt)
+A2 = GAtom("A2",mtDt1,rlDt)
+A3 = GAtom("A3",mtDt1,rlDt)
+A4 = GAtom("A4",mtDt1,rlDt)
+B1 = GAtom("B1",mtDt1,rlDt)
+B2 = GAtom("B2",mtDt1,rlDt)
+B3 = GAtom("B3",mtDt1,rlDt)
+B4 = GAtom("B4",mtDt1,rlDt)
+C1 = GAtom("C1",mtDt1,rlDt)
+C2 = GAtom("C2",mtDt1,rlDt)
+C3 = GAtom("C3",mtDt1,rlDt)
+C4 = GAtom("C4",mtDt1,rlDt)
+D1 = GAtom("D1",mtDt1,rlDt)
+D2 = GAtom("D2",mtDt1,rlDt)
+D3 = GAtom("D3",mtDt1,rlDt)
+D4 = GAtom("D4",mtDt1,rlDt)

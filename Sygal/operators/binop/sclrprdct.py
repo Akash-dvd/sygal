@@ -16,21 +16,21 @@ class sclrprdct(binop):
     if coeff == S(0):
       return(GExpr.Znl)
       
-    if( len(tmvs[0].grade) == 1 and len(tmvs[1].grade) == 1):
-      if tmvs[0].grade == tmvs[1].grade:
-        if tmvs[0].grade == {0}:
-          return GExpr.Onl*coeff
+    if is_uniGraded(tmvs[0]) and (tmvs[0].grade == tmvs[1].grade):
+      if tmvs[0].grade == {0}:
+        return GExpr.Onl*coeff
+      else :
+        MV = Basic.__new__(sclrprdct, *GSortArgs(tmvs))
+        MV1 = meta_treatment(MV)
+        if MV1 == GExpr.Znl:
+          return GExpr.Znl
         else :
-          MV = Basic.__new__(sclrprdct, *GSortArgs(tmvs))
-          MV.mtDt = spclst([{GExpr.nl:grd(0,0)}])
-          MV.rlDt = relDt()
-          t = (Box.__new__(Box,MV,coeff))
-          return t
+          MV1.rlDt = relDt()
+          bx = Box.__new__(Box,mv=MV1,coeff=coeff)
+          return bx
 
-      else:
-        raise ValueError("Both args must be of single equal grade")
     else:
-      raise ValueError("Both args must be of single grade")
+      raise ValueError("Both args must be eq-uni graded")
 
   # @property
   # def grade(self:"sclrprdct")->Union[set,frozenset]:
@@ -87,6 +87,16 @@ class sclrprdct(binop):
   def down(self:"sclrprdct")->"GExpr":
     return self.args[1]
 
+def meta_treatment(expr:sclrprdct)->sclrprdct:
+  up_dct = expr.up.mtDt[0]
+  down_dct = expr.down.mtDt[0]
+  if up_dct|down_dct:
+    expr.mtDt = spclst([{GExpr.nl:0}])
+    return expr
+  else :
+    return GExpr.Znl
+
+
 from libs.Sygal.imports.import1tail import *
 
 if is_devmode():
@@ -95,9 +105,9 @@ else :
   StrPrinter._print_sclrprdct = sclrprdct.sympystr
 
 from libs.Sygal.operators.binop.higher.sclrprdcthigher import sclrprdcthigher
-from libs.Sygal.operators.binop.simplify.sclrprdctsimp import sclrprdctsimp
+from libs.Sygal.operators.binop.canon.sclrprdctcanon import sclrprdctcanon
 from libs.Sygal.operators.binop.expand.sclrprdctexpand import sclrprdctexpand
 
 sclrprdcthigher()
-sclrprdctsimp()
+sclrprdctcanon()
 sclrprdctexpand()

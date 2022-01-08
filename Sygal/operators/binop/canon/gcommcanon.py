@@ -1,0 +1,2 @@
+def gcommcanon():
+  pass

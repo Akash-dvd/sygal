@@ -31,11 +31,9 @@ class grcntrct(binop):
       return Box.Znl
 
     # Check if zero grade .. Then call sclrprdct
-    elif (is_singleGrade(tmvs[0])) and (tmvs[0].grade == tmvs[1].grade):
-      MV = Basic.__new__(sclrprdct, *GSortArgs(tmvs))
-      MV.mtDt = spclst([{GExpr.nl:grd(0,0)}])
-      MV.rlDt = relDt()
-      return(Box.__new__(Box,MV,coeff))
+    elif is_uniGraded(tmvs[0]) and (tmvs[0].grade == tmvs[1].grade):
+      MV = sclrprdct(*tmvs)
+      return MV
     else:
       MV = Basic.__new__(grcntrct, *tmvs)
       # pseudoscalar and rlDt check
@@ -131,7 +129,7 @@ def meta_treatment(expr:grcntrct)->grcntrct:
         for p1 in part1:
           t_dct1 = spcdct({})
           t_dct11 = spcdct({})
-          t = all([down_dct[k]>=p1[i] for i,k in enumerate(tup)])
+          t = all([down_dct[k].value>=p1[i] for i,k in enumerate(tup)])
 
           if t :
             t_dct1.update({k:grd(p1[i],down_dct[k].limit) for i,k in enumerate(tup)})
@@ -153,76 +151,11 @@ def meta_treatment(expr:grcntrct)->grcntrct:
   else :
     return GExpr.Znl
 
-def meta_treatment1(expr:grcntrct)->grcntrct:
-  up = expr.up
-  down = expr.down
-  Zval = grd(0,0)
-  spc_lst = spclst([])
-  for up_dct,down_dct in product(up.mtDt,down.mtDt):
-
-    up_dct_grd = 0
-    down_dct_grd = 0
-
-
-    for k,v in up_dct.items():
-      up_dct_grd+=v.value
-    
-    for k,v in down_dct.items():
-      down_dct_grd+=v.value
-    
-    if up_dct_grd>down_dct_grd:
-      continue
-
-
-    for size in range(1,len(down_dct)+1):
-
-      keys_tup = list(subsets(down_dct,size))
-
-      # x1 = (list(kbins([1]*x, size, ordered=None)))
-      lst_distri = (list(kbins([1]*up_dct_grd, size)))
-
-      lst_distri1 = []
-      for ele1 in lst_distri:
-        lst1 = []
-        for ele2 in ele1:
-          lst1.append(reduce(lambda x,y:x+y,ele2))
-        lst_distri1.append(lst1)
-
-      # subsets(down_dct) -> keys_tup -> k_tup_i
-      # [(k1,k2...)] -> [(k1,k2),(k2,k3)] -> (k2,k3)
-      # kbins([1]*up_dct_grd -> lst_distri -> lst_distri1 -> lst_distri1_i
-      # [[[1,1,1]]] -> [[1,1],[1]] -> [[2],[2,3]] -> [2,3]
-      for k_tup_i,lst_distri1_i in product(keys_tup,lst_distri1):
-        t_dct1 = spcdct({})
-        t_dct2 = spcdct({})
-        t_lst = [down_dct[k].value>=lst_distri1_i[i] for i,k in enumerate(k_tup_i)]
-        t = reduce(lambda x,y:x and y,t_lst)
-        if t :
-          t_dct1.update({k:grd(lst_distri1_i[i],down_dct[k].limit) for i,k in enumerate(k_tup_i)})
-
-          for k,v in down_dct.items():
-            t1 = down_dct[k].value-(t_dct1.get(k,Zval)).value
-            if t1:
-              t_dct2.update({k:grd(t1,down_dct[k].limit)})
-          
-          t2 = up_dct|t_dct1
-
-          if t2 :
-            spc_lst.append(t_dct2)
-
-        else:
-          continue
-  if bool(spc_lst):
-    expr.mtDt = spc_lst
-    return expr
-  else :
-    return GExpr.Znl
-
 
 from libs.Sygal.imports.import1tail import *
 
 from libs.Sygal.operators.binop.higher.grcntrcthigher import grcntrcthigher
-from libs.Sygal.operators.binop.simplify.grcntrctsimp import grcntrctsimp
+from libs.Sygal.operators.binop.canon.grcntrctcanon import grcntrctcanon
 from libs.Sygal.operators.binop.expand.grcntrctexpand import grcntrctexpand
 
 
@@ -232,5 +165,5 @@ else :
   StrPrinter._print_grcntrct = grcntrct.sympystr
 
 grcntrcthigher()
-grcntrctsimp()
+grcntrctcanon()
 grcntrctexpand()

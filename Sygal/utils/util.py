@@ -1,7 +1,7 @@
 from typing import Tuple, TypeVar, Callable, Dict, Sequence, List, Optional, Union
 
 from collections.abc import Iterable
-
+from sympy.combinatorics.permutations import Permutation
 from sympy.utilities.iterables import kbins
 from functools import reduce
 from collections import defaultdict
@@ -25,60 +25,38 @@ def kbin_distri(range:int,bin:int) -> list:
     part1.append(lst1)
   return part1
 
-
-class relDt(dict):
-
-  def __init__(self:"relDt",*args) -> None:
-    if len(args) == 0:
-      super().__init__()
-    elif len(args) == 1:
-      arg = args[0]
-      if type(arg) == relDt:
-        super().__init__(arg)
-        return None
-      elif issubclass(type(arg),dict):
-        t_dict = {}
-        for k,v in arg.items():
-          if type(k).__name__ == "Box":
-            if k.coeff == S(1): 
-              k1 = k.mv
-            else:
-              raise ValueError("Box has non-1 coeff")
-          else:
-            k1 = k
-          t_dict[k1] = v
-        super().__init__(t_dict)
-      else :
-        raise ValueError("Dict required as arguement")
-    else:
-      raise ValueError("More tahn one arguement not allowed")
+def parity(args1:List,args2:List)->S:
+  # ASSUMPTIONS
+  # both arguements have unmixed grades
+  # remove even grades , they are transparent to positional changes
   
-  def update(self:"relDt",arg:Union[dict,"relDt"]) -> None:
-    if issubclass(type(arg), dict):
-      t_dct = {}
-      t_dct.update(self)
-      for k,v in arg.items():
-        if (type(k).__name__ == "Box"):
-          k1 = k.mv
-        else :
-          k1 = k
-        t_dct.update({k1:v})
-      super().clear()
-      super().update(t_dct)
-
-    else :
-      ValueError("Arg must be type spcdct")
-
-  def __getitem__(self:"relDt", key)  -> "relDt" :
-    if type(key).__name__ == "Box":
-      key1 = key.mv
-    else:
-      key1 = key
-    return self.get(key1,None)
-
-  def __setitem__(self:"relDt", key, newvalue) -> "relDt":
-    raise NotImplementedError
+  # Reimplement using something from permutation library
+  t1 = [i for i in args1 if next(iter(i.grade))%2==1 ]
+  d1 = dict()
+  t2 = [i for i in args2 if next(iter(i.grade))%2==1 ]
   
-  def copy(self) -> "relDt":
-    t = relDt(super().copy())
-    return t
+  for index, value in enumerate(t1):
+    d1[value.__hash__()] = [index]
+
+  for index, value in enumerate(t2):
+    d1[value.__hash__()].append(index)
+  
+  perm = []
+  for index, (key, value) in enumerate(d1.items()):
+    perm.append(value)
+  
+  perm1 = sorted(perm,key=lambda ele:ele[1])
+  perm2 = [i[0] for i in perm1]
+
+  p = Permutation(perm2)
+
+  return S((p.parity()*-2)+1)
+
+def GSortArgs(seq:Union[list,tuple],reverse:bool=False) -> Union[list,tuple]:
+  """
+  Sort Paritioned arguements based on Grades,names
+  Complex arguement are put at last sorted by sum of their weights
+  """
+
+  newseq = sorted(seq,key=lambda ele:(len(ele.grade),next(iter(ele.grade)),ele.name,ele.__hash__()),reverse=reverse)
+  return newseq

@@ -65,5 +65,5 @@ def sclrprdctconcat_rl(expr):
 
 
 
-def sclrprdctsimp():
-  sclrprdct.gsimplify = exhaust(do_one(sclrprdctconcat_rl,))
+def sclrprdctcanon():
+  sclrprdct.gcanonicalization = exhaust(do_one(sclrprdctconcat_rl,))

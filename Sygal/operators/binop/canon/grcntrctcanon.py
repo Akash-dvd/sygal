@@ -52,7 +52,7 @@ def Rcntrct2Lcntrct(expr):
     cf = BX.coeff
     if(type(BX.mv.down)==grcntrct):
       tu = BX.mv.up
-      td = BX.mv.down.up
+      td = BX.mv.down
       if( is_unMixedGrade(tu) and is_unMixedGrade(td)):
         t1 = glcntrct(tu,td)
         sign1 = next(iter(tu.grade))%2
@@ -67,5 +67,5 @@ def Rcntrct2Lcntrct(expr):
     return expr
 
 
-def grcntrctsimp():
-  grcntrct.gsimplify = exhaust(do_one(Rcntrct2Lcntrct,rcntrctconcat_rl))
+def grcntrctcanon():
+  grcntrct.gcanonicalization = exhaust(do_one(Rcntrct2Lcntrct,rcntrctconcat_rl))

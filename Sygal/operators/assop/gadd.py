@@ -31,14 +31,6 @@ class gadd(assop):
         return Box.Znl
       
 
-
-  @property
-  def grade(self:"gadd") -> Union[set,frozenset]:
-    t = set()
-    for i in self.args:
-      t.update(i.grade)
-    return t
-
   def sympystr(self,expr:"gadd") -> str:
     return str(expr)
 
@@ -150,12 +142,12 @@ canonicalize = exhaust(typed({gadd: do_one(*rules1)}))
 
 
 from libs.Sygal.operators.assop.higher.gaddhigher import gaddhigher
-from libs.Sygal.operators.assop.simplify.gaddsimp import gaddsimp
+from libs.Sygal.operators.assop.canon.gaddcanon import gaddcanon
 from libs.Sygal.operators.assop.expand.gaddexpand import gaddexpand
 
 
 gaddhigher()
-gaddsimp()
+gaddcanon()
 gaddexpand()
 
 from libs.Sygal.imports.import1tail import *
@@ -164,3 +156,11 @@ if is_devmode():
   StrPrinter._print_gadd = gadd.sympyrepr
 else :
   StrPrinter._print_gadd = gadd.sympystr
+
+
+  # @property
+  # def grade(self:"gadd") -> Union[set,frozenset]:
+  #   t = set()
+  #   for i in self.args:
+  #     t.update(i.grade)
+  #   return t

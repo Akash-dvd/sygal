@@ -118,7 +118,7 @@ def meta_treatment(expr:projection)->projection:
         for p1 in part1:
           t_dct1 = spcdct({})
           t_dct11 = spcdct({})
-          t = all([down_dct[k]>=p1[i] for i,k in enumerate(tup)])
+          t = all([down_dct[k].value>=p1[i] for i,k in enumerate(tup)])
 
           if t :
             t_dct1.update({k:grd(p1[i],down_dct[k].limit) for i,k in enumerate(tup)})
@@ -162,7 +162,7 @@ def meta_treatment(expr:projection)->projection:
           for p1 in part1:
             t_dct1 = spcdct({})
             t_dct11 = spcdct({})
-            t = all([down_dct[k]>=p1[i] for i,k in enumerate(tup)])
+            t = all([down_dct[k].value>=p1[i] for i,k in enumerate(tup)])
 
             if t :
               t_dct1.update({k:grd(p1[i],down_dct[k].limit) for i,k in enumerate(tup)})
@@ -193,9 +193,9 @@ else :
 
 
 from libs.Sygal.operators.binop.outermorphic.higher.projectionhigher import projectionhigher
-from libs.Sygal.operators.binop.outermorphic.simplify.projectionsimp import projectionsimp
+from libs.Sygal.operators.binop.outermorphic.canon.projectioncanon import projectioncanon
 from libs.Sygal.operators.binop.outermorphic.expand.projectionexpand import projectionexpand
 
 projectionhigher()
-projectionsimp()
+projectioncanon()
 projectionexpand()

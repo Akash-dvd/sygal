@@ -97,7 +97,7 @@ class dilation(transforms):
 
 
 from libs.Sygal.operators.binop.outermorphic.isomorphic.higher.inversionhigher import inversionhigher
-from libs.Sygal.operators.binop.outermorphic.isomorphic.simplify.inversionsimp import inversionsimp
+from libs.Sygal.operators.binop.outermorphic.isomorphic.canon.inversioncanon import inversioncanon
 from libs.Sygal.operators.binop.outermorphic.isomorphic.expand.inversionexpand import inversionexpand
 
 # from libs.Sygal.utils.utils import is_devmode
@@ -108,5 +108,5 @@ else :
   StrPrinter._print_inversion = inversion.sympystr
 
 inversionhigher()
-inversionsimp()
+inversioncanon()
 inversionexpand()

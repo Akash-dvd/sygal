@@ -35,7 +35,7 @@ def test_gmul_simp():
   
   ]
 
-  assert reduce(lambda x,y: x and y, [simplify_iter(gmul)(x) == y for x, y in test_cases1])
+  assert reduce(lambda x,y: x and y, [canon_iter(gmul)(x) == y for x, y in test_cases1])
 
 # Higher
 
@@ -104,6 +104,7 @@ def test_gmul_2Proj():
 
 
 def test_gmul_2Rej():
+
   """
   7)  Check higher def to rej
   """

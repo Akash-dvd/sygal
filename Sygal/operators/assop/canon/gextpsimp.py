@@ -16,29 +16,40 @@ from libs.Sygal.operators.binop.outermorphic.projection import projection
 from libs.Sygal.operators.binop.outermorphic.rejection import rejection
 
 
-
 new = gextp.__new__
+
 
 """
 7)  Check simplification for inv,pro,rej
+
 TODO
 TODO
 TODO
 TODO
-((a1^a2..a_r)<((b1..br)^(c1..cm)))^((a1..a_r)<((b1..br)^(d1..dn))) ==
-(a1^a2..a_r)<((b1..br)^(c1..cm)^(d1..dn))
-Will be done after implementing dot product and multiplication.
+
+t1 = ((a1^a2)<(b1^b2^c1^c2))^((a1^a2)<(b1^b2^d1^d2))^((a1^a2)<(d1^d2^b4^c4))
+t1_1 = (((a1^a2)|(b1^b2))*((a1^a2)|(d1^d2)))*((a1^a2)<(b1^b2^c1^c2^d1^d2^b4^c4))
+
+t2 = ((a1^a2)<(b1^b2^b3))^((a1)<((a2<(b1^b2))^b3))
+t2_1 = ((a1^a2)<(b1^b2))*((a1)<(b3^(a2<(b1^b2^b3))))
+
+ta = ((a1^a2^a3)<(b1^b2^b3^c1^c2))^((a1^a2^a3)<(b1^b2^b3^d1^d2))^((a1^a2^a3)<(b1^b2^b3^b4^c4))
+ta_1 = ((a1^a2^a3)|(b1^b2^b3))**2*((a1^a2^a3)<(b1^b2^b3^c1^c2^d1^d2^b4^c4))
+
+Ta = (d1<(a1^a2^(d2<(b1^b2^(d3<(c1^c2^c3))))))^(d1<(a3^a4^(d2<(b3^b4^(d3<(c1^c2^c3^c4))))))
+
+Ta_1 = ((d1^d2^d3)|(c1^c2^c3))*(d1<(a1^a2^a3^a4^(d2<(b1^b2^b3^b4^(d3<(c1^c2^c3^c4))))))
 """
 
-class concat():  
+class concat():
     
   @staticmethod
   def sandhi(expr:GExpr,depth:int = 0) -> GExpr:
     """bottom up conjugation by rlzero of single layer sub_sandhi
     
     """
-    fn1 = concat.sandhi0(depth)
-    fn = bottom_up(conjugation(rlZero,fn1))
+    # fn = bottom_up(conjugation(rlZero,fn1))
+    fn = bottom_up(concat.sandhi0(depth))
     return fn(expr)
 
   @staticmethod
@@ -55,7 +66,7 @@ class concat():
       Then calls aggregator function to merge the indexes of lncrt or rncrt structures.
       lst2 = [(_rx, 0, 1, 4), (_oo, 2, 3)]
 
-      Following this it call sub_sandhi1 on each tuple.(_rx, 0, 1, 4). BBut instead of indexes supplies list of denominator values of corresponding indexes.
+      Following this it call sub_sandhi1 on each tuple.(_rx, 0, 1, 4). But instead of indexes supplies list of denominator values of corresponding indexes.
       It expects the merhed version of the supplied indexes.
       It keeps appening the results to the arg list and After the list is exhausted it deletes the older arguements.
       Then recreates the expr with new args and returns.
@@ -113,6 +124,7 @@ class concat():
       
       return expr
     return sandhi1 
+  
   @staticmethod
   def aggregator(lst:List[GExpr]) -> List[GExpr]:
     """
@@ -155,7 +167,6 @@ class concat():
     expr3Set.update(set(expr2.args))
     ln2 = len(expr3Set)
     
-
     arg1 = tuple(expr3Set)
     sub1 = expr1.func(*arg1)
 
@@ -185,9 +196,6 @@ class concat():
     else:
       return [S(0)]
 
-
-# expr = a2^(a1<((b1<(a1^a2)^b2)))^(a1<((b1<(a3^a2)^b3)))
-# concat.sandhi(expr)
 
 def inv_gextp(expr):
 
@@ -266,45 +274,6 @@ def rej_gextp(expr):
     return expr
 
 ############################
-# mtDt ceiling touch simple and complex
-# replace or merge when ceiling is touched
-# {I3:3,I41:1} -> replace with I3
-# {I3:2,I41:2} -> {I41:4}
-def rej_mtDt(expr):
-  return expr
-  ################
-  # replace or merge when ceiling is touched
-  # {I3:3,I41:1} -> replace with I3
-  # {I3:2,I41:2} -> {I41:4}
-  if(type(expr)==Box):
-    BX = expr
-    cf = BX.coeff
-    for i,k,v in enumerate(BX.mv.mtDt.items()):
-      if not k == GExpr.nl:
-        if v == set(len(k.mv.args)):
-          lst = [ele for ele in BX.mv.args if ele.mtDt[k] and len(ele.mtDt)==1 and len(ele.mtDt[k])==1]
-          if len(k.mv.args) == reduce(lambda x,y:x.mv.mtDt[k]+y.mv.mtDt[k],lst) :
-            diffA = [ele for ele in BX.mv.args if ele not in lst]
-            cpydiffA = []
-            cpydiffA.extend(diffA)
-            cpydiffA.extend(lst)
-            sign1 = parity(BX.mv.args,cpydiffA)
-            cpydiffB = []
-            cpydiffB.extend(diffA)
-            cpydiffB.extend(k.mv.args)
-            t_lst = gextp(*lst)
-            iFrame = GExpr.pSCiFrmlst(GExpr.pSClst.index(k))
-            bx = gextp(*cpydiffB)*(t_lst|iFrame)*sign1*cf
-            bx.mv.mtDt = relDt()
-            bx.mv.rlDt = relDt()
-            return bx
-  
-        else :
-          pass
-      else:
-        pass
-  else :
-    return expr
 
 def gextpsimp():
   gextp.gsimplify = exhaust(do_one(concat.sandhi,inv_gextp,proj_gextp,rej_gextp))

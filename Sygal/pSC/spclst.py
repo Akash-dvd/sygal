@@ -12,10 +12,13 @@ class spclst(list):
   def __init__(self, lst) -> None:
     # check if every element is a dict
     if type(lst) == spclst:
-      list.__init__(self, lst) 
+      list.__init__(self, lst)
+    # But GAtom does the wrapping
+    elif issubclass(type(lst),dict):
+      raise ValueError("Wrap the dict in a list")
     elif isinstance(lst,Iterable):
       t = [spcdct(ele) for ele in lst if bool(ele)]
-      t1 = spclst.standardize(t)
+      t1 = spclst.canonicalize(t)
       list.__init__(self,t1)
     else :
       raise ValueError("Illegal Arguements")
@@ -25,7 +28,7 @@ class spclst(list):
     # Already __init__ takes care of this
     if issubclass(type(itrble), list):
       super().extend(itrble)
-      t = spclst.standardize(self)
+      t = spclst.canonicalize(self)
       list.__init__(self,t)
     else :
       raise ValueError("type must be spclst")
@@ -34,7 +37,7 @@ class spclst(list):
     if type(obj) == spcdct :
       if bool(obj):
         super().append(obj)
-        t = spclst.standardize(self)
+        t = spclst.canonicalize(self)
         list.__init__(self,t)
       else :
         pass
@@ -46,14 +49,14 @@ class spclst(list):
     if type(__object) == spcdct :
       if bool(__object):
         super().insert(__index, __object)
-        t = spclst.standardize(self)
+        t = spclst.canonicalize(self)
         list.__init__(self,t)
       else :
         pass
     else :
       raise ValueError("type must be spcdct")
     
-  def standardize(lst) -> list:
+  def canonicalize(lst) -> list:
     # sort and deduplicate
     if not bool(lst) :
       return []

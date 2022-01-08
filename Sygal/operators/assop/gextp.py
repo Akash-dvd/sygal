@@ -47,60 +47,28 @@ class gextp(assop):
       if ((len(MV2.args)-len(set(MV2.args))) > 0):  
         return GExpr.Znl
 
+      MV3 = gextp.meta_treatment(MV2)
+      if MV3 == GExpr.Znl:
+        return GExpr.Znl
+      else :
+        MV3.rlDt = relDt()
 
       # ordering
       ###########################
-      if(is_unMixedGrade(MV2)):
+      if(is_unMixedGrade(MV3)):
         # For signed sorting
-        MV3 = canonicalize2(MV2)
-        # More patternmatching
-        if(len(MV3.args)<=1):
-        # Not possible
-        # to arrive here
-          raise ValueError
+        MV4 = canonicalize2(MV3)
+        cf1 = Mul(parity(MV3.args,MV4.args),cf)
 
-        cf1 = Mul(parity(MV2.args,MV3.args),cf)
       else :
-        MV3 = MV2
+        MV4 = MV3
         cf1 = cf
 
+      MV4.rlDt = relDt()
+      MV4.mtDt = MV3.mtDt
+      bx = Box.__new__(Box,mv=MV4,coeff=cf1)
+      return bx
 
-      # pseudoscalar and rlDt check
-      ###########################
-      
-      # prim check
-      # TODO remove it from here
-      # t2 = all([is_primitive(ele) for ele in MV3.args])
-      # if t2:
-      #   bx = Basic.__new__(Box,MV3,cf1)
-      #   bx_1 = primeta_treatment(bx)
-      #   bx_1.mv.rlDt = defaultdict(lambda:None)
-      #   return bx_1
-      
-      # else:
-      MV4 = meta_treatment(MV3)
-      if MV4 == GExpr.Znl:
-        return GExpr.Znl
-      else :
-        MV4.rlDt = relDt()
-        bx = Box.__new__(Box,mv=MV4,coeff=cf1)
-        return bx
-
-  @property
-  def grade(self:"gextp") -> Union[set,frozenset]:
-    t1 = set()
-    t2 = set()
-    t1.update(self.args[0].grade)
-    for i,argi in enumerate(self.args):
-      j=i+1
-      if(j<len(self.args)):
-        t2.clear()
-        arg2 = self.args[j].grade
-        for elem1,elem2 in product(t1,arg2):
-          t2.add((elem2+elem1))
-        t1.clear()
-        t1.update(t2)
-    return t2
 
   def sympystr(self,expr:"gextp") -> str:
     return str(expr)
@@ -165,44 +133,37 @@ class gextp(assop):
     t1 = t.reversion()
     return t1
 
-# def primeta_treatment(bx:"Box")->"Box":
-#   bx.mv.mtDt = spclst([])
-#   t1 = len(bx.mv.args)
-#   t2 = grd(t1,t1)
-#   bx.mv.mtDt.extend([spcdct({bx:t2})])
-#   return bx
+  def meta_treatment(expr:"gextp")->"gextp":
+    
 
-def meta_treatment(expr:gextp)->gextp:
-  
+    # if null list extend -> null list
+    # if null dict update -> null dict
+    acc_mtDt = spclst([])
+    spc_lst = spclst([])
+    spc_lst.extend(expr.args[0].mtDt)
 
-  # if null list extend -> null list
-  # if null dict update -> null dict
-  acc_mtDt = spclst([])
-  spc_lst = spclst([])
-  spc_lst.extend(expr.args[0].mtDt)
+    for arg in expr.args[1:]:
+      # TODO
+      # Iterate over only the upere half on product    
+      acc_mtDt.extend([dct1+dct2 for dct1,dct2 in product(spc_lst,arg.mtDt)])
 
-  for arg in expr.args[1:]:
-    # TODO
-    # Iterate over only the upere half on product    
-    acc_mtDt.extend([dct1+dct2 for dct1,dct2 in product(spc_lst,arg.mtDt)])
-
-    if bool(acc_mtDt):
-      spc_lst.clear()
-      spc_lst.extend(acc_mtDt)
-      acc_mtDt.clear()
-   
-    else:
-      return GExpr.nl
-  
-  if bool(spc_lst):
-    expr.mtDt = spc_lst
-    return expr
-  else :
-    return GExpr.Znl
+      if bool(acc_mtDt):
+        spc_lst.clear()
+        spc_lst.extend(acc_mtDt)
+        acc_mtDt.clear()
+    
+      else:
+        return GExpr.nl
+    
+    if bool(spc_lst):
+      expr.mtDt = spc_lst
+      return expr
+    else :
+      return GExpr.Znl
 
 
 from libs.Sygal.operators.assop.higher.gextphigher import gextphigher
-from libs.Sygal.operators.assop.simplify.gextpsimp import gextpsimp
+from libs.Sygal.operators.assop.canon.gextpcanon import gextpcanon
 from libs.Sygal.operators.assop.expand.gextpexpand import gextpexpand
 
 from libs.Sygal.imports.import1tail import *
@@ -219,7 +180,7 @@ canonicalize1 = exhaust(typed({gextp: do_one(*rules1)}))
 canonicalize2 = exhaust(typed({gextp: do_one(*rules2)}))
 
 gextphigher()
-gextpsimp()
+gextpcanon()
 gextpexpand()
 
 
@@ -228,3 +189,20 @@ if is_devmode():
   StrPrinter._print_gextp = gextp.sympyrepr
 else :
   StrPrinter._print_gextp = gextp.sympystr
+
+
+  # @property
+  # def grade(self:"gextp") -> Union[set,frozenset]:
+  #   t1 = set()
+  #   t2 = set()
+  #   t1.update(self.args[0].grade)
+  #   for i,argi in enumerate(self.args):
+  #     j=i+1
+  #     if(j<len(self.args)):
+  #       t2.clear()
+  #       arg2 = self.args[j].grade
+  #       for elem1,elem2 in product(t1,arg2):
+  #         t2.add((elem2+elem1))
+  #       t1.clear()
+  #       t1.update(t2)
+  #   return t2

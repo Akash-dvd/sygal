@@ -17,6 +17,9 @@ def difflist(t1,t2):
 
 
 def gmul_expand(expr,A=gmul,grade="all"):
+  """
+  Doesn't support Gatom of grade >1
+  """
   if(type(expr)==Box):
     BX = GExpr.gdistribute(expr)
     cf = BX.coeff
@@ -36,6 +39,9 @@ def gmul_expand(expr,A=gmul,grade="all"):
       return BX
     else:
       return BX
+  elif(issubclass(type(expr),GExpr) and not expr.is_atom):
+    mv = expr
+    
   else :
     return expr
 

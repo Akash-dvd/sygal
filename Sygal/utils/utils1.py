@@ -14,18 +14,18 @@ NOTALLOWED - GEXPR, BOX
 new = Basic.__new__
 # TODO add new to arguements
 
-def conjugation(rl1,rl2):
-  return chain(rl1,rl2,rl1)
+# def conjugation(rl1,rl2):
+#   return chain(rl1,rl2,rl1)
 
 
-def rlZero(expr:"GExpr",fns=basic_fns) -> "GExpr" :
-  op, new, children, leaf = map(fns.get, ('op', 'new', 'children', 'leaf'))
-  if leaf(expr):
-    return expr
-  elif (S(0) in expr.args):
-    return S(0)
-  else : 
-    return expr
+# def rlZero(expr:"GExpr",fns=basic_fns) -> "GExpr" :
+#   op, new, children, leaf = map(fns.get, ('op', 'new', 'children', 'leaf'))
+#   if leaf(expr):
+#     return expr
+#   elif (S(0) in expr.args):
+#     return S(0)
+#   else : 
+#     return expr
 
 
 def rlGSortArgs(expr:GExpr,reverse:bool=False) -> GExpr:
@@ -37,42 +37,32 @@ def rlGSortArgs(expr:GExpr,reverse:bool=False) -> GExpr:
   return new(expr.__class__, *newseq)
 
 
-def GSortArgs(seq:Union[list,tuple],reverse:bool=False) -> Union[list,tuple]:
-  """
-  Sort Paritioned arguements based on Grades,names
-  Complex arguement are put at last sorted by sum of their weights
-  """
-
-  newseq = sorted(seq,key=lambda ele:(len(ele.grade),next(iter(ele.grade)),ele.name,ele.__hash__()),reverse=reverse)
-  return newseq
-
-
-def parity(args1:List[GExpr],args2:List[GExpr])->S:
-  # ASSUMPTIONS
-  # both arguements have unmixed grades
-  # remove even grades , they are transparent to positional changes
+# def parity(args1:List[GExpr],args2:List[GExpr])->S:
+#   # ASSUMPTIONS
+#   # both arguements have unmixed grades
+#   # remove even grades , they are transparent to positional changes
   
-  # Reimplement using something from permutation library
-  t1 = [i for i in args1 if next(iter(i.grade))%2==1 ]
-  d1 = dict()
-  t2 = [i for i in args2 if next(iter(i.grade))%2==1 ]
+#   # Reimplement using something from permutation library
+#   t1 = [i for i in args1 if next(iter(i.grade))%2==1 ]
+#   d1 = dict()
+#   t2 = [i for i in args2 if next(iter(i.grade))%2==1 ]
   
-  for index, value in enumerate(t1):
-    d1[value.__hash__()] = [index]
+#   for index, value in enumerate(t1):
+#     d1[value.__hash__()] = [index]
 
-  for index, value in enumerate(t2):
-    d1[value.__hash__()].append(index)
+#   for index, value in enumerate(t2):
+#     d1[value.__hash__()].append(index)
   
-  perm = []
-  for index, (key, value) in enumerate(d1.items()):
-    perm.append(value)
+#   perm = []
+#   for index, (key, value) in enumerate(d1.items()):
+#     perm.append(value)
   
-  perm1 = sorted(perm,key=lambda ele:ele[1])
-  perm2 = [i[0] for i in perm1]
+#   perm1 = sorted(perm,key=lambda ele:ele[1])
+#   perm2 = [i[0] for i in perm1]
 
-  p = Permutation(perm2)
+#   p = Permutation(perm2)
 
-  return S((p.parity()*-2)+1)
+#   return S((p.parity()*-2)+1)
 
 
 def bx_sift(seqBx:Tuple[Box], keyfunc:Callable, count:Callable)->List[Box]:
@@ -113,7 +103,7 @@ def is_pSC(arg:"GExpr")->bool:
   return arg in GExpr.pSC
 
 
-def is_singleGrade(expr:Union[Expr,GExpr])->bool:
+def is_uniGraded(expr:Union[Expr,GExpr])->bool:
   if issubclass(type(expr),GExpr):
     gd = expr.grade
     return len(gd) == 1

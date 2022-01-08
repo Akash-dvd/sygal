@@ -1,4 +1,3 @@
-# Perpendicular and parallel
 from libs.Sygal.imports.import1head import *
 from libs.Sygal.imports.import1tail import *
 from libs.Sygal.operators.assop.gadd import gadd
@@ -17,21 +16,30 @@ from libs.Sygal.operators.binop.outermorphic.projection import projection
 from libs.Sygal.operators.binop.outermorphic.rejection import rejection
 
 
-def projection_simplify(expr:Box)->Optional[Box]:
-  if (type(expr)==Box):
+# Assuming blade*blade = scalar
+
+def gmul_canon(expr:"gmul")->Optional[GExpr]:
+  if(type(expr)==Box):
     BX = expr
     cf = BX.coeff
-    if type(BX.mv) == projection:
-      sub = BX.mv.down
-      obj = BX.mv.up
-      if is_perpendicularPair(obj,sub):
-        return GExpr.Znl
-      else :
-        return expr
-    else :
+    if type(BX.mv) == gmul and len(BX.mv.args)>=2:
+      # loop before the last element
+      for i,arg in enumerate(BX.mv.args[:-1]):
+        # check if the adjacent element leads to scalar
+        t = is_scalarPair(arg,BX.mv.args[i+1])
+        if t:
+          t1 = [element for j, element in enumerate(BX.mv.args) if j not in {i,i+1}]
+          coeff = expand_iter(sclrprdct)(BX.mv.args[i]<BX.mv.args[i+1])
+          if t1:
+            return gmul(*t1)*cf*coeff
+          else :
+            return coeff*cf
       return expr
+    else :
+      return expr 
+
   else :
     return expr
 
-def projectionsimp():
-  projection.gsimplify = exhaust(do_one(projection_simplify,))
+def gmulcanon():
+  gmul.gcanonicalization = gmul_canon

@@ -1,4 +1,5 @@
 from collections import defaultdict
+from math import exp
 import sys
 
 from typing import Tuple, TypeVar, Callable, Dict, Sequence, List, Optional, Union
@@ -13,26 +14,34 @@ from sympy.strategies.tools import subs as strtSubs
 from sympy.printing.str import StrPrinter
 
 from libs.Sygal.GExpr import GExpr
-from libs.Sygal.pSC import spclst
-from libs.Sygal.utils.util import relDt
-
-
-
+from libs.Sygal.pSC.spclst import spclst
+from libs.Sygal.relDt.relDt import relDt
+from libs.Sygal.utils.util import *
 
 class Box(GExpr):
   # Chnage here for S(0) coeff
-  def __new__(cls,mv:"GExpr"=S(1),coeff:Expr=S(1))->"Box":
+  def __new__(cls,mv:"GExpr",coeff:Expr=S(1))->"Box":
     if(type(coeff)==Box):
       raise ValueError
     
-
     # Pattern matching for types
-    fct1 = issubclass(type(mv),GExpr)
-    # fct2 is for scalar multivectors
+    fct1  = issubclass(type(mv),GExpr)
+
+    if fct1:
+      mv = ceil_mtDt(mv)
+    else :
+      pass
+
     fct2 = fct1 and (mv.grade == {0})
-    fct3 = issubclass(type(mv),Box)
-    fct4 = fct3 and fct2
-    
+    fct3  = issubclass(type(mv),Box)
+    fct4  = fct3 and fct2
+    # fct42  = fct3 and ceil_mtDt(mv.mv)
+
+    # fct1  = issubclass(type(mv),GExpr)
+    # fct2 = fct1 and (mv.grade == {0})
+    # fct3  = issubclass(type(mv),Box)
+    # fct4  = fct3 and fct2
+
     new = GExpr.__new__
     
     if fct4:
@@ -47,12 +56,12 @@ class Box(GExpr):
     elif fct3:
       BX = mv
       # Check if the arrived box encloses gadd
-      if(type(BX.mv)==gadd):
+      if(type(BX.mv).__name__ == "gadd"):
         # Well formed gadd box always has S(1) coeff
         if(BX.coeff!=S(1)):
           raise
         t = [new(Box,bx.mv,Mul(bx.coeff,coeff)) for bx in BX.mv.args]
-        t1 = new(Box,new(gadd,*t),S(1))
+        t1 = new(Box,new(type(BX.mv),*t),S(1))
         t1.mv.mtDt = BX.mv.mtDt.copy()
         t1.mv.rlDt = BX.mv.rlDt.copy()
         return t1
@@ -72,16 +81,20 @@ class Box(GExpr):
         t.mv.rlDt = relDt()
         return t
       else:
-        t = new(Box,GExpr.nl,Mul(mv,coeff))
-        t.mv.mtDt = GExpr.nl.mtDt
-        t.mv.rlDt = relDt()
-        return t
+        # Here mv has to be checked that it should only scprdct or gmul 
+        if type(mv).__name__ == "sclrprdct":
+          t = new(Box,GExpr.nl,Mul(mv,coeff))
+          t.mv.mtDt = GExpr.nl.mtDt
+          t.mv.rlDt = relDt()
+          return t   
+        else:
+          raise NotImplementedError
     # Non Zero grade
     elif fct1:
-      if(type(mv)==gadd):
+      if(type(mv).__name__== "gadd"):
         # t = [new(Box,bx.mv,Mul(bx.coeff,coeff).simplify()) for bx in mv.args]
         t = [new(Box,bx.mv,Mul(bx.coeff,coeff)) for bx in mv.args]
-        t1 = new(Box,new(gadd,*t),S(1))
+        t1 = new(Box,new(type(mv),*t),S(1))
         t1.mv.mtDt = mv.mtDt.copy()
         t1.mv.rlDt = mv.rlDt.copy()
         return t1
@@ -222,7 +235,7 @@ class Box(GExpr):
   
 # Standard import style
 # These extra imports cause issue with strategies import
-from libs.Sygal.operators.assop.gadd import gadd
+# from libs.Sygal.operators.assop.gadd import gadd
 # from libs.Sygal.operators.assop.gextp import gextp
 # from libs.Sygal.operators.assop.gmul import gmul
 
@@ -244,38 +257,74 @@ else :
   StrPrinter._print_Box = Box.sympystr
 
 
-def rej_mtDt(expr):
-  return
+def ceil_mtDt(expr) ->bool:
+  # return False
+
+  # This will return is PSC has touched ceiling
+  # Also will updat the mtDt
   ################
   # replace or merge when ceiling is touched
   # {I3:3,I41:1} -> replace with I3
   # {I3:2,I41:2} -> {I41:4}
-  if(type(expr)==Box):
-    BX = expr
-    cf = BX.coeff
-    for i,k,v in enumerate(BX.mv.mtDt.items()):
-      if not k == GExpr.nl:
-        if v == set(len(k.mv.args)):
-          lst = [ele for ele in BX.mv.args if ele.mtDt[k] and len(ele.mtDt)==1 and len(ele.mtDt[k])==1]
-          if len(k.mv.args) == reduce(lambda x,y:x.mv.mtDt[k]+y.mv.mtDt[k],lst) :
-            diffA = [ele for ele in BX.mv.args if ele not in lst]
-            cpydiffA = []
-            cpydiffA.extend(diffA)
-            cpydiffA.extend(lst)
-            sign1 = parity(BX.mv.args,cpydiffA)
-            cpydiffB = []
-            cpydiffB.extend(diffA)
-            cpydiffB.extend(k.mv.args)
-            t_lst = gextp(*lst)
-            iFrame = GExpr.pSCiFrmlst(GExpr.pSClst.index(k))
-            bx = gextp(*cpydiffB)*(t_lst|iFrame)*sign1*cf
-            bx.mv.mtDt = relDt()
-            bx.mv.rlDt = relDt()
-            return bx
-  
-        else :
+  # TODO
+  # {I31:2,I41:1} -> {I31:2,I41:1}
+  # {I31:3,I5:1} -> {I5:4}
+  # TODO
+  # _oo^_x^_y^a1 -> +/-(a1|_oo)*_o^_x^_y^_oo
+  return expr
+  cls = type(expr)
+  if type(expr).__name__== "gextp" and expr not in GExpr.pSClst:
+    mv = expr
+    if len(mv.mtDt) == 1:
+      # is_Unigraded basically
+      dct = mv.mtDt[0]
+      keys_lst = list(dct)
+      
+      for i,k in enumerate(keys_lst):
+        if dct[k].value == dct[k].limit and dct[k].limit>=1:
+          
+          pluck_ele = [ele for ele in mv.args if len(ele.mtDt)==1 and (ele.mtDt[0][k].value)]
+
+          pluckmv = Basic.__new__(cls,*pluck_ele)
+          pluckmv.rlDt = relDt()
+          pluckmv = pluckmv.meta_treatment()
+          pluckbx = Basic.__new__(Box,pluckmv,S(1))
+
+          diff = [ele for ele in mv.args if ele not in pluck_ele]
+
+          n_args1 = []
+          n_args1.extend(diff)
+          n_args1.extend(pluck_ele)
+          sign1 = parity(mv.args,n_args1)
+
+          n_args2 = []
+          n_args2.extend(diff)
+          j = GExpr.pSClst.index(k) 
+          n_Frame = GExpr.pSCiFrmlst[j]
+          n_args2.extend(k.args)
+
+          coeff = pluckbx|n_Frame
+
+          n_args3 = GSortArgs(n_args2)
+
+          sign2 = parity(n_args3,n_args2)
+          n_mv = Basic.__new__(cls,*n_args3)
+          n_mv = n_mv.meta_treatment()
+          n_mv.rlDt = expr.rlDt
+          
+          bx = Basic.__new__(Box,n_mv,Mul(sign2,sign1,coeff.coeff))
+          return bx
+        elif True:
           pass
-      else:
-        pass
-  else :
+        else :
+          continue
+      return expr
+    else:
+      return expr
+  elif type(expr).__name__== "sclrprdct":
     return expr
+    raise NotImplementedError
+  else:
+    return expr
+
+

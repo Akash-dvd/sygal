@@ -66,10 +66,10 @@ def invoker_expand(op):
     return op.gexpand(expr)
   return expander
 
-def invoker_simplify(op):
-  def simplifier(expr):
-    return op.gsimplify(expr)
-  return simplifier
+def invoker_canon(op):
+  def canonicalizer(expr):
+    return op.gcanonicalization(expr)
+  return canonicalizer
 
 def invoker_higher(op):
   def highier(expr):
@@ -79,8 +79,8 @@ def invoker_higher(op):
 def higher_iter(op,flag = gen_traverse):  
   return exhaust(bottom_up(bx_typed({op: invoker_higher(op)}),flag))
 
-def simplify_iter(op,flag = gen_traverse):  
-  return exhaust(bottom_up(bx_typed({op: invoker_simplify(op)}),flag))
+def canon_iter(op,flag = gen_traverse):  
+  return exhaust(bottom_up(bx_typed({op: invoker_canon(op)}),flag))
 
 def expand_iter(op,flag = gen_traverse):  
   return exhaust(bottom_up(bx_typed({op: invoker_expand(op)}),flag))

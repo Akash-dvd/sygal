@@ -25,7 +25,7 @@ inversion(a1*a2*a3,b1)),
 
 
 def test_inversion_higher():
-  assert reduce(lambda x,y: x and y, [higher_iter(inversion)(x) == y for x, y in test_cases1])
+  assert all([higher_iter(inversion)(x) == y for x, y in test_cases1])
 
 # appendtoDict(na2,{na1:S(0)})
 # t10 = inversion(na1^na2,na2)

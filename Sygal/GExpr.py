@@ -3,7 +3,7 @@ from typing import Tuple, TypeVar, Callable, Dict, Sequence, List, Optional, Uni
 from collections import Iterable,defaultdict
 from sympy import (
   Basic,diff, Rational, Symbol, S, Mul, Add, Expr,
-  expand, simplify, eye, trigsimp,
+  expand, simplify, eye, trigsimp,sympify,
   symbols, sqrt, Matrix,srepr,bottom_up
 )
 from sympy.strategies.tools import subs as strtSubs
@@ -68,6 +68,22 @@ class GExpr(Expr):
   
   def __rrshift__(self:"GExpr", A:"GExpr") -> "GExpr":  # comutator (>>)
     return gcomm(A,self)
+
+  def __pow__(self:"GExpr",power:int):
+    power1 = sympify(power)
+    t = []
+    
+    if power1.is_Integer:
+      if power1 >= S(0):
+        t.append(self)
+        t1 = t*power1
+        t2 = gmul(*t1)
+        return t2
+      else:
+        raise ValueError("Exponent must be >=0")
+    else:
+      raise ValueError("Illegal Exponent")
+
 
   ###########################
   @property

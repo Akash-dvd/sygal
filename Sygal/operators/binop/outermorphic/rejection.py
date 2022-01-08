@@ -122,7 +122,7 @@ def meta_treatment(expr:rejection)->rejection:
         for p1 in part1:
           t_dct1 = spcdct({})
           t_dct11 = spcdct({})
-          t = all([down_dct[k]>=p1[i] for i,k in enumerate(tup)])
+          t = all([down_dct[k].value>=p1[i] for i,k in enumerate(tup)])
 
           if t :
             t_dct1.update({k:grd(p1[i],down_dct[k].limit) for i,k in enumerate(tup)})
@@ -153,9 +153,9 @@ else :
 
 
 from libs.Sygal.operators.binop.outermorphic.higher.rejectionhigher import rejectionhigher
-from libs.Sygal.operators.binop.outermorphic.simplify.rejectionsimp import rejectionsimp
+from libs.Sygal.operators.binop.outermorphic.canon.rejectioncanon import rejectioncanon
 from libs.Sygal.operators.binop.outermorphic.expand.rejectionexpand import rejectionexpand
 
 rejectionhigher()
-rejectionsimp()
+rejectioncanon()
 rejectionexpand()

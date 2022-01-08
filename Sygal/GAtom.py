@@ -10,11 +10,13 @@ from sympy import (
   expand, simplify, eye, trigsimp,sympify,
   symbols, sqrt, Matrix,srepr,AtomicExpr
 )
+from sympy import oo as I
 
 from libs.Sygal.GExpr import GExpr
 from libs.Sygal.pSC.grd import grd
 from libs.Sygal.pSC.spcdct import spcdct
 from libs.Sygal.pSC.spclst import spclst
+from libs.Sygal.relDt.relDt import relDt
 from sympy.core.cache import cacheit
 from libs.Sygal.Box import Box
 from libs.Sygal.utils.utils1 import rlGSortArgs,parity,is_unMixedGrade,bx_sift,GSortArgs,is_devmode
@@ -22,6 +24,14 @@ from libs.Sygal.operators.assop.gextp import gextp
 # from libs.Sygal.pSC.pextp import pextp
 # defDic = defaultdict(lambda x:None)
 
+def dct_is_joint(mv1:GExpr,mv2:GExpr):
+  fct = False
+  for grp in GExpr.Disjoint_Grp:
+    if mv1 in grp and mv2 in grp:
+      fct = True
+    else:
+      continue
+  return fct
 
 
 def pextp(*args) -> "Box":
@@ -41,7 +51,7 @@ def pextp(*args) -> "Box":
 class GAtom(GExpr,AtomicExpr):
 
   def __new__(cls, name:str,mtDt:Union[List[Dict],Dict],rlDt:Dict) -> Box:
-
+    
     # Pattern match for name -> str
     # TODO check for earlier symbols
     if not isinstance(name, str):
@@ -50,24 +60,26 @@ class GAtom(GExpr,AtomicExpr):
       raise TypeError("name should not start with  _")
 
     # Pattern match for mtdt -> dict
-    if not mtDt:
-      mtDt = [{GExpr.I13:13}]
-    elif isinstance(mtDt,Iterable):
+    # if not bool(mtDt):
+    #   mtDt = spclst([{GExpr.I13:1}])
+    if issubclass(type(mtDt),dict):
       mtDt = spclst([mtDt])
+    elif issubclass(type(mtDt),list):
+      mtDt = spclst(mtDt)
+    else:
+      raise ValueError("Iterable must be a list")
 
     # Pattern match for rlDt -> dict
-    if not rlDt:
-      rlDt = relDt()
-      rlDt.update({GExpr._oo:S(-1)})
+    # if not bool(rlDt):
+    #   rlDt = relDt()
+    #   rlDt.update({GExpr._oo:S(-1)})
     
     # Scalar Check
-    if mtDt:
-      if mtDt == [{GExpr.nl:grd(0,0)}]:
-        return GExpr.Onl
-      else :
-        pass
+
+    if mtDt == [{GExpr.nl:grd(0,0)}]:
+      return GExpr.Onl
     else :
-      return GExpr.Znl
+      pass
 
     # BOX INITIALIZER
     bx = GAtom.__xnew_cached_(GAtom, name)
@@ -113,6 +125,8 @@ class GAtom(GExpr,AtomicExpr):
       # Check if hash is not present in the object
     )
 
+
+
   @property
   def name(self):
     return self.args[0]
@@ -122,7 +136,7 @@ class GAtom(GExpr,AtomicExpr):
       raise ValueError
     else:
       #######################
-
+      spcdct.is_joint = dct_is_joint
 
       # t_grd._value = 0
       GExpr.Onl = GAtom.__xnew_cached_(GAtom,"\u0950")
@@ -210,40 +224,38 @@ class GAtom(GExpr,AtomicExpr):
 
       GExpr.pSClst = [GExpr.nl,_oo.mv,_x.mv,_y.mv,GExpr.I31.mv,_o.mv,GExpr.I32.mv,GExpr.I41.mv,_rx.mv,GExpr.I42.mv,GExpr.I43.mv,GExpr.I5.mv,_x1.mv,_x2.mv,_x3.mv,_x4.mv,_x5.mv,_x6.mv,_x7.mv,_x8.mv,GExpr.I8.mv,GExpr.I13.mv]
 
-      GExpr.pSCiFrmlst = [GExpr.Onl,_o*S(-1),_x,_y,GExpr.I32,_oo*S(-1),GExpr.I31,GExpr.I41*S(-1),_rx*S(-1),GExpr.I43*S(-1),GExpr.I42*S(-1),GExpr.I5,_x1,_x2,_x3,_x4,_x5,_x6,_x7,_x8,GExpr.I8,GExpr.I13]
-
-
-      GExpr.x = [GExpr.Onl,_oo,_x,_y,GExpr.I31,_o,GExpr.I32,GExpr.I41,_rx,GExpr.I42,GExpr.I43,GExpr.I5,_x1,_x2,_x3,_x4,_x5,_x6,_x7,_x8,GExpr.I8,GExpr.I13]
-      
-      GExpr.y = [GExpr.Onl,_o*S(-1),_x,_y,GExpr.I32,_oo*S(-1),GExpr.I31,GExpr.I41*S(-1),_rx*S(-1),GExpr.I43*S(-1),GExpr.I42*S(-1),GExpr.I5,_x1,_x2,_x3,_x4,_x5,_x6,_x7,_x8,GExpr.I8,GExpr.I13]
-
+      GExpr.pSCiFrmlst = [GExpr.Onl,_o*S(-1),_x,_y,GExpr.I32*S(-1),_oo*S(-1),GExpr.I31*S(-1),GExpr.I41*S(-1),_rx*S(-1),GExpr.I43*S(-1),GExpr.I42,GExpr.I5,_x1,_x2,_x3,_x4,_x5,_x6,_x7,_x8,GExpr.I8,GExpr.I13]
 
       GExpr.grdlmt = [
         # replace 9 by infinity
       
-        [9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9],
-        [9,0,0,0,0,1,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,1],
-        [9,0,1,0,1,0,1,1,0,1,1,1,0,0,0,0,0,0,0,0,0,1],
-        [9,0,0,1,1,0,1,1,0,1,1,1,0,0,0,0,0,0,0,0,0,1],
-        [9,0,1,1,2,1,3,3,0,2,3,3,0,0,0,0,0,0,0,0,0,2],
-        [9,1,0,0,1,0,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,1],
-        [9,1,1,1,3,0,2,3,0,3,2,3,0,0,0,0,0,0,0,0,0,3],
-        [9,1,1,1,3,1,3,4,0,3,3,4,0,0,0,0,0,0,0,0,0,4],
-        [9,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1],
-        [9,0,1,1,2,1,3,3,1,3,4,4,0,0,0,0,0,0,0,0,0,4],
-        [9,1,1,1,3,0,2,3,1,4,3,4,0,0,0,0,0,0,0,0,0,4],
-        [9,1,1,1,3,1,3,4,1,4,4,5,0,0,0,0,0,0,0,0,0,5],
-        [9,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,1],
-        [9,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,1],
-        [9,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,1],
-        [9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,1],
-        [9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,1],
-        [9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1],
-        [9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1],
-        [9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1],
-        [9,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,8,8],
-        [9,1,1,1,3,1,3,4,1,4,4,5,1,1,1,1,1,1,1,1,8,13],
+        [I,I,I,I,I,I,I,I,I,I,I,I,I,I,I,I,I,I,I,I,I,I],
+        [I,0,0,0,0,1,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,1],
+        [I,0,1,0,1,0,1,1,0,1,1,1,0,0,0,0,0,0,0,0,0,1],
+        [I,0,0,1,1,0,1,1,0,1,1,1,0,0,0,0,0,0,0,0,0,1],
+        [I,0,1,1,2,1,3,3,0,2,3,3,0,0,0,0,0,0,0,0,0,2],
+        [I,1,0,0,1,0,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,1],
+        [I,1,1,1,3,0,2,3,0,3,2,3,0,0,0,0,0,0,0,0,0,3],
+        [I,1,1,1,3,1,3,4,0,3,3,4,0,0,0,0,0,0,0,0,0,4],
+        [I,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,1],
+        [I,0,1,1,2,1,3,3,1,3,4,4,0,0,0,0,0,0,0,0,0,4],
+        [I,1,1,1,3,0,2,3,1,4,3,4,0,0,0,0,0,0,0,0,0,4],
+        [I,1,1,1,3,1,3,4,1,4,4,5,0,0,0,0,0,0,0,0,0,5],
+        [I,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,1],
+        [I,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,1],
+        [I,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,1],
+        [I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,1],
+        [I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,1],
+        [I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1],
+        [I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1],
+        [I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1],
+        [I,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,8,8],
+        [I,1,1,1,3,1,3,4,1,4,4,5,1,1,1,1,1,1,1,1,8,13],
       ]
+      
+      GExpr.Disjoint_Grp = [[_o.mv,_x.mv,_y.mv,_rx.mv,_oo.mv],[_x1.mv,_x2.mv,_x3.mv,_x4.mv,_x5.mv,_x6.mv,_x7.mv,_x8.mv]] 
+      
+      
       GExpr.initialized = True 
   
   __xnew__ = staticmethod(
@@ -255,26 +267,3 @@ class GAtom(GExpr,AtomicExpr):
 
 GAtom._preprocess()
 
-
-# [
-#   [9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9],
-#   [9,0,0,0,0,1,1,0,0,1,0,0,0,0,0,0,0,0,0,1],
-#   [9,0,1,0,1,0,1,0,1,1,0,0,0,0,0,0,0,0,0,1],
-#   [9,0,0,1,1,0,1,0,1,1,0,0,0,0,0,0,0,0,0,1],
-#   [9,0,1,1,2,1,3,0,2,3,0,0,0,0,0,0,0,0,0,2],
-#   [9,1,0,0,1,0,1,0,1,1,0,0,0,0,0,0,0,0,0,1],
-#   [9,1,1,1,3,1,4,0,3,4,0,0,0,0,0,0,0,0,0,4],
-#   [9,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,1],
-#   [9,0,1,1,2,1,3,1,3,4,0,0,0,0,0,0,0,0,0,4],
-#   [9,1,1,1,3,1,4,1,4,5,0,0,0,0,0,0,0,0,0,5],
-#   [9,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,1],
-#   [9,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,1],
-#   [9,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,1],
-#   [9,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,1],
-#   [9,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,1],
-#   [9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1],
-#   [9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1],
-#   [9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1],
-#   [9,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,8,8],
-#   [9,1,1,1,3,1,4,1,4,5,1,1,1,1,1,1,1,1,8,13],
-# ]
