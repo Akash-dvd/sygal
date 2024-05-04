@@ -7,11 +7,11 @@ from sympy import (
   symbols, sqrt, Matrix, SympifyError, sympify
 )
 
-from libs.Sygal.GExpr import GExpr 
-from libs.Sygal.Box import Box 
+from Sygal.GExpr import GExpr 
+from Sygal.Box import Box 
 
-from libs.Sygal.strategies.util import gen_traverse,spe_traverse
-from libs.Sygal.strategies.core import chain, do_one
+from Sygal.strategies.util import gen_traverse,spe_traverse
+from Sygal.strategies.core import chain, do_one
 
 
 def top_down(rule, fns=gen_traverse):

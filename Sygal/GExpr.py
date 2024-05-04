@@ -1,10 +1,11 @@
 from operator import inv
 from typing import Tuple, TypeVar, Callable, Dict, Sequence, List, Optional, Union
-from collections import Iterable,defaultdict
+from collections.abc import Iterable
+from collections import defaultdict
 from sympy import (
   Basic,diff, Rational, Symbol, S, Mul, Add, Expr,
   expand, simplify, eye, trigsimp,sympify,
-  symbols, sqrt, Matrix,srepr,bottom_up
+  symbols, sqrt, Matrix,srepr,bottom_up,
 )
 from sympy.strategies.tools import subs as strtSubs
 
@@ -181,23 +182,23 @@ class GExpr(Expr):
 
 
 
-from libs.Sygal.operators.assop.gadd import gadd
-from libs.Sygal.operators.assop.gextp import gextp
-from libs.Sygal.operators.assop.gmul import gmul
+from Sygal.operators.assop.gadd import gadd
+from Sygal.operators.assop.gextp import gextp
+from Sygal.operators.assop.gmul import gmul
 
-from libs.Sygal.operators.binop.ganticomm import ganticomm
-from libs.Sygal.operators.binop.gcomm import gcomm
-from libs.Sygal.operators.binop.sclrprdct import sclrprdct
-from libs.Sygal.operators.binop.grcntrct import grcntrct
-from libs.Sygal.operators.binop.glcntrct import glcntrct
+from Sygal.operators.binop.ganticomm import ganticomm
+from Sygal.operators.binop.gcomm import gcomm
+from Sygal.operators.binop.sclrprdct import sclrprdct
+from Sygal.operators.binop.grcntrct import grcntrct
+from Sygal.operators.binop.glcntrct import glcntrct
 
-from libs.Sygal.operators.binop.outermorphic.outermorphic import outermorphic
-from libs.Sygal.operators.binop.outermorphic.projection import projection 
-from libs.Sygal.operators.binop.outermorphic.rejection import rejection  
+from Sygal.operators.binop.outermorphic.outermorphic import outermorphic
+from Sygal.operators.binop.outermorphic.projection import projection 
+from Sygal.operators.binop.outermorphic.rejection import rejection  
 
-from libs.Sygal.operators.binop.outermorphic.isomorphic.isomorphic import isomorphic
-from libs.Sygal.operators.binop.outermorphic.isomorphic.inversion import inversion  
+from Sygal.operators.binop.outermorphic.isomorphic.isomorphic import isomorphic
+from Sygal.operators.binop.outermorphic.isomorphic.inversion import inversion  
 
-from libs.Sygal.operators.binop.outermorphic.isomorphic.transforms.dilation import dilation 
-from libs.Sygal.operators.binop.outermorphic.isomorphic.transforms.translation import translation 
-from libs.Sygal.operators.binop.outermorphic.isomorphic.transforms.rotation import rotation
+from Sygal.operators.binop.outermorphic.isomorphic.transforms.dilation import dilation 
+from Sygal.operators.binop.outermorphic.isomorphic.transforms.translation import translation 
+from Sygal.operators.binop.outermorphic.isomorphic.transforms.rotation import rotation

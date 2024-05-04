@@ -1,8 +1,8 @@
 # Required for tests
 import sys
-sys.path.append('/app/solver')
+sys.path.append('/app/lib')
 
-from libs.Sygal.initial import *
+from Sygal.initial import *
 
 
 

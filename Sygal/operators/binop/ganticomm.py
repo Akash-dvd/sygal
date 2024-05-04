@@ -8,7 +8,7 @@ from sympy import (
 )
 
 
-from libs.Sygal.GExpr import GExpr
+from Sygal.GExpr import GExpr
 
 class ganticomm(GExpr):
   """Represents a modulo operation on symbolic expressions.

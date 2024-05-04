@@ -1,8 +1,8 @@
-from libs.Sygal.imports.import1head import *
-from libs.Sygal.imports.import1tail import *
+from Sygal.imports.import1head import *
+from Sygal.imports.import1tail import *
 
-from libs.Sygal.operators.assop.gextp import gextp
-from libs.Sygal.operators.binop.outermorphic.outermorphic import outermorphic
+from Sygal.operators.assop.gextp import gextp
+from Sygal.operators.binop.outermorphic.outermorphic import outermorphic
 
 def outermorphicExpander(expr):
   if (type(expr)==Box):

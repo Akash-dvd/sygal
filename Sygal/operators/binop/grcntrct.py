@@ -1,6 +1,6 @@
-from libs.Sygal.imports.import1head import *
-from libs.Sygal.operators.binop.binop import binop
-from libs.Sygal.operators.binop.sclrprdct import sclrprdct
+from Sygal.imports.import1head import *
+from Sygal.operators.binop.binop import binop
+from Sygal.operators.binop.sclrprdct import sclrprdct
 
 
 class grcntrct(binop):
@@ -152,11 +152,11 @@ def meta_treatment(expr:grcntrct)->grcntrct:
     return GExpr.Znl
 
 
-from libs.Sygal.imports.import1tail import *
+from Sygal.imports.import1tail import *
 
-from libs.Sygal.operators.binop.higher.grcntrcthigher import grcntrcthigher
-from libs.Sygal.operators.binop.canon.grcntrctcanon import grcntrctcanon
-from libs.Sygal.operators.binop.expand.grcntrctexpand import grcntrctexpand
+from Sygal.operators.binop.higher.grcntrcthigher import grcntrcthigher
+from Sygal.operators.binop.canon.grcntrctcanon import grcntrctcanon
+from Sygal.operators.binop.expand.grcntrctexpand import grcntrctexpand
 
 
 if is_devmode():

@@ -1,15 +1,15 @@
 from sympy.core.compatibility import iterable
-from libs.Sygal.imports.import1head import *
-from libs.Sygal.imports.import1tail import *
-from libs.Sygal.operators.assop.gadd import gadd
-from libs.Sygal.operators.assop.gextp import gextp
-from libs.Sygal.operators.assop.gmul import gmul
+from Sygal.imports.import1head import *
+from Sygal.imports.import1tail import *
+from Sygal.operators.assop.gadd import gadd
+from Sygal.operators.assop.gextp import gextp
+from Sygal.operators.assop.gmul import gmul
 
-from libs.Sygal.operators.binop.ganticomm import ganticomm
-from libs.Sygal.operators.binop.gcomm import gcomm
-from libs.Sygal.operators.binop.sclrprdct import sclrprdct
-from libs.Sygal.operators.binop.grcntrct import grcntrct
-from libs.Sygal.operators.binop.glcntrct import glcntrct
+from Sygal.operators.binop.ganticomm import ganticomm
+from Sygal.operators.binop.gcomm import gcomm
+from Sygal.operators.binop.sclrprdct import sclrprdct
+from Sygal.operators.binop.grcntrct import grcntrct
+from Sygal.operators.binop.glcntrct import glcntrct
 
 """
 USAGE --

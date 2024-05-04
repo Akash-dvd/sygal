@@ -1,17 +1,21 @@
-# """Core module. Provides the basic operations needed in sympy.
-# """
+# # """Core module. Provides the basic operations needed in sympy.
+# # """
 
-# from .rules import rlZero ,conjugation,rlGSortArgs
+# # from .rules import rlZero ,conjugation,rlGSortArgs
 
-# from .utils import is_unMixedGrade,parity,bx_sift,is_invertible
+# from .util import kbin_distri,parity,GSortArgs
+
+# from .utils1 import rlGSortArgs,bx_sift,is_unMixedGrade,is_primitive,is_pSC,is_uniGraded
+
+# from .utils2 import is_vecPerpendicularPair,is_perpendicularPair,is_vecnull,is_null,is_nzScalarPair,is_scalarPair,is_blade,is_vecBlade,is_versor,get_grade
+
+
 
 # __all__ = [
-#     'rlZero',
-#     'conjugation',
-#     'rlGSortArgs',
- 
-#     'is_unMixedGrade',
-#     'parity',
-#     'bx_sift',
-#     'is_invertible'
+#   'kbin_distri','parity','GSortArgs',
+
+#   'rlGSortArgs','bx_sift','is_unMixedGrade,is_primitive','is_pSC','is_uniGraded',
+
+#   'is_vecPerpendicularPair','is_perpendicularPair','is_vecnull','is_null','is_nzScalarPair','is_scalarPair','is_blade','is_vecBlade','is_versor','get_grade'
 # ]
+ 

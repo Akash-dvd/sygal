@@ -1,5 +1,5 @@
-from libs.Sygal.imports.import1head import *
-from libs.Sygal.operators.assop.assop import assop
+from Sygal.imports.import1head import *
+from Sygal.operators.assop.assop import assop
 
 
 class gadd(assop):
@@ -141,16 +141,16 @@ rules1 = (
 canonicalize = exhaust(typed({gadd: do_one(*rules1)}))
 
 
-from libs.Sygal.operators.assop.higher.gaddhigher import gaddhigher
-from libs.Sygal.operators.assop.canon.gaddcanon import gaddcanon
-from libs.Sygal.operators.assop.expand.gaddexpand import gaddexpand
+from Sygal.operators.assop.higher.gaddhigher import gaddhigher
+from Sygal.operators.assop.canon.gaddcanon import gaddcanon
+from Sygal.operators.assop.expand.gaddexpand import gaddexpand
 
 
 gaddhigher()
 gaddcanon()
 gaddexpand()
 
-from libs.Sygal.imports.import1tail import *
+from Sygal.imports.import1tail import *
 
 if is_devmode():
   StrPrinter._print_gadd = gadd.sympyrepr

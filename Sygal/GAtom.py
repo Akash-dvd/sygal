@@ -1,9 +1,10 @@
 from typing import Tuple, TypeVar, Callable, Dict, Sequence, List, Optional, Union
 
 from functools import reduce
-from collections import Iterable,defaultdict
+from collections.abc import Iterable
+from collections import defaultdict
 
-from libs.Sygal.utils.util import *
+from Sygal.utils.util import *
 
 from sympy import (
   Basic,diff, Rational, Symbol, S, Mul, Add, Expr,
@@ -11,17 +12,17 @@ from sympy import (
   symbols, sqrt, Matrix,srepr,AtomicExpr
 )
 from sympy import oo as I
-
-from libs.Sygal.GExpr import GExpr
-from libs.Sygal.pSC.grd import grd
-from libs.Sygal.pSC.spcdct import spcdct
-from libs.Sygal.pSC.spclst import spclst
-from libs.Sygal.relDt.relDt import relDt
 from sympy.core.cache import cacheit
-from libs.Sygal.Box import Box
-from libs.Sygal.utils.utils1 import rlGSortArgs,parity,is_unMixedGrade,bx_sift,GSortArgs,is_devmode
-from libs.Sygal.operators.assop.gextp import gextp
-# from libs.Sygal.pSC.pextp import pextp
+
+from Sygal.GExpr import GExpr
+from Sygal.pSC.grd import grd
+from Sygal.pSC.spcdct import spcdct
+from Sygal.pSC.spclst import spclst
+from Sygal.relDt.relDt import relDt
+from Sygal.Box import Box
+from Sygal.utils.utils1 import rlGSortArgs,parity,is_unMixedGrade,bx_sift,GSortArgs,is_devmode
+from Sygal.operators.assop.gextp import gextp
+# from Sygal.pSC.pextp import pextp
 # defDic = defaultdict(lambda x:None)
 
 def dct_is_joint(mv1:GExpr,mv2:GExpr):

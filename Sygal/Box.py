@@ -13,10 +13,10 @@ from sympy.strategies.tools import subs as strtSubs
 
 from sympy.printing.str import StrPrinter
 
-from libs.Sygal.GExpr import GExpr
-from libs.Sygal.pSC.spclst import spclst
-from libs.Sygal.relDt.relDt import relDt
-from libs.Sygal.utils.util import *
+from Sygal.GExpr import GExpr
+from Sygal.pSC.spclst import spclst
+from Sygal.relDt.relDt import relDt
+from Sygal.utils.util import *
 
 class Box(GExpr):
   # Chnage here for S(0) coeff
@@ -235,15 +235,15 @@ class Box(GExpr):
   
 # Standard import style
 # These extra imports cause issue with strategies import
-# from libs.Sygal.operators.assop.gadd import gadd
-# from libs.Sygal.operators.assop.gextp import gextp
-# from libs.Sygal.operators.assop.gmul import gmul
+# from Sygal.operators.assop.gadd import gadd
+# from Sygal.operators.assop.gextp import gextp
+# from Sygal.operators.assop.gmul import gmul
 
-# from libs.Sygal.operators.binop.ganticomm import ganticomm
-# from libs.Sygal.operators.binop.gcomm import gcomm
-# from libs.Sygal.operators.binop.sclrprdct import sclrprdct
-# from libs.Sygal.operators.binop.grcntrct import grcntrct
-# from libs.Sygal.operators.binop.glcntrct import glcntrct
+# from Sygal.operators.binop.ganticomm import ganticomm
+# from Sygal.operators.binop.gcomm import gcomm
+# from Sygal.operators.binop.sclrprdct import sclrprdct
+# from Sygal.operators.binop.grcntrct import grcntrct
+# from Sygal.operators.binop.glcntrct import glcntrct
 
 
 def is_devmode():

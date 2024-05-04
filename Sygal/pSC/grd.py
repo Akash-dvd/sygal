@@ -1,9 +1,9 @@
 from typing import Tuple, TypeVar, Callable, Dict, Sequence, List, Optional, Union,Any
 
 from functools import reduce,total_ordering
-from collections import Iterable,defaultdict
-
-from libs.Sygal.GExpr import GExpr 
+from collections.abc import Iterable
+from collections import defaultdict
+from Sygal.GExpr import GExpr 
 
 
 # @total_ordering

@@ -5,41 +5,44 @@ from sympy import (
 )
 
 from functools import reduce
-from collections import Iterable,defaultdict
+from collections.abc import Iterable
+from collections import defaultdict
 
-from libs.Sygal.utils.util import *
-
-from libs.Sygal.strategies.rl import (rm_id, glom, flatten, unpack, sort, distribute,subs, rebuild)
-from libs.Sygal.strategies.core import (null_safe, exhaust, memoize, condition,chain, tryit, do_one, debug, switch, minimize)
-from libs.Sygal.strategies.tools import subs, typed ,canon
-from libs.Sygal.strategies.traverse import (top_down, bottom_up, bxsall, top_down_once,bottom_up_once,spe_traverse,gen_traverse)
-from libs.Sygal.strategies.tree import treeapply, greedy, allresults, brute
-from libs.Sygal.strategies.iters import higher_iter,canon_iter ,expand_iter,bx_typed
-
-from libs.Sygal.GAtom import GAtom,GExpr,Box
-
-from libs.Sygal.operators.assop.gadd import gadd
-from libs.Sygal.operators.assop.gextp import gextp
-from libs.Sygal.operators.assop.gmul import gmul
-
-from libs.Sygal.operators.binop.ganticomm import ganticomm
-from libs.Sygal.operators.binop.gcomm import gcomm
-from libs.Sygal.operators.binop.sclrprdct import sclrprdct
-from libs.Sygal.operators.binop.grcntrct import grcntrct
-from libs.Sygal.operators.binop.glcntrct import glcntrct
-from libs.Sygal.operators.binop.sclrprdct import sclrprdct
+# from Sygal.utils.util import *
+from Sygal.utils.util import *
 
 
-from libs.Sygal.operators.binop.outermorphic.isomorphic.inversion import inversion
-from libs.Sygal.operators.binop.outermorphic.projection import projection
-from libs.Sygal.operators.binop.outermorphic.rejection import rejection
+from Sygal.strategies.rl import (rm_id, glom, flatten, unpack, sort, distribute,subs, rebuild)
+from Sygal.strategies.core import (null_safe, exhaust, memoize, condition,chain, tryit, do_one, debug, switch, minimize)
+from Sygal.strategies.tools import subs, typed ,canon
+from Sygal.strategies.traverse import (top_down, bottom_up, bxsall, top_down_once,bottom_up_once,spe_traverse,gen_traverse)
+from Sygal.strategies.tree import treeapply, greedy, allresults, brute
+from Sygal.strategies.iters import higher_iter,canon_iter ,expand_iter,bx_typed
 
-from libs.Sygal.operators.binop.outermorphic.outermorphic import outermorphic
+from Sygal.GAtom import GAtom,GExpr,Box
+
+from Sygal.operators.assop.gadd import gadd
+from Sygal.operators.assop.gextp import gextp
+from Sygal.operators.assop.gmul import gmul
+
+from Sygal.operators.binop.ganticomm import ganticomm
+from Sygal.operators.binop.gcomm import gcomm
+from Sygal.operators.binop.sclrprdct import sclrprdct
+from Sygal.operators.binop.grcntrct import grcntrct
+from Sygal.operators.binop.glcntrct import glcntrct
+from Sygal.operators.binop.sclrprdct import sclrprdct
 
 
-from libs.Sygal.operators.binop.outermorphic.isomorphic.isomorphic import isomorphic
+from Sygal.operators.binop.outermorphic.isomorphic.inversion import inversion
+from Sygal.operators.binop.outermorphic.projection import projection
+from Sygal.operators.binop.outermorphic.rejection import rejection
 
-from libs.Sygal.imports.import_util2 import *
+from Sygal.operators.binop.outermorphic.outermorphic import outermorphic
+
+
+from Sygal.operators.binop.outermorphic.isomorphic.isomorphic import isomorphic
+
+from Sygal.imports.import_util2 import *
 
 i = sqrt(-1)
 (X,X1,Y,Y1,X2,Y2,Z) = symbols('x x1 y y1 x2 y2 z')
@@ -69,7 +72,9 @@ i = sqrt(-1)
 
 
 
-mtDt = {GExpr.I41:1}
+# mtDt = {GExpr.I41:1}
+mtDt = {GExpr.I13:1}
+# GExpr.I13
 rlDt = relDt()
 rlDt.update({GExpr._oo:S(-1)})
 rlDt_n = relDt()

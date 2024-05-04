@@ -1,8 +1,8 @@
-from libs.Sygal.imports.import1head import *
-from libs.Sygal.imports.import1tail import *
+from Sygal.imports.import1head import *
+from Sygal.imports.import1tail import *
 
-from libs.Sygal.operators.assop.gmul import gmul
-from libs.Sygal.operators.binop.outermorphic.isomorphic.isomorphic import isomorphic
+from Sygal.operators.assop.gmul import gmul
+from Sygal.operators.binop.outermorphic.isomorphic.isomorphic import isomorphic
 
 def isomorphicExpander(expr):
   if (type(expr)==Box):

@@ -1,5 +1,5 @@
-from libs.Sygal.imports.import1head import *
-from libs.Sygal.operators.assop.assop import assop
+from Sygal.imports.import1head import *
+from Sygal.operators.assop.assop import assop
 
 
 class gmul(assop):
@@ -211,9 +211,9 @@ rules = (
   )
 
 
-from libs.Sygal.operators.assop.higher.gmulhigher import gmulhigher
-from libs.Sygal.operators.assop.canon.gmulcanon import gmulcanon
-from libs.Sygal.operators.assop.expand.gmulexpand import gmulexpand
+from Sygal.operators.assop.higher.gmulhigher import gmulhigher
+from Sygal.operators.assop.canon.gmulcanon import gmulcanon
+from Sygal.operators.assop.expand.gmulexpand import gmulexpand
 
 
 
@@ -223,7 +223,7 @@ gmulhigher()
 gmulcanon()
 gmulexpand()
 
-from libs.Sygal.imports.import1tail import *
+from Sygal.imports.import1tail import *
 
 if is_devmode():
   StrPrinter._print_gmul = gmul.sympyrepr
@@ -233,7 +233,7 @@ else :
 # THIS WAS LIKE AN AD_HOC INSERTION HERE
 # PUTTING ON TOP GIVES DEPENDENCY ERROR
 # BUT LOOKS FINE ALSO :|
-from libs.Sygal.operators.binop.sclrprdct import sclrprdct
+from Sygal.operators.binop.sclrprdct import sclrprdct
 
 
   # @property

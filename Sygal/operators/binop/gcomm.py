@@ -7,7 +7,7 @@ from sympy import (
   symbols, sqrt, Matrix,srepr,Function
 )
 
-from libs.Sygal.GExpr import GExpr
+from Sygal.GExpr import GExpr
 
 class gcomm(GExpr):
   """Represents a modulo operation on symbolic expressions.

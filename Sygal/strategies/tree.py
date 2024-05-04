@@ -1,9 +1,9 @@
 from __future__ import print_function, division
 
 from functools import partial
-from libs.Sygal.strategies import chain, minimize
-import libs.Sygal.strategies.branch as branch
-from libs.Sygal.strategies.branch import yieldify
+from Sygal.strategies import chain, minimize
+import Sygal.strategies.branch as branch
+from Sygal.strategies.branch import yieldify
 
 identity = lambda x: x
 

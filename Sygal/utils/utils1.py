@@ -1,8 +1,9 @@
-# from .importshead import *
-from libs.Sygal.imports.import1head import *
-from sympy.strategies.util import basic_fns
-from libs.Sygal.GExpr import GExpr
-from libs.Sygal.Box import Box
+from sympy.strategies.util import basic_fns,Basic
+
+# from Sygal..importshead import *
+from Sygal.imports.import1head import *
+from Sygal.GExpr import GExpr
+from Sygal.Box import Box
 
 """
 USAGE --
@@ -103,7 +104,8 @@ def is_pSC(arg:"GExpr")->bool:
   return arg in GExpr.pSC
 
 
-def is_uniGraded(expr:Union[Expr,GExpr])->bool:
+# def is_uniGraded(expr:Union[Expr,GExpr])->bool:
+def is_uniGraded(expr):
   if issubclass(type(expr),GExpr):
     gd = expr.grade
     return len(gd) == 1

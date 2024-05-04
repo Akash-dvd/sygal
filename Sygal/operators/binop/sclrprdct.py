@@ -1,5 +1,5 @@
-from libs.Sygal.imports.import1head import *
-from libs.Sygal.operators.binop.binop import binop
+from Sygal.imports.import1head import *
+from Sygal.operators.binop.binop import binop
 
 class sclrprdct(binop):
   """
@@ -97,16 +97,16 @@ def meta_treatment(expr:sclrprdct)->sclrprdct:
     return GExpr.Znl
 
 
-from libs.Sygal.imports.import1tail import *
+from Sygal.imports.import1tail import *
 
 if is_devmode():
   StrPrinter._print_sclrprdct = sclrprdct.sympyrepr
 else :
   StrPrinter._print_sclrprdct = sclrprdct.sympystr
 
-from libs.Sygal.operators.binop.higher.sclrprdcthigher import sclrprdcthigher
-from libs.Sygal.operators.binop.canon.sclrprdctcanon import sclrprdctcanon
-from libs.Sygal.operators.binop.expand.sclrprdctexpand import sclrprdctexpand
+from Sygal.operators.binop.higher.sclrprdcthigher import sclrprdcthigher
+from Sygal.operators.binop.canon.sclrprdctcanon import sclrprdctcanon
+from Sygal.operators.binop.expand.sclrprdctexpand import sclrprdctexpand
 
 sclrprdcthigher()
 sclrprdctcanon()

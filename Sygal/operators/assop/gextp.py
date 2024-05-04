@@ -1,5 +1,5 @@
-from libs.Sygal.imports.import1head import *
-from libs.Sygal.operators.assop.assop import assop
+from Sygal.imports.import1head import *
+from Sygal.operators.assop.assop import assop
 
 # defDic = defaultdict(lambda x:None)
 
@@ -162,11 +162,11 @@ class gextp(assop):
       return GExpr.Znl
 
 
-from libs.Sygal.operators.assop.higher.gextphigher import gextphigher
-from libs.Sygal.operators.assop.canon.gextpcanon import gextpcanon
-from libs.Sygal.operators.assop.expand.gextpexpand import gextpexpand
+from Sygal.operators.assop.higher.gextphigher import gextphigher
+from Sygal.operators.assop.canon.gextpcanon import gextpcanon
+from Sygal.operators.assop.expand.gextpexpand import gextpexpand
 
-from libs.Sygal.imports.import1tail import *
+from Sygal.imports.import1tail import *
 
 rules1 = (
   unpack,flatten

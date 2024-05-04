@@ -1,32 +1,32 @@
-from libs.Sygal.strategies.rl import (rm_id, glom, flatten, unpack, sort, distribute,subs, rebuild)
-from libs.Sygal.strategies.core import (null_safe, exhaust, memoize, condition,chain, tryit, do_one, debug, switch, minimize)
-from libs.Sygal.strategies.tools import subs, typed ,canon
-from libs.Sygal.strategies.traverse import (top_down, bottom_up, bxsall, top_down_once,bottom_up_once,spe_traverse,gen_traverse)
-from libs.Sygal.strategies.tree import treeapply, greedy, allresults, brute
+from Sygal.strategies.rl import (rm_id, glom, flatten, unpack, sort, distribute,subs, rebuild)
+from Sygal.strategies.core import (null_safe, exhaust, memoize, condition,chain, tryit, do_one, debug, switch, minimize)
+from Sygal.strategies.tools import subs, typed ,canon
+from Sygal.strategies.traverse import (top_down, bottom_up, bxsall, top_down_once,bottom_up_once,spe_traverse,gen_traverse)
+from Sygal.strategies.tree import treeapply, greedy, allresults, brute
 
 def key1():
-  from libs.Sygal.Box import Box
-  from libs.Sygal.operators.assop.gadd import gadd
-  from libs.Sygal.operators.assop.gextp import gextp
-  from libs.Sygal.operators.assop.gmul import gmul
+  from Sygal.Box import Box
+  from Sygal.operators.assop.gadd import gadd
+  from Sygal.operators.assop.gextp import gextp
+  from Sygal.operators.assop.gmul import gmul
 
-  from libs.Sygal.operators.binop.ganticomm import ganticomm
-  from libs.Sygal.operators.binop.gcomm import gcomm
-  from libs.Sygal.operators.binop.sclrprdct import sclrprdct
-  from libs.Sygal.operators.binop.grcntrct import grcntrct
-  from libs.Sygal.operators.binop.glcntrct import glcntrct
+  from Sygal.operators.binop.ganticomm import ganticomm
+  from Sygal.operators.binop.gcomm import gcomm
+  from Sygal.operators.binop.sclrprdct import sclrprdct
+  from Sygal.operators.binop.grcntrct import grcntrct
+  from Sygal.operators.binop.glcntrct import glcntrct
 
-  from libs.Sygal.operators.binop.outermorphic.outermorphic import outermorphic
-  from libs.Sygal.operators.binop.outermorphic.projection import projection
-  from libs.Sygal.operators.binop.outermorphic.rejection import rejection
+  from Sygal.operators.binop.outermorphic.outermorphic import outermorphic
+  from Sygal.operators.binop.outermorphic.projection import projection
+  from Sygal.operators.binop.outermorphic.rejection import rejection
   
-  from libs.Sygal.operators.binop.outermorphic.isomorphic.isomorphic import isomorphic
-  from libs.Sygal.operators.binop.outermorphic.isomorphic.inversion import inversion
+  from Sygal.operators.binop.outermorphic.isomorphic.isomorphic import isomorphic
+  from Sygal.operators.binop.outermorphic.isomorphic.inversion import inversion
 
-  from libs.Sygal.operators.binop.outermorphic.isomorphic.transforms.transforms import transforms
-  from libs.Sygal.operators.binop.outermorphic.isomorphic.transforms.dilation import dilation
-  from libs.Sygal.operators.binop.outermorphic.isomorphic.transforms.rotation import rotation
-  from libs.Sygal.operators.binop.outermorphic.isomorphic.transforms.translation import translation
+  from Sygal.operators.binop.outermorphic.isomorphic.transforms.transforms import transforms
+  from Sygal.operators.binop.outermorphic.isomorphic.transforms.dilation import dilation
+  from Sygal.operators.binop.outermorphic.isomorphic.transforms.rotation import rotation
+  from Sygal.operators.binop.outermorphic.isomorphic.transforms.translation import translation
 
 
   def key(x):

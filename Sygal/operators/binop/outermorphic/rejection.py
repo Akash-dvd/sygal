@@ -1,15 +1,15 @@
-from libs.Sygal.imports.import1head import *
-from libs.Sygal.imports.import1tail import *
-from libs.Sygal.operators.assop.gadd import gadd
-from libs.Sygal.operators.assop.gextp import gextp
-from libs.Sygal.operators.assop.gmul import gmul
+from Sygal.imports.import1head import *
+from Sygal.imports.import1tail import *
+from Sygal.operators.assop.gadd import gadd
+from Sygal.operators.assop.gextp import gextp
+from Sygal.operators.assop.gmul import gmul
 
-from libs.Sygal.operators.binop.ganticomm import ganticomm
-from libs.Sygal.operators.binop.gcomm import gcomm
-from libs.Sygal.operators.binop.sclrprdct import sclrprdct
-from libs.Sygal.operators.binop.grcntrct import grcntrct
-from libs.Sygal.operators.binop.glcntrct import glcntrct
-from libs.Sygal.imports.import_util2 import *
+from Sygal.operators.binop.ganticomm import ganticomm
+from Sygal.operators.binop.gcomm import gcomm
+from Sygal.operators.binop.sclrprdct import sclrprdct
+from Sygal.operators.binop.grcntrct import grcntrct
+from Sygal.operators.binop.glcntrct import glcntrct
+from Sygal.imports.import_util2 import *
 
 from .outermorphic import outermorphic
 
@@ -152,9 +152,9 @@ else :
   StrPrinter._print_rejection = rejection.sympystr
 
 
-from libs.Sygal.operators.binop.outermorphic.higher.rejectionhigher import rejectionhigher
-from libs.Sygal.operators.binop.outermorphic.canon.rejectioncanon import rejectioncanon
-from libs.Sygal.operators.binop.outermorphic.expand.rejectionexpand import rejectionexpand
+from Sygal.operators.binop.outermorphic.higher.rejectionhigher import rejectionhigher
+from Sygal.operators.binop.outermorphic.canon.rejectioncanon import rejectioncanon
+from Sygal.operators.binop.outermorphic.expand.rejectionexpand import rejectionexpand
 
 rejectionhigher()
 rejectioncanon()

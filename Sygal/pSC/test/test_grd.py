@@ -1,8 +1,8 @@
 # Required for tests
-import sys
-sys.path.append('/app/solver')
+# import sys
+# sys.path.append('/app/solver')
 
-from libs.Sygal.initial import *
+from initial import *
 
 
 def test_grd():

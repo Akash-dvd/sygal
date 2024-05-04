@@ -1,11 +1,11 @@
 from typing import Tuple, TypeVar, Callable, Dict, Sequence, List, Optional, Union,Any
 
 from functools import reduce,total_ordering
-from collections import Iterable,defaultdict
-
-from libs.Sygal.GExpr import GExpr
-from libs.Sygal.pSC.grd import grd
-from libs.Sygal.pSC.spcdct import spcdct
+from collections.abc import Iterable
+from collections import defaultdict
+from Sygal.GExpr import GExpr
+from Sygal.pSC.grd import grd
+from Sygal.pSC.spcdct import spcdct
 
 class spclst(list):
   # Wont take empty dicts

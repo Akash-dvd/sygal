@@ -1,13 +1,14 @@
 from typing import Tuple, TypeVar, Callable, Dict, Sequence, List, Optional, Union,Any
 
 from functools import reduce,total_ordering
-from collections import Iterable,defaultdict
+from collections.abc import Iterable
+from collections import defaultdict
 from itertools import product
 from sympy import subsets
 
-from libs.Sygal.GExpr import GExpr 
-from libs.Sygal.pSC.grd import grd
-from libs.Sygal.utils.util import * 
+from Sygal.GExpr import GExpr 
+from Sygal.pSC.grd import grd
+from Sygal.utils.util import * 
 
 Ngrd = grd(None,None)
 
@@ -48,6 +49,7 @@ class spcdct(dict):    # -> Union[spcdct,None]
       t_dct1 = spcdct.canonicalize(t_dct)
       super().clear()
       super().update(t_dct1)
+      
     else :
       ValueError("Arg must be type dict")
 
@@ -137,12 +139,7 @@ class spcdct(dict):    # -> Union[spcdct,None]
     and (super().__eq__(other)) )
     # and (self.value != other.value) )
 
-  # TODO 
-  ################
-  # replace or merge when ceiling is touched
-  # {I3:3,I41:1} -> replace with I3
-  # {I3:2,I41:2} -> {I41:4}
-  # Similar overflows
+
   def canonicalize(dct) -> dict:
 
     ##############

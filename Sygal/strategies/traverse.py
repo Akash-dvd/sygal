@@ -9,8 +9,8 @@ from sympy import (
 
 
 
-from libs.Sygal.strategies.util import gen_traverse,spe_traverse
-from libs.Sygal.strategies.core import chain, do_one
+from Sygal.strategies.util import gen_traverse,spe_traverse
+from Sygal.strategies.core import chain, do_one
 
 def top_down(rule, fns=gen_traverse):
   """Apply a rule down a tree running it on the top nodes first."""
@@ -38,8 +38,8 @@ def bottom_up_once(rule, fns=gen_traverse):
 
 def bxsall(rule, fns=gen_traverse):
   """Strategic all - apply rule to args."""
-  from libs.Sygal.GExpr import GExpr 
-  from libs.Sygal.Box import Box 
+  from Sygal.GExpr import GExpr 
+  from Sygal.Box import Box 
 
   op, new, children, leaf,coeff_flag = map(fns.get, ('op', 'new', 'children', 'leaf','coeff_flag'))
 
