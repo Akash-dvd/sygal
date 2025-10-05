@@ -8,6 +8,7 @@ from sympy import (
   symbols, sqrt, Matrix,srepr,bottom_up,
 )
 from sympy.strategies.tools import subs as strtSubs
+from sympy.strategies.rl import rebuild
 
 # from sympy.core.decorators import call_highest_priority, sympify_return
 
@@ -118,9 +119,9 @@ class GExpr(Expr):
   ghigher = lambda x:x
   ###########################
 
-  def sSubs(self:"GExpr", args):
-    raise NotImplemented
-    # def replace(old,new):
+  # def sSubs(self:"GExpr", args):
+  #   raise NotImplemented
+  #   # def replace(old,new):
     #   if new is None:
     #     exprlst.remove(old)
     #   else:
@@ -144,41 +145,35 @@ class GExpr(Expr):
     #   raise
 
   def subs(self:"GExpr",map) -> "GExpr":
-    if isinstance(map,list):
-      for old,new in map:
-        expr = strtSubs({old:new})(self)
-        expr1 = expr.func(*expr.args)
-      return expr1
-      
-    elif isinstance(map,tuple):
-      old,new = map
-      expr = strtSubs({old:new})(self)
-      expr1 = expr.func(*expr.args)
-      # expression needs to be rebui;d
+
+    if isinstance(map,dict):
+      expr = strtSubs(map)(self)
+      expr1 = rebuild(expr)
+      # expr1 = expr.func(*expr.args)
       return expr1
     else :
-      raise
+      raise  
+
+    #   for old,new in map.items:
+    #     expr = strtSubs({old:new})(self)
+    #     expr1 = expr.func(*expr.args)
+    #   return expr1
+    
+    # elif isinstance(map,list):
+    #   for old,new in map:
+    #     expr = strtSubs({old:new})(self)
+    #     expr1 = expr.func(*expr.args)
+    #   return expr1
+      
+    # elif isinstance(map,tuple):
+    #   old,new = map
+    #   expr = strtSubs({old:new})(self)
+    #   expr1 = expr.func(*expr.args)
+    #   # expression needs to be rebui;d
+    #   return expr1
+    # else :
+    #   raise
   
-  # # Definitions links inside GExpr
-  # @staticmethod
-  # def inversion() -> "GExpr":
-  #   return  ginversion
-  
-  # @staticmethod
-  # def rejection() -> "GExpr":
-  #   return  grejection
-  # @staticmethod
-  # def projection() -> "GExpr":
-  #   return  gprojection
-
-  # @staticmethod
-  # def isomorphic() -> "GExpr":
-  #   return  gisomorphic
-
-  # @staticmethod
-  # def outermorphic() -> "GExpr":
-  #   return  goutermorphic
-
 
 
 

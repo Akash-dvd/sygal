@@ -57,8 +57,10 @@ class GAtom(GExpr,AtomicExpr):
     # TODO check for earlier symbols
     if not isinstance(name, str):
       raise TypeError("name should be a string, not %s" % repr(type(name)))
-    elif name.startswith('_'):
-      raise TypeError("name should not start with  _")
+    
+    # this check should be somewhere upper
+    # elif name.startswith('_'):
+    #   raise TypeError("name should not start with  _")
 
     # Pattern match for mtdt -> dict
     # if not bool(mtDt):

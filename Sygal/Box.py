@@ -18,11 +18,18 @@ from Sygal.pSC.spclst import spclst
 from Sygal.relDt.relDt import relDt
 from Sygal.utils.util import *
 
+import warnings
+
 class Box(GExpr):
   # Chnage here for S(0) coeff
   def __new__(cls,mv:"GExpr",coeff:Expr=S(1))->"Box":
     if(type(coeff)==Box):
-      raise ValueError
+      coeff = coeff.coeff
+      warnings.warn("Warning.......Box coeff is box again")
+      
+      # raise ValueError
+    else :
+      coeff = coeff
     
     # Pattern matching for types
     fct1  = issubclass(type(mv),GExpr)
