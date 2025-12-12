@@ -12,7 +12,6 @@ from Sygal.operators.binop.gcomm import gcomm
 from Sygal.operators.binop.sclrprdct import sclrprdct
 from Sygal.operators.binop.grcntrct import grcntrct
 from Sygal.operators.binop.glcntrct import glcntrct
-from Sygal.operators.binop.sclrprdct import sclrprdct
 
 from Sygal.imports.import_util2 import *
 
@@ -31,25 +30,13 @@ def sclprdct_expand(expr:Expr)->Union[Expr,Box]:
     down = expr.down
     if is_vecBlade(up) and is_vecBlade(down):
       if(up.is_atom):#down will also be atom
-        t1 = up.rlDt[down]
-        t2 = down.rlDt[up]
-        if t1 != None and t2 != None:
-          if t1 == t2:
-            return t1
-          else :
-            raise ValueError("Two different values for innerproduct")
-        elif t1!= None:
-          return t1
-        elif t2!=None:
-          return t2
-        else :
-          return expr
+        # relDt removed - return expression unchanged
+        return expr
       else:
         lst = []
         for i,u_ele in enumerate(up.args):
-          t3 = list(filter(lambda x:x is not None,[d_ele.rlDt[u_ele] for d_ele in down.args]))
-          if t3:
-            lst.append(u_ele)
+          # relDt removed - simplified logic
+          lst.append(u_ele)
         down_1 = down
 
         for ele in lst:
@@ -82,21 +69,8 @@ def sclprdct_expand1(expr:Expr)->Union[Expr,Box]:
     down = expr.down
     if is_vecBlade(up) and is_vecBlade(down):
       if(up.is_atom):#down will also be atom
-        # bx_down = Basic.__new__(Box,down,S(1))
-        # bx_up = Basic.__new__(Box,up,S(1))
-        t1 = up.rlDt[down]
-        t2 = down.rlDt[up]
-        if t1 != None and t2 != None:
-          if t1 == t2:
-            return t1
-          else :
-            raise ValueError("Two different values for innerproduct")
-        elif t1!= None:
-          return t1
-        elif t2!=None:
-          return t2
-        else :
-          return expr
+        # relDt removed - return expression unchanged
+        return expr
       else:
         lst = list(up.args)
         down_1 = down

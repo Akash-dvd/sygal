@@ -35,7 +35,13 @@ def test_0():
 
 
 def test_sandhi():
-  # TODO SORT FOR EQUALITY
+  """
+  Test sandhi (combination) rule for outer products of left contractions.
+  Sandhi rule: (A < (B^C)) ^ (A < (C^D)) -> A < (B^C^D) when conditions are met.
+  
+  Note: This test compares both multivector structure AND coefficients.
+  The sandhi canonicalization should preserve mathematical correctness.
+  """
 
   test_cases = [
   ((A1<(B1^B2))^(A1<(B2^B3)),
@@ -61,7 +67,18 @@ def test_sandhi():
 
   ]
 
-  assert all([(canon_iter(gextp)(x)).mv == y.mv for x, y in test_cases])
+  # Compare full expressions (multivector + coefficients) for correctness
+  # If only structure needs checking, compare .mv; but coefficients matter too
+  results = []
+  for x, y in test_cases:
+    result = canon_iter(gextp)(x)
+    # Compare multivector structure
+    mv_match = result.mv == y.mv
+    # Also check if coefficients match (important for mathematical correctness)
+    coeff_match = result.coeff == y.coeff
+    results.append(mv_match and coeff_match)
+    
+  assert all(results), "Sandhi simplification failed: some test cases don't match in structure or coefficients"
 
 
 def test_gmul_2Proj():

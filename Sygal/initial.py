@@ -12,9 +12,9 @@ from collections import defaultdict
 from Sygal.utils.util import *
 
 
-from Sygal.strategies.rl import (rm_id, glom, flatten, unpack, sort, distribute,subs, rebuild)
-from Sygal.strategies.core import (null_safe, exhaust, memoize, condition,chain, tryit, do_one, debug, switch, minimize)
-from Sygal.strategies.tools import subs, typed ,canon
+from Sygal.strategies.rl import (rm_id, glom, flatten, unpack, sort, distribute, subs, rebuild)
+from Sygal.strategies.core import (null_safe, exhaust, memoize, condition, chain, tryit, do_one, debug, switch, minimize)
+from Sygal.strategies.tools import typed, canon
 from Sygal.strategies.traverse import (top_down, bottom_up, bxsall, top_down_once,bottom_up_once,spe_traverse,gen_traverse)
 from Sygal.strategies.tree import treeapply, greedy, allresults, brute
 from Sygal.strategies.iters import higher_iter,canon_iter ,expand_iter,bx_typed
@@ -30,7 +30,6 @@ from Sygal.operators.binop.gcomm import gcomm
 from Sygal.operators.binop.sclrprdct import sclrprdct
 from Sygal.operators.binop.grcntrct import grcntrct
 from Sygal.operators.binop.glcntrct import glcntrct
-from Sygal.operators.binop.sclrprdct import sclrprdct
 
 
 from Sygal.operators.binop.outermorphic.isomorphic.inversion import inversion
@@ -75,10 +74,9 @@ i = sqrt(-1)
 # mtDt = {GExpr.I41:1}
 mtDt = {GExpr.I13:1}
 # GExpr.I13
-rlDt = relDt()
-rlDt.update({GExpr._oo:S(-1)})
-rlDt_n = relDt()
-rlDt_n.update({GExpr._oo:S(-1),"self":S(0)})
+# relDt removed - no longer required
+rlDt = {}
+rlDt_n = {}
 
 
 

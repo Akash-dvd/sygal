@@ -18,7 +18,6 @@ from Sygal.GExpr import GExpr
 from Sygal.pSC.grd import grd
 from Sygal.pSC.spcdct import spcdct
 from Sygal.pSC.spclst import spclst
-from Sygal.relDt.relDt import relDt
 from Sygal.Box import Box
 from Sygal.utils.utils1 import rlGSortArgs,parity,is_unMixedGrade,bx_sift,GSortArgs,is_devmode
 from Sygal.operators.assop.gextp import gextp
@@ -45,13 +44,12 @@ def pextp(*args) -> "Box":
   dct = spcdct({})
   dct.sup_update({MV:grade})
   MV.mtDt.append(dct)
-  MV.rlDt = relDt()
   bx = Basic.__new__(Box,MV,coeff)
   return bx
 
 class GAtom(GExpr,AtomicExpr):
 
-  def __new__(cls, name:str,mtDt:Union[List[Dict],Dict],rlDt:Dict) -> Box:
+  def __new__(cls, name:str,mtDt:Union[List[Dict],Dict],rlDt:Dict=None) -> Box:
     
     # Pattern match for name -> str
     # TODO check for earlier symbols
@@ -87,22 +85,9 @@ class GAtom(GExpr,AtomicExpr):
     # BOX INITIALIZER
     bx = GAtom.__xnew_cached_(GAtom, name)
     bx.mv.mtDt = mtDt
-    # DICT INITIALIZER
-    GAtom.dict_initializer(bx,rlDt)
+    # DICT INITIALIZER - removed rlDt handling
   
     return bx
-
-  def dict_initializer(bx,t_rlDt):
-    rlDt = relDt()
-
-    for k,v in t_rlDt.items():
-      if k =="self":
-        rlDt.update({bx:v})
-      elif issubclass(type(k),GExpr):
-        rlDt.update({k:v})
-      else :
-        raise NotImplemented
-    bx.mv.rlDt = rlDt
 
   def __new_stage2__(cls, name) -> Box:
     
@@ -146,16 +131,13 @@ class GAtom(GExpr,AtomicExpr):
       t_dct = dict.__new__(spcdct)
       t_dct.sup_update({GExpr.Onl.mv:grd(0,0)})
       GExpr.Onl.mv.mtDt = spclst([t_dct])
-      GExpr.Onl.mv.rlDt = relDt()
       # GExpr.Onl.mv.mtDt = spclst([{GExpr.nl:t_grd}])
-      # GExpr.Onl.mv.rlDt = defDic derived from GExpr
 
       GExpr.nl = GExpr.Onl.mv
 
       # To make sure Both Znl and Onl share same _nl
       GExpr.Znl = Basic.__new__(Box,GExpr.nl,S(0)) 
       GExpr.Znl.mv.mtDt = spclst([t_dct])
-      GExpr.Znl.mv.rlDt = relDt()
       
       
       
@@ -189,21 +171,7 @@ class GAtom(GExpr,AtomicExpr):
       _x7 = prim[11]
       _x8 = prim[12]
       
-      rel_dot = [[_o,_oo,S(-1)],[_x,_x,S(1)],[_y,_y,S(1)],[_rx,_rx,S(-1)],[_oo,_o,S(-1)],[_x1,_x1,S(1)],[_x2,_x2,S(1)],[_x3,_x3,S(1)],[_x4,_x4,S(1)],[_x5,_x5,S(1)],[_x6,_x6,S(1)],[_x7,_x7,S(1)],[_x8,_x8,S(1)]]
-      
-      accu_def_rlDt = relDt()
-      tmpdict = relDt()
-      
-      for bx in prim:
-        tmpdict.update({bx:S(0)})
-      for bx in prim:
-        newtmpdict = tmpdict.copy()
-        accu_def_rlDt.update({bx:newtmpdict})
-
-      for bx1,bx2,cf in rel_dot:
-        accu_def_rlDt[bx1].update({bx2:cf})
-      for bx in prim:
-        bx.mv.rlDt = accu_def_rlDt[bx]
+      # relDt initialization removed - no longer required
 
       #######################
           

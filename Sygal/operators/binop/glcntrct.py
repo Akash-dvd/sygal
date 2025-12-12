@@ -41,7 +41,6 @@ class glcntrct(binop):
       if MV1 == GExpr.Znl:
         return GExpr.Znl
       else :
-        MV1.rlDt = relDt()
         bx = Box.__new__(Box,mv=MV1,coeff=coeff)
         return bx
 

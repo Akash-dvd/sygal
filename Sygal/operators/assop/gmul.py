@@ -46,12 +46,10 @@ class gmul(assop):
       elif MV3.grade == {0}:
         if len(MV3.args) != 2:
           raise NotImplementedError
-        MV3.rlDt = relDt()
         MV4 = sclrprdct(MV3.args[0],MV3.args[1])
         t = MV4*cf
         return t
       else :
-        MV3.rlDt = relDt()
         bx = Box.__new__(Box,mv=MV3,coeff=cf)
         return bx
 

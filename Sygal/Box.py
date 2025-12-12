@@ -1,5 +1,4 @@
 from collections import defaultdict
-from math import exp
 import sys
 
 from typing import Tuple, TypeVar, Callable, Dict, Sequence, List, Optional, Union
@@ -15,7 +14,6 @@ from sympy.printing.str import StrPrinter
 
 from Sygal.GExpr import GExpr
 from Sygal.pSC.spclst import spclst
-from Sygal.relDt.relDt import relDt
 from Sygal.utils.util import *
 
 import warnings
@@ -58,7 +56,6 @@ class Box(GExpr):
         raise
       t = new(Box,GExpr.nl,Mul(coeff,BX.coeff))
       t.mv.mtDt = GExpr.nl.mtDt
-      t.mv.rlDt = relDt()
       return t
     elif fct3:
       BX = mv
@@ -70,12 +67,10 @@ class Box(GExpr):
         t = [new(Box,bx.mv,Mul(bx.coeff,coeff)) for bx in BX.mv.args]
         t1 = new(Box,new(type(BX.mv),*t),S(1))
         t1.mv.mtDt = BX.mv.mtDt.copy()
-        t1.mv.rlDt = BX.mv.rlDt.copy()
         return t1
       else:
         t = new(Box,BX.mv,Mul(coeff,BX.coeff))
         t.mv.mtDt = BX.mv.mtDt.copy()
-        t.mv.rlDt = BX.mv.rlDt.copy()
         return t
     
     # Not box mvs
@@ -85,14 +80,12 @@ class Box(GExpr):
       if(mv == GExpr.nl):
         t = new(Box,GExpr.nl,coeff)
         t.mv.mtDt = GExpr.nl.mtDt
-        t.mv.rlDt = relDt()
         return t
       else:
         # Here mv has to be checked that it should only scprdct or gmul 
         if type(mv).__name__ == "sclrprdct":
           t = new(Box,GExpr.nl,Mul(mv,coeff))
           t.mv.mtDt = GExpr.nl.mtDt
-          t.mv.rlDt = relDt()
           return t   
         else:
           raise NotImplementedError
@@ -103,12 +96,10 @@ class Box(GExpr):
         t = [new(Box,bx.mv,Mul(bx.coeff,coeff)) for bx in mv.args]
         t1 = new(Box,new(type(mv),*t),S(1))
         t1.mv.mtDt = mv.mtDt.copy()
-        t1.mv.rlDt = mv.rlDt.copy()
         return t1
       else:
         t = new(Box,mv,coeff)
         t.mv.mtDt = mv.mtDt.copy()
-        t.mv.rlDt = mv.rlDt.copy()    
         return t
     
     # Scalars boxing
@@ -118,7 +109,6 @@ class Box(GExpr):
         raise
       t = new(Box,GExpr.nl,sympify(mv))
       t.mv.mtDt = GExpr.nl.mtDt
-      t.mv.rlDt = relDt()
       return t
 
   def sympystr(self,expr:"Box") -> str:
@@ -203,9 +193,6 @@ class Box(GExpr):
   def mtDt(self:"Box")->spclst:
     return self.mv.mtDt
 
-  @property
-  def rlDt(self:"Box")->relDt:
-    return self.mv.rlDt
 
   @property
   def coeff(self:"Box") -> "GExpr":
@@ -293,7 +280,6 @@ def ceil_mtDt(expr) ->bool:
           pluck_ele = [ele for ele in mv.args if len(ele.mtDt)==1 and (ele.mtDt[0][k].value)]
 
           pluckmv = Basic.__new__(cls,*pluck_ele)
-          pluckmv.rlDt = relDt()
           pluckmv = pluckmv.meta_treatment()
           pluckbx = Basic.__new__(Box,pluckmv,S(1))
 
@@ -317,7 +303,6 @@ def ceil_mtDt(expr) ->bool:
           sign2 = parity(n_args3,n_args2)
           n_mv = Basic.__new__(cls,*n_args3)
           n_mv = n_mv.meta_treatment()
-          n_mv.rlDt = expr.rlDt
           
           bx = Basic.__new__(Box,n_mv,Mul(sign2,sign1,coeff.coeff))
           return bx

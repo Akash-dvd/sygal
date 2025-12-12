@@ -50,8 +50,6 @@ class gextp(assop):
       MV3 = gextp.meta_treatment(MV2)
       if MV3 == GExpr.Znl:
         return GExpr.Znl
-      else :
-        MV3.rlDt = relDt()
 
       # ordering
       ###########################
@@ -64,7 +62,6 @@ class gextp(assop):
         MV4 = MV3
         cf1 = cf
 
-      MV4.rlDt = relDt()
       MV4.mtDt = MV3.mtDt
       bx = Box.__new__(Box,mv=MV4,coeff=cf1)
       return bx

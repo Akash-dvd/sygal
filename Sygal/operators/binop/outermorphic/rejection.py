@@ -35,7 +35,6 @@ class rejection(outermorphic):
       if MV2 == GExpr.Znl:
         return GExpr.Znl
       else :
-        MV2.rlDt = relDt()
         bx = Box.__new__(Box,mv=MV2,coeff=coeff)
         return bx
 

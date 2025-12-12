@@ -1,6 +1,6 @@
-from Sygal.strategies.rl import (rm_id, glom, flatten, unpack, sort, distribute,subs, rebuild)
-from Sygal.strategies.core import (null_safe, exhaust, memoize, condition,chain, tryit, do_one, debug, switch, minimize)
-from Sygal.strategies.tools import subs, typed ,canon
+from Sygal.strategies.rl import (rm_id, glom, flatten, unpack, sort, distribute, subs, rebuild)
+from Sygal.strategies.core import (null_safe, exhaust, memoize, condition, chain, tryit, do_one, debug, switch, minimize)
+from Sygal.strategies.tools import typed, canon
 from Sygal.strategies.traverse import (top_down, bottom_up, bxsall, top_down_once,bottom_up_once,spe_traverse,gen_traverse)
 from Sygal.strategies.tree import treeapply, greedy, allresults, brute
 
