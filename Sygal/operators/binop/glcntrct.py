@@ -1,4 +1,13 @@
-from Sygal.imports.import1head import *
+# Core imports - Import directly to avoid circular dependency
+from Sygal.GExpr import GExpr
+from Sygal.Box import Box
+from Sygal.imports.sympy_basic import Basic, Mul, S, subsets
+from Sygal.imports.typing_helpers import product
+from Sygal.imports.utils import is_uniGraded, is_devmode
+from Sygal.imports.psc import grd, spclst, spcdct
+from Sygal.imports.utils import kbin_distri
+from Sygal.imports.sympy_basic import StrPrinter
+
 from Sygal.operators.binop.binop import binop
 from Sygal.operators.binop.sclrprdct import sclrprdct
 
@@ -151,18 +160,23 @@ def meta_treatment(expr:glcntrct)->glcntrct:
     return GExpr.Znl
 
 
-from Sygal.imports.import1tail import *
-
 if is_devmode():
   StrPrinter._print_glcntrct = glcntrct.sympyrepr
 else :
   StrPrinter._print_glcntrct = glcntrct.sympystr
 
 
-from Sygal.operators.binop.higher.glcntrcthigher import glcntrcthigher
-from Sygal.operators.binop.canon.glcntrctcanon import glcntrctcanon
-from Sygal.operators.binop.expand.glcntrctexpand import glcntrctexpand
+# Lazy import to avoid circular dependency
+# These modules import glcntrct, so initialization is moved to binop/__init__.py
+# This ensures all operators are imported before initialization happens
+def _initialize_glcntrct():
+  """Initialize glcntrct higher, canon, and expand rules."""
+  from Sygal.operators.binop.higher.glcntrcthigher import glcntrcthigher
+  from Sygal.operators.binop.canon.glcntrctcanon import glcntrctcanon
+  from Sygal.operators.binop.expand.glcntrctexpand import glcntrctexpand
+  
+  glcntrcthigher()
+  glcntrctcanon()
+  glcntrctexpand()
 
-glcntrcthigher()
-glcntrctcanon()
-glcntrctexpand()
+# Don't initialize here - initialization happens in binop/__init__.py after all imports

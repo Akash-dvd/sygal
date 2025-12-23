@@ -20,7 +20,8 @@ from Sygal.pSC.spcdct import spcdct
 from Sygal.pSC.spclst import spclst
 from Sygal.Box import Box
 from Sygal.utils.utils1 import rlGSortArgs,parity,is_unMixedGrade,bx_sift,GSortArgs,is_devmode
-from Sygal.operators.assop.gextp import gextp
+# Lazy import to avoid circular dependency: gextp imports from imports.core which imports GAtom
+# from Sygal.operators.assop.gextp import gextp
 # from Sygal.pSC.pextp import pextp
 # defDic = defaultdict(lambda x:None)
 
@@ -34,7 +35,22 @@ def dct_is_joint(mv1:GExpr,mv2:GExpr):
   return fct
 
 
+# Cache for gextp import to avoid repeated imports
+_gextp_cache = None
+
 def pextp(*args) -> "Box":
+  # Lazy import to avoid circular dependency
+  global _gextp_cache
+  if _gextp_cache is None:
+    # Ensure operators package is initialized first
+    import sys
+    if 'Sygal.operators' not in sys.modules:
+      import Sygal.operators  # Initialize the operators package
+    if 'Sygal.operators.assop' not in sys.modules:
+      import Sygal.operators.assop  # Initialize the assop subpackage
+    from Sygal.operators.assop.gextp import gextp
+    _gextp_cache = gextp
+  gextp = _gextp_cache
   coeff = args[0]
   tmvs = [arg.mv for arg in args[1:]]
   MV = Basic.__new__(gextp, *tmvs)
@@ -236,5 +252,8 @@ class GAtom(GExpr,AtomicExpr):
   # __xnew_cached_ = staticmethod(
   #   __new_stage2__)   # never cached (e.g. dummy)
 
-GAtom._preprocess()
+# Don't call _preprocess() at module level - it causes circular imports
+# _preprocess() is now called at the end of initial.py after all modules are loaded
+# This avoids the circular dependency: imports.core -> GAtom -> operators -> imports.core
+# GAtom._preprocess()  # REMOVED - moved to initial.py
 

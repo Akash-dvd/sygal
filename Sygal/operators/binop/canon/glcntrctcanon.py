@@ -1,15 +1,13 @@
-from Sygal.imports.import1head import *
-from Sygal.imports.import1tail import *
-from Sygal.operators.assop.gadd import gadd
-from Sygal.operators.assop.gextp import gextp
-from Sygal.operators.assop.gmul import gmul
+# Core imports - Import directly to avoid circular dependency
+from Sygal.Box import Box
+from Sygal.imports.sympy_basic import S
+from Sygal.imports.strategies import exhaust, do_one
+from Sygal.imports.utils import is_unMixedGrade
 
-from Sygal.operators.binop.ganticomm import ganticomm
-from Sygal.operators.binop.gcomm import gcomm
-from Sygal.operators.binop.sclrprdct import sclrprdct
-from Sygal.operators.binop.grcntrct import grcntrct
+# Only import operators actually used
+from Sygal.operators.assop.gextp import gextp
 from Sygal.operators.binop.glcntrct import glcntrct
-from Sygal.imports.import_util2 import *
+from Sygal.operators.binop.grcntrct import grcntrct
 
 
 def lcntrctconcat_rl(expr):

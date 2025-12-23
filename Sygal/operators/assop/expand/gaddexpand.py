@@ -1,29 +1,24 @@
-from Sygal.imports.import1head import *
-from Sygal.imports.import1tail import *
+# Core imports - Import directly to avoid circular dependency
+from Sygal.GExpr import GExpr
+from Sygal.Box import Box
+from Sygal.imports.sympy_basic import Mul, Add
+from Sygal.imports.strategies import exhaust, bottom_up_once, do_one
+
+# Only import operators actually used - gadd is safe to import at module level
 from Sygal.operators.assop.gadd import gadd
-from Sygal.operators.assop.gextp import gextp
-from Sygal.operators.assop.gmul import gmul
 
-from Sygal.operators.binop.ganticomm import ganticomm
-from Sygal.operators.binop.gcomm import gcomm
-from Sygal.operators.binop.sclrprdct import sclrprdct
-from Sygal.operators.binop.grcntrct import grcntrct
-from Sygal.operators.binop.glcntrct import glcntrct
-from Sygal.imports.import_util2 import *
-
-from Sygal.operators.binop.outermorphic.isomorphic.inversion import inversion
-from Sygal.operators.binop.outermorphic.projection import projection
-from Sygal.operators.binop.outermorphic.rejection import rejection
-
-from Sygal.operators.binop.outermorphic.isomorphic.transforms.transforms import transforms
-from Sygal.operators.binop.outermorphic.isomorphic.transforms.dilation import dilation
-from Sygal.operators.binop.outermorphic.isomorphic.transforms.rotation import rotation
-from Sygal.operators.binop.outermorphic.isomorphic.transforms.translation import translation
+# Lazy imports to avoid circular dependency - these are only used inside functions
+# inversion, projection, rejection will be imported inside distriOvr_GAdd
 
 
 
 
 def distriOvr_GAdd(expr):
+  # Lazy imports to avoid circular dependency
+  from Sygal.operators.binop.outermorphic.isomorphic.inversion import inversion
+  from Sygal.operators.binop.outermorphic.projection import projection
+  from Sygal.operators.binop.outermorphic.rejection import rejection
+  
   if (type(expr)==Box):
     BX = expr
     cf = BX.coeff

@@ -1,4 +1,14 @@
-from Sygal.imports.import1head import *
+# Core imports - Import directly to avoid circular dependency
+from Sygal.GExpr import GExpr
+from Sygal.Box import Box
+from Sygal.imports.sympy_basic import Basic, Mul, S
+from Sygal.imports.typing_helpers import Tuple
+from Sygal.imports.strategies import exhaust, typed, do_one
+from Sygal.imports.utils import bx_sift
+from Sygal.imports.psc import spclst
+from Sygal.imports.utils import is_devmode
+from Sygal.imports.sympy_basic import StrPrinter
+
 from Sygal.operators.assop.assop import assop
 
 
@@ -148,8 +158,6 @@ from Sygal.operators.assop.expand.gaddexpand import gaddexpand
 gaddhigher()
 gaddcanon()
 gaddexpand()
-
-from Sygal.imports.import1tail import *
 
 if is_devmode():
   StrPrinter._print_gadd = gadd.sympyrepr

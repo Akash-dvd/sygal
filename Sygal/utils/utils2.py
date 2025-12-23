@@ -1,15 +1,12 @@
-from sympy.core.compatibility import iterable
-from Sygal.imports.import1head import *
-from Sygal.imports.import1tail import *
-from Sygal.operators.assop.gadd import gadd
-from Sygal.operators.assop.gextp import gextp
-from Sygal.operators.assop.gmul import gmul
+# Core imports - Import directly to avoid circular dependency
+from Sygal.GExpr import GExpr
+from Sygal.imports.sympy_basic import Expr, S
+from Sygal.imports.typing_helpers import Union, List, Iterable, reduce
+from Sygal.imports.strategies import expand_iter
 
-from Sygal.operators.binop.ganticomm import ganticomm
-from Sygal.operators.binop.gcomm import gcomm
-from Sygal.operators.binop.sclrprdct import sclrprdct
-from Sygal.operators.binop.grcntrct import grcntrct
-from Sygal.operators.binop.glcntrct import glcntrct
+# Lazy import operators to avoid circular dependency
+# Operators are imported inside functions where they're used
+# This prevents KeyError: 'Sygal.operators' during module initialization
 
 """
 USAGE --
@@ -43,6 +40,7 @@ NOTALLOWED - GMUL, GADD, GLCNTRCT ETC
 def is_vecPerpendicularPair(args0:Union[Expr,GExpr],args1:Union[Expr,GExpr])->bool:
   # vec can be gadd(a1,a2) also
   if(args0.grade == {1} and args1.grade == {1}):
+    from Sygal.operators.binop.sclrprdct import sclrprdct
     t = sclrprdct(args0,args1)
     t1 = expand_iter(sclrprdct)(t)
     return t1 == GExpr.Znl
@@ -50,6 +48,8 @@ def is_vecPerpendicularPair(args0:Union[Expr,GExpr],args1:Union[Expr,GExpr])->bo
     return False
 
 def is_perpendicularPair(args0:Union[Expr,GExpr],args1:Union[Expr,GExpr])->bool:
+  from Sygal.operators.assop.gmul import gmul
+  from Sygal.operators.binop.sclrprdct import sclrprdct
   t = args0*args1
   t1 = expand_iter(gmul)(t)
   t2 = sclrprdct.gexpand1(t1)
@@ -60,6 +60,7 @@ def is_perpendicularPair(args0:Union[Expr,GExpr],args1:Union[Expr,GExpr])->bool:
 
 def is_vecnull(expr:Union[Expr,GExpr])->bool:
   if expr.grade == {1}:
+    from Sygal.operators.binop.sclrprdct import sclrprdct
     t = sclrprdct(expr,expr)
     t1 = t.gexpand()
     return t1 == GExpr.Znl
@@ -68,6 +69,7 @@ def is_vecnull(expr:Union[Expr,GExpr])->bool:
 
 def is_null(expr:Union[Expr,GExpr])->bool:
   if len(expr.grade) == 1:
+    from Sygal.operators.binop.sclrprdct import sclrprdct
     t = sclrprdct(expr,expr)
     t1 = t.gexpand()
     return t1 == GExpr.Znl
@@ -75,6 +77,8 @@ def is_null(expr:Union[Expr,GExpr])->bool:
     return False
 
 def is_nzScalarPair(args0:Union[Expr,GExpr],args1:Union[Expr,GExpr])->bool:
+  from Sygal.operators.assop.gmul import gmul
+  from Sygal.operators.binop.sclrprdct import sclrprdct
   t = args0*args1
   t1 = expand_iter(gmul)(t)
   t2 = sclrprdct.gexpand1(t1)
@@ -84,6 +88,8 @@ def is_nzScalarPair(args0:Union[Expr,GExpr],args1:Union[Expr,GExpr])->bool:
     return False
 
 def is_scalarPair(args0:Union[Expr,GExpr],args1:Union[Expr,GExpr])->bool:
+  from Sygal.operators.assop.gmul import gmul
+  from Sygal.operators.binop.sclrprdct import sclrprdct
   t = args0*args1
   t1 = expand_iter(gmul)(t)
   t2 = sclrprdct.gexpand1(t1)
@@ -96,6 +102,8 @@ def is_blade(expr:Union[Expr,GExpr])->bool:
 def is_vecBlade(arg:Union[Expr,GExpr])->bool:
   # arguements must be either be of grade 1 or gextp each composed of grade 1 elements
   # Othercase is not implemented yet
+  from Sygal.Box import Box
+  from Sygal.operators.assop.gextp import gextp
   if issubclass(type(arg),GExpr):
     if(type(arg)==Box):
       expr = arg.mv
@@ -111,6 +119,8 @@ def is_vecBlade(arg:Union[Expr,GExpr])->bool:
     return False
 
 def is_versor(arg:Union[Expr,GExpr])->bool:
+  from Sygal.Box import Box
+  from Sygal.operators.assop.gmul import gmul
   if(type(arg)==Box):
     expr = arg.mv
   else :
@@ -137,6 +147,8 @@ def get_grade(expr:GExpr,r:Union[int,set,frozenset,List[int]]) -> Union[Expr,GEx
   if issubclass(type(expr),GExpr):
     BX = GExpr.gdistribute(expr)
     
+    # Lazy import to avoid circular dependency
+    from Sygal.operators.assop.gadd import gadd
 
     if (BX.grade == grd):
       return BX

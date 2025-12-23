@@ -1,18 +1,18 @@
-from Sygal.imports.import1head import *
-from Sygal.imports.import1tail import *
-from Sygal.operators.assop.gadd import gadd
-from Sygal.operators.assop.gextp import gextp
-from Sygal.operators.assop.gmul import gmul
+# Core imports
+from Sygal.imports.sympy_basic import S
+from Sygal.imports.strategies import exhaust, do_one
+from Sygal.imports.utils import is_unMixedGrade
 
-from Sygal.operators.binop.ganticomm import ganticomm
-from Sygal.operators.binop.gcomm import gcomm
-from Sygal.operators.binop.sclrprdct import sclrprdct
-from Sygal.operators.binop.grcntrct import grcntrct
-from Sygal.operators.binop.glcntrct import glcntrct
-from Sygal.imports.import_util2 import *
+# Lazy imports to avoid circular dependency - these are only used inside functions
+# gextp, sclrprdct, glcntrct, grcntrct will be imported inside sclrprdctconcat_rl
 
 # MAy be can be better programmed with moads monoids eyc \_(..)_/
 def sclrprdctconcat_rl(expr):
+  # Lazy imports to avoid circular dependency
+  from Sygal.operators.assop.gextp import gextp
+  from Sygal.operators.binop.sclrprdct import sclrprdct
+  from Sygal.operators.binop.glcntrct import glcntrct
+  from Sygal.operators.binop.grcntrct import grcntrct
   if isinstance(expr,sclrprdct):
     if(type(expr.down)==glcntrct):
       tu = expr.up
@@ -66,4 +66,6 @@ def sclrprdctconcat_rl(expr):
 
 
 def sclrprdctcanon():
+  # Lazy import to avoid circular dependency
+  from Sygal.operators.binop.sclrprdct import sclrprdct
   sclrprdct.gcanonicalization = exhaust(do_one(sclrprdctconcat_rl,))

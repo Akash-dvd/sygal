@@ -1,12 +1,4 @@
-from sympy.core.numbers import nan
-# from .function import Function
-
-from sympy import (
-  Basic,diff, Rational, Symbol, S, Mul, Add, Expr,
-  expand, simplify, eye, trigsimp,
-  symbols, sqrt, Matrix,srepr,Function
-)
-
+# Core imports - Import directly to avoid circular dependency
 from Sygal.GExpr import GExpr
 
 class gcomm(GExpr):

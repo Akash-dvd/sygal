@@ -1,20 +1,15 @@
-from Sygal.imports.import1head import *
-from Sygal.imports.import1tail import *
-from Sygal.operators.assop.gadd import gadd
+# Core imports - Import directly to avoid circular dependency
+from Sygal.GExpr import GExpr
+from Sygal.Box import Box
+from Sygal.imports.strategies import exhaust, typed, do_one
+from Sygal.imports.utils import is_unMixedGrade, is_perpendicularPair, is_vecBlade, parity
+from Sygal.imports.typing_helpers import Tuple
+
+# Only import operators actually used - gextp is safe to import at module level
 from Sygal.operators.assop.gextp import gextp
-from Sygal.operators.assop.gmul import gmul
 
-from Sygal.operators.binop.ganticomm import ganticomm
-from Sygal.operators.binop.gcomm import gcomm
-from Sygal.operators.binop.sclrprdct import sclrprdct
-from Sygal.operators.binop.grcntrct import grcntrct
-from Sygal.operators.binop.glcntrct import glcntrct
-from Sygal.imports.import_util2 import *
-
-from Sygal.operators.binop.outermorphic.isomorphic.inversion import inversion
-from Sygal.operators.binop.outermorphic.projection import projection
-from Sygal.operators.binop.outermorphic.rejection import rejection
-
+# Lazy imports to avoid circular dependency - these are only used inside functions
+# glcntrct, grcntrct, sclrprdct, inversion, projection, rejection will be imported inside functions
 
 new = gextp.__new__
 
@@ -68,6 +63,8 @@ class concat():
 
   @staticmethod
   def iter(bx:Box,blade1:GExpr) -> Box:
+    # Lazy import to avoid circular dependency
+    from Sygal.operators.binop.glcntrct import glcntrct
     plck_lst1 = [i for i, x in enumerate(bx.mv.args) if type(x) == glcntrct and type(x.down) == gextp]
 
     for ind1,ind2 in subsets(plck_lst1,2):
@@ -84,7 +81,9 @@ class concat():
     return bx
 
   @staticmethod
-  def binary_op(expr1:glcntrct,expr2:glcntrct,blade1:GExpr) -> Tuple[bool,Box]: 
+  def binary_op(expr1, expr2, blade1:GExpr) -> Tuple[bool,Box]:
+    # Lazy import to avoid circular dependency
+    from Sygal.operators.binop.glcntrct import glcntrct 
     # ln12 = len(expr1.args)+len(expr2.args)
     up1 = expr1.up
     up2 = expr2.up
@@ -290,6 +289,8 @@ class concat():
 
 
 def inv_gextp(expr):
+  # Lazy import to avoid circular dependency
+  from Sygal.operators.binop.outermorphic.isomorphic.inversion import inversion
 
   if(type(expr)==Box):
     BX = expr
@@ -321,6 +322,8 @@ def inv_gextp(expr):
 
 # sign issues
 def proj_gextp(expr):
+  # Lazy import to avoid circular dependency
+  from Sygal.operators.binop.outermorphic.projection import projection
   # DproU^D -> 0
   if(type(expr)==Box):
     BX = expr
@@ -343,6 +346,8 @@ def proj_gextp(expr):
 
 # sign issues
 def rej_gextp(expr):
+  # Lazy import to avoid circular dependency
+  from Sygal.operators.binop.outermorphic.rejection import rejection
   # DrejU^D -> 
   if(type(expr)==Box):
     BX = expr

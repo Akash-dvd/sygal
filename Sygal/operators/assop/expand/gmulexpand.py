@@ -1,15 +1,9 @@
-from Sygal.imports.import1head import *
-from Sygal.imports.import1tail import *
-from Sygal.operators.assop.gadd import gadd
-from Sygal.operators.assop.gextp import gextp
-from Sygal.operators.assop.gmul import gmul
+# Core imports - Import directly to avoid circular dependency
+from Sygal.GExpr import GExpr
+from Sygal.Box import Box
 
-from Sygal.operators.binop.ganticomm import ganticomm
-from Sygal.operators.binop.gcomm import gcomm
-from Sygal.operators.binop.sclrprdct import sclrprdct
-from Sygal.operators.binop.grcntrct import grcntrct
-from Sygal.operators.binop.glcntrct import glcntrct
-from Sygal.imports.import_util2 import *
+# Only import operators actually used
+from Sygal.operators.assop.gmul import gmul
 
 def difflist(t1,t2):
   return [ele for ele in t1 if ele not in t2]

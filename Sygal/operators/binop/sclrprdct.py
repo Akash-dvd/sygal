@@ -1,4 +1,12 @@
-from Sygal.imports.import1head import *
+# Core imports - Import directly to avoid circular dependency
+from Sygal.GExpr import GExpr
+from Sygal.Box import Box
+from Sygal.imports.sympy_basic import Basic, Mul, S
+from Sygal.imports.utils import is_uniGraded, GSortArgs
+from Sygal.imports.psc import spclst
+from Sygal.imports.utils import is_devmode
+from Sygal.imports.sympy_basic import StrPrinter
+
 from Sygal.operators.binop.binop import binop
 
 class sclrprdct(binop):
@@ -95,8 +103,6 @@ def meta_treatment(expr:sclrprdct)->sclrprdct:
   else :
     return GExpr.Znl
 
-
-from Sygal.imports.import1tail import *
 
 if is_devmode():
   StrPrinter._print_sclrprdct = sclrprdct.sympyrepr

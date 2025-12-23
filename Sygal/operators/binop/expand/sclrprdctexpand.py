@@ -1,28 +1,28 @@
 # Partition Expansion
 
-from Sygal.imports.import1head import *
-from Sygal.imports.import1tail import *
+# Core imports
+# Core imports - Import directly to avoid circular dependency
+from Sygal.GExpr import GExpr
+from Sygal.Box import Box
+from Sygal.imports.sympy_basic import Expr
+from Sygal.imports.typing_helpers import Union
+from Sygal.imports.strategies import exhaust, do_one, bottom_up, typed, expand_iter
+from Sygal.imports.utils import is_vecBlade, parity
 
-from Sygal.operators.assop.gadd import gadd
-from Sygal.operators.assop.gextp import gextp
-from Sygal.operators.assop.gmul import gmul
-
-from Sygal.operators.binop.ganticomm import ganticomm
-from Sygal.operators.binop.gcomm import gcomm
+# Only import operators actually used - sclrprdct is safe to import at module level
 from Sygal.operators.binop.sclrprdct import sclrprdct
-from Sygal.operators.binop.grcntrct import grcntrct
-from Sygal.operators.binop.glcntrct import glcntrct
 
-from Sygal.imports.import_util2 import *
-
-from Sygal.operators.binop.outermorphic.isomorphic.inversion import inversion
-from Sygal.operators.binop.outermorphic.projection import projection
-from Sygal.operators.binop.outermorphic.rejection import rejection
+# Lazy imports to avoid circular dependency - these are only used inside functions
+# gextp, glcntrct will be imported inside functions
 
 def difflist(t1,t2):
   return [ele for ele in t1 if ele not in t2]
 
 def sclprdct_expand(expr:Expr)->Union[Expr,Box]:
+  # Lazy imports to avoid circular dependency
+  from Sygal.operators.binop.glcntrct import glcntrct
+  from Sygal.operators.assop.gextp import gextp
+  
   # ###### HERE BOX IS NOT POSSIBLE
 
   if(type(expr)==sclrprdct):
@@ -62,6 +62,9 @@ def sclprdct_expand(expr:Expr)->Union[Expr,Box]:
     return expr
 
 def sclprdct_expand1(expr:Expr)->Union[Expr,Box]:
+  # Lazy import to avoid circular dependency
+  from Sygal.operators.binop.glcntrct import glcntrct
+  
   # ###### HERE BOX IS NOT POSSIBLE
 
   if(type(expr)==sclrprdct):

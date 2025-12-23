@@ -1,27 +1,27 @@
-from Sygal.imports.import1head import *
-from Sygal.imports.import1tail import *
+# Core imports - Import directly to avoid circular dependency
+from Sygal.GExpr import GExpr
+from Sygal.Box import Box
+from Sygal.imports.sympy_basic import Expr, Mul
+from Sygal.imports.typing_helpers import Union
+from Sygal.imports.strategies import exhaust, do_one
+from Sygal.imports.utils import is_vecBlade, parity
+from Sygal.imports.sympy_basic import subsets
 
-from Sygal.operators.assop.gadd import gadd
-from Sygal.operators.assop.gextp import gextp
-from Sygal.operators.assop.gmul import gmul
-
-from Sygal.operators.binop.ganticomm import ganticomm
-from Sygal.operators.binop.gcomm import gcomm
-from Sygal.operators.binop.sclrprdct import sclrprdct
-from Sygal.operators.binop.grcntrct import grcntrct
+# Only import operators actually used - glcntrct is safe to import at module level
 from Sygal.operators.binop.glcntrct import glcntrct
-from Sygal.operators.binop.sclrprdct import sclrprdct
 
-from Sygal.imports.import_util2 import *
-
-from Sygal.operators.binop.outermorphic.isomorphic.inversion import inversion
-from Sygal.operators.binop.outermorphic.projection import projection
-from Sygal.operators.binop.outermorphic.rejection import rejection
+# Lazy imports to avoid circular dependency - these are only used inside functions
+# gextp, sclrprdct, gadd will be imported inside functions
 
 def difflist(t1,t2):
   return [ele for ele in t1 if ele not in t2]
 
 def glcntrct_expand(expr:Expr)->Union[Expr,Box]:
+  # Lazy imports to avoid circular dependency
+  from Sygal.operators.assop.gextp import gextp
+  from Sygal.operators.binop.sclrprdct import sclrprdct
+  from Sygal.operators.assop.gadd import gadd
+  
   if(type(expr)==Box):
     BX = GExpr.gdistribute(expr)
     cf = BX.coeff

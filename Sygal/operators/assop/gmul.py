@@ -1,4 +1,13 @@
-from Sygal.imports.import1head import *
+# Core imports - Import directly to avoid circular dependency
+from Sygal.GExpr import GExpr
+from Sygal.Box import Box
+from Sygal.imports.sympy_basic import Basic, Mul, S
+from Sygal.imports.typing_helpers import Tuple, product, reduce
+from Sygal.imports.strategies import exhaust, typed, do_one, flatten
+from Sygal.imports.psc import grd, spclst, spcdct
+from Sygal.imports.utils import kbin_distri, is_devmode
+from Sygal.imports.sympy_basic import StrPrinter
+
 from Sygal.operators.assop.assop import assop
 
 
@@ -220,8 +229,6 @@ canonicalize = exhaust(typed({gmul: do_one(*rules)}))
 gmulhigher()
 gmulcanon()
 gmulexpand()
-
-from Sygal.imports.import1tail import *
 
 if is_devmode():
   StrPrinter._print_gmul = gmul.sympyrepr

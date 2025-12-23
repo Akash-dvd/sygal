@@ -1,6 +1,7 @@
-from Sygal.imports.import1head import *
-from Sygal.imports.import1tail import *
+# Core imports - Import directly to avoid circular dependency
+from Sygal.Box import Box
 
+# Only import operators actually used
 from Sygal.operators.assop.gmul import gmul
 from Sygal.operators.binop.outermorphic.isomorphic.isomorphic import isomorphic
 

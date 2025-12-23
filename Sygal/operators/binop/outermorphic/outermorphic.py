@@ -1,8 +1,6 @@
-from Sygal.imports.import1head import *
-from Sygal.imports.import1tail import *
+# Core imports - Import directly to avoid circular dependency
 from Sygal.GExpr import GExpr
 from Sygal.operators.binop.binop import binop
-from Sygal.operators.assop.gextp import gextp
 
 
 class outermorphic(binop):

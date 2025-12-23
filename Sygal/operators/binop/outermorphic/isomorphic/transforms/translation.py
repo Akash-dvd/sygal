@@ -1,22 +1,12 @@
-from Sygal.imports.import1head import *
-from Sygal.imports.import1tail import *
-from Sygal.operators.assop.gadd import gadd
-from Sygal.operators.assop.gextp import gextp
-from Sygal.operators.assop.gmul import gmul
+# Core imports - Import directly to avoid circular dependency
+from Sygal.GExpr import GExpr
+from Sygal.Box import Box
+from Sygal.imports.sympy_basic import Mul, S
+from Sygal.imports.typing_helpers import Optional, Union
+from Sygal.imports.utils import is_devmode
+from Sygal.imports.sympy_basic import StrPrinter
 
-from Sygal.operators.binop.ganticomm import ganticomm
-from Sygal.operators.binop.gcomm import gcomm
-from Sygal.operators.binop.sclrprdct import sclrprdct
-from Sygal.operators.binop.grcntrct import grcntrct
-from Sygal.operators.binop.glcntrct import glcntrct
-
-from Sygal.imports.import_util2 import *
-
-from Sygal.operators.binop.outermorphic.isomorphic.inversion import inversion
-from Sygal.operators.binop.outermorphic.projection import projection
-from Sygal.operators.binop.outermorphic.rejection import rejection
-
-
+# Only import operators actually used
 from Sygal.operators.binop.outermorphic.isomorphic.transforms.transforms import transforms
 
 
@@ -96,11 +86,10 @@ class translation(transforms):
 
 
 
+from Sygal.operators.binop.outermorphic.isomorphic.inversion import inversion
 from Sygal.operators.binop.outermorphic.isomorphic.higher.inversionhigher import inversionhigher
 from Sygal.operators.binop.outermorphic.isomorphic.canon.inversioncanon import inversioncanon
 from Sygal.operators.binop.outermorphic.isomorphic.expand.inversionexpand import inversionexpand
-
-# from Sygal.utils.utils import is_devmode
 
 if is_devmode():
   StrPrinter._print_inversion = inversion.sympyrepr

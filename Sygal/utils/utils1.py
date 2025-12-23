@@ -1,9 +1,16 @@
-from sympy.strategies.util import basic_fns,Basic
+from sympy.strategies.util import basic_fns, Basic
 
-# from Sygal..importshead import *
-from Sygal.imports.import1head import *
+# Core imports - Import directly to avoid circular dependency
+# (imports.core imports GAtom which imports utils1, creating a cycle)
 from Sygal.GExpr import GExpr
 from Sygal.Box import Box
+from Sygal.imports.sympy_basic import S, Add
+from Sygal.imports.typing_helpers import Tuple, Callable, List, defaultdict
+import sys
+
+# Import parity and GSortArgs from util.py (they're defined there, not here)
+# This is needed because GAtom.py imports these from utils1
+from Sygal.utils.util import parity, GSortArgs
 
 """
 USAGE --

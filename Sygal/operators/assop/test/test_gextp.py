@@ -26,92 +26,78 @@ TODO
 Will be done after implementing dot product and multiplication.
 """
 
-def test_0():  
-  assert( (a1^a2).mv == (a2^a1).mv 
-  and ((a1^a2).coeff + (a2^a1).coeff) == 0 
-  )
+# Test cases for anti-commutativity
+test_cases_anticommu = [
+  # Anti-commutativity: (a1^a2) and (a2^a1) have same multivector but opposite coefficients
+  # This is a property test, not a transformation
+  ((a1^a2).mv, (a2^a1).mv),
+]
+
+def test_0():
+  """Test anti-commutativity of outer product."""
+  # Check that multivectors are equal and coefficients sum to zero
+  assert (a1^a2).mv == (a2^a1).mv
+  assert ((a1^a2).coeff + (a2^a1).coeff) == 0
 
 
 
+
+# Test cases for sandhi (combination) rule
+test_cases_sandhi = [
+  ((A1<(B1^B2))^(A1<(B2^B3)), A1<(B1^B2^B3)),
+  ((B3^(A1<(B1^B2^A2)))^(A1<(B2^B3))^(B2<(B1^B3))^(B2<(A2^B3)),
+   (B3^(A1<(B1^B2^B3^A2)))^(B2<(A2^B1^B3))),
+  (A2^(A1<(((B1<(A1^A2))^B2^B3)))^(A1<(((B1<(A1^A2))^A2))),
+   A2^(A1<(((B1<(A1^A2))^A2^B2^B3)))),
+  (A2^(A1<(((B1<(A1^A2^A3))^B2)))^(A1<(((B1<(A1^A2))^B3))),
+   A2^(A1<(((B1<(A1^A2^A3))^B2^B3)))),
+  ((A1<(B1^(B3<(A1^(B2<(A1^A2^A3^B1))))))^(A1<(B2^(B3<(A2^(B2<(A1^A2^A3)))))),
+   A1<(B1^B2^(B3<(A1^A2^(B2<(A1^A2^A3^B1)))))),
+  ((A1<(A2^A3^(rx<(A1^A2))))^(A1<(B2^B3^(rx<(A1^A2)))),
+   A1<(A2^A3^B2^B3^(rx<(A1^A2)))),
+  ((rx<(A2^A1))^A1^((oo<(A2^A1))<(A3^A2^((rx<(A2^A1)))))^(rx<(A1^A3))^((oo<(A2^A1))<(A1^B2^(rx<(A2^A1))))^(rx<(B1^B2))^(rx<(B2^B3)),
+   (A1^(rx<(B1^B2^B3))^((oo<(A1^A2))<(A1^A2^A3^B2^(rx<(A1^A2))))^(rx<(A1^A2^A3))))
+]
 
 def test_sandhi():
-  """
-  Test sandhi (combination) rule for outer products of left contractions.
-  Sandhi rule: (A < (B^C)) ^ (A < (C^D)) -> A < (B^C^D) when conditions are met.
+  """Test sandhi (combination) rule for outer products of left contractions.
   
-  Note: This test compares both multivector structure AND coefficients.
-  The sandhi canonicalization should preserve mathematical correctness.
+  Sandhi rule: (A < (B^C)) ^ (A < (C^D)) -> A < (B^C^D) when conditions are met.
   """
+  transformation = canon_iter(gextp)
+  assert all([transformation(x) == y for x, y in test_cases_sandhi])
 
-  test_cases = [
-  ((A1<(B1^B2))^(A1<(B2^B3)),
-  A1<(B1^B2^B3)),
 
-  ((B3^(A1<(B1^B2^A2)))^(A1<(B2^B3))^(B2<(B1^B3))^(B2<(A2^B3)),
-  (B3^(A1<(B1^B2^B3^A2)))^(B2<(A2^B1^B3))),
-
-  (A2^(A1<(((B1<(A1^A2))^B2^B3)))^(A1<(((B1<(A1^A2))^A2))),
-  A2^(A1<(((B1<(A1^A2))^A2^B2^B3)))), 
-
-  (A2^(A1<(((B1<(A1^A2^A3))^B2)))^(A1<(((B1<(A1^A2))^B3))),
-  A2^(A1<(((B1<(A1^A2^A3))^B2^B3)))), 
-
-  ((A1<(B1^(B3<(A1^(B2<(A1^A2^A3^B1))))))^(A1<(B2^(B3<(A2^(B2<(A1^A2^A3)))))),
-  A1<(B1^B2^(B3<(A1^A2^(B2<(A1^A2^A3^B1)))))),
-
-  ((A1<(A2^A3^(rx<(A1^A2))))^(A1<(B2^B3^(rx<(A1^A2)))),
-  A1<(A2^A3^B2^B3^(rx<(A1^A2)))),
-
-  ((rx<(A2^A1))^A1^((oo<(A2^A1))<(A3^A2^((rx<(A2^A1)))))^(rx<(A1^A3))^((oo<(A2^A1))<(A1^B2^(rx<(A2^A1))))^(rx<(B1^B2))^(rx<(B2^B3)),
-  (A1^(rx<(B1^B2^B3))^((oo<(A1^A2))<(A1^A2^A3^B2^(rx<(A1^A2))))^(rx<(A1^A2^A3))))
-
-  ]
-
-  # Compare full expressions (multivector + coefficients) for correctness
-  # If only structure needs checking, compare .mv; but coefficients matter too
-  results = []
-  for x, y in test_cases:
-    result = canon_iter(gextp)(x)
-    # Compare multivector structure
-    mv_match = result.mv == y.mv
-    # Also check if coefficients match (important for mathematical correctness)
-    coeff_match = result.coeff == y.coeff
-    results.append(mv_match and coeff_match)
-    
-  assert all(results), "Sandhi simplification failed: some test cases don't match in structure or coefficients"
-
+# Test cases for gmul to projection
+test_cases_gmul_2proj = [
+  ((a1<(a2^a3))^(a1<(a3^a4)), (a1|a3)*(a1<(a2^a3^a4))),
+  (((A1^A2)<(B1^B2^C1^C2))^((A1^A2)<(B1^B2^D1^D2))^((A1^A2)<(D1^D2^B4^C4)),
+   (((A1^A2)|(B1^B2))*((A1^A2)|(D1^D2)))*((A1^A2)<(B1^B2^C1^C2^D1^D2^B4^C4))),
+  (((A1^A2)<(B1^B2^B3))^((A1)<((A2<(B1^B2))^B3)),
+   ((A1^A2)|(B1^B2))*((A1)<(B3^(A2<(B1^B2^B3))))),
+  (((A1^A2^A3)<(B1^B2^B3^C1^C2))^((A1^A2^A3)<(B1^B2^B3^D1^D2))^((A1^A2^A3)<(B1^B2^B3^B4^C4)),
+   ((A1^A2^A3)|(B1^B2^B3))**2*((A1^A2^A3)<(B1^B2^B3^C1^C2^D1^D2^B4^C4))),
+  ((D1<(A1^A2^(D2<(B1^B2^(D3<(C1^C2^C3))))))^(D1<(A3^A4^(D2<(B3^B4^(D3<(C1^C2^C3^C4)))))),
+   ((D1^D2^D3)|(C1^C2^C3))*(D1<(A1^A2^A3^A4^(D2<(B1^B2^B3^B4^(D3<(C1^C2^C3^C4)))))),
+  (((A1^A2)<(B1^B2^B3))^(A1<((A2<(B1^B2))^B4)),
+   ((A1^A2)|(B1^B2))*(A1<((A2<(B1^B2^B3))^B4)))
+]
 
 def test_gmul_2Proj():
-  test_cases = [
-  ((a1<(a2^a3))^(a1<(a3^a4)),
-  (a1|a3)*(a1<(a2^a3^a4))),
+  """Test gmul to projection transformation."""
+  transformation = canon_iter(gextp)
+  assert all([transformation(x) == y for x, y in test_cases_gmul_2proj])
 
-  (((A1^A2)<(B1^B2^C1^C2))^((A1^A2)<(B1^B2^D1^D2))^((A1^A2)<(D1^D2^B4^C4)),
-  (((A1^A2)|(B1^B2))*((A1^A2)|(D1^D2)))*((A1^A2)<(B1^B2^C1^C2^D1^D2^B4^C4))),
- 
-  (((A1^A2)<(B1^B2^B3))^((A1)<((A2<(B1^B2))^B3)),
-  ((A1^A2)|(B1^B2))*((A1)<(B3^(A2<(B1^B2^B3))))),
 
-  (((A1^A2^A3)<(B1^B2^B3^C1^C2))^((A1^A2^A3)<(B1^B2^B3^D1^D2))^((A1^A2^A3)<(B1^B2^B3^B4^C4)),
-  ((A1^A2^A3)|(B1^B2^B3))**2*((A1^A2^A3)<(B1^B2^B3^C1^C2^D1^D2^B4^C4))),
-
-  ((D1<(A1^A2^(D2<(B1^B2^(D3<(C1^C2^C3))))))^(D1<(A3^A4^(D2<(B3^B4^(D3<(C1^C2^C3^C4)))))),
-  ((D1^D2^D3)|(C1^C2^C3))*(D1<(A1^A2^A3^A4^(D2<(B1^B2^B3^B4^(D3<(C1^C2^C3^C4))))))),
-
-  (((A1^A2)<(B1^B2^B3))^(A1<((A2<(B1^B2))^B4)),
-  ((A1^A2)|(B1^B2))*(A1<((A2<(B1^B2^B3))^B4)))
-
-  ]
-
-  assert all([canon_iter(gextp)(x) == y for x, y in test_cases])
-
+# Test cases for canonicalization with rx and oo
+test_cases_canon_rx_oo = [
+  ((rx<(a1^a2))^(rx<(a2^a3))^(rx<(a3^b1))^oo, (rx<(b1^a1^a2^a3))^oo),
+]
 
 def test_3():
-  
-  temp = (rx<(a1^a2))^(rx<(a2^a3))^(rx<(a3^b1))^oo
-  rv = canon_iter(gextp)(temp)
-  print(rv)
-  assert(rv == (rx<(b1^a1^a2^a3))^oo )
+  """Test canonicalization with rx and oo."""
+  transformation = canon_iter(gextp)
+  assert all([transformation(x) == y for x, y in test_cases_canon_rx_oo])
 
 
 
