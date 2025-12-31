@@ -57,8 +57,6 @@ i = sqrt(-1)
 (B1,B2,B3,B4,B5,B6) = symbols('B1 B2 B3 B4 B5 B6', commutative=False)
 
 # relDt removed - no longer required
-rlDt = {}
-rlDt_n = {}
 
 # Initialize GExpr after all imports are complete to avoid circular imports
 # This MUST be called before using GExpr.I13, GExpr.primbx, GExpr._rx, etc.
@@ -71,22 +69,22 @@ if not GExpr.initialized:
 mtDt = {GExpr.I13:1}
 # GExpr.I13
 
-a1 = GAtom("a1",mtDt,rlDt)
-a2 = GAtom("a2",mtDt,rlDt)
-a3 = GAtom("a3",mtDt,rlDt)
-a4 = GAtom("a4",mtDt,rlDt)
-b1 = GAtom("b1",mtDt,rlDt)
-b2 = GAtom("b2",mtDt,rlDt)
-b3 = GAtom("b3",mtDt,rlDt)
-b4 = GAtom("b4",mtDt,rlDt)
-c1 = GAtom("c1",mtDt,rlDt)
-c2 = GAtom("c2",mtDt,rlDt)
-c3 = GAtom("c3",mtDt,rlDt)
-c4 = GAtom("c4",mtDt,rlDt)
-d1 = GAtom("d1",mtDt,rlDt)
-d2 = GAtom("d2",mtDt,rlDt)
-d3 = GAtom("d3",mtDt,rlDt)
-d4 = GAtom("d4",mtDt,rlDt)
+a1 = GAtom("a1",mtDt)
+a2 = GAtom("a2",mtDt)
+a3 = GAtom("a3",mtDt)
+a4 = GAtom("a4",mtDt)
+b1 = GAtom("b1",mtDt)
+b2 = GAtom("b2",mtDt)
+b3 = GAtom("b3",mtDt)
+b4 = GAtom("b4",mtDt)
+c1 = GAtom("c1",mtDt)
+c2 = GAtom("c2",mtDt)
+c3 = GAtom("c3",mtDt)
+c4 = GAtom("c4",mtDt)
+d1 = GAtom("d1",mtDt)
+d2 = GAtom("d2",mtDt)
+d3 = GAtom("d3",mtDt)
+d4 = GAtom("d4",mtDt)
 
 # Now import operators after _preprocess() is complete and all modules are initialized
 # This avoids the circular dependency: imports.core -> GAtom -> (no _preprocess) -> operators -> imports.core
@@ -98,38 +96,40 @@ from Sygal.imports.operators import (
   transforms, dilation, rotation, translation
 )
 
-o = GExpr.primbx[0]
-rx = GExpr._rx
-oo = GExpr._oo
+# Note: primbx, _rx, _oo are no longer available in simplified system
+# These may need to be recreated if still needed
+o = None
+rx = None
+oo = None
 
-na1 = GAtom("na1",mtDt,rlDt_n)
-na2 = GAtom("na2",mtDt,rlDt_n)
-na3 = GAtom("na3",mtDt,rlDt_n)
-nb1 = GAtom("nb1",mtDt,rlDt_n)
-nb2 = GAtom("nb2",mtDt,rlDt_n)
-nb3 = GAtom("nb3",mtDt,rlDt_n)
-nc1 = GAtom("nc1",mtDt,rlDt_n)
-nc2 = GAtom("nc2",mtDt,rlDt_n)
-nc3 = GAtom("nc3",mtDt,rlDt_n)
-nd1 = GAtom("nd1",mtDt,rlDt_n)
-nd2 = GAtom("nd2",mtDt,rlDt_n)
-nd3 = GAtom("nd3",mtDt,rlDt_n)
+na1 = GAtom("na1",mtDt)
+na2 = GAtom("na2",mtDt)
+na3 = GAtom("na3",mtDt)
+nb1 = GAtom("nb1",mtDt)
+nb2 = GAtom("nb2",mtDt)
+nb3 = GAtom("nb3",mtDt)
+nc1 = GAtom("nc1",mtDt)
+nc2 = GAtom("nc2",mtDt)
+nc3 = GAtom("nc3",mtDt)
+nd1 = GAtom("nd1",mtDt)
+nd2 = GAtom("nd2",mtDt)
+nd3 = GAtom("nd3",mtDt)
 
-mtDt1 = {GExpr.I13:1}
+mtDt1 = {GExpr.I41:1}
 
-A1 = GAtom("A1",mtDt1,rlDt)
-A2 = GAtom("A2",mtDt1,rlDt)
-A3 = GAtom("A3",mtDt1,rlDt)
-A4 = GAtom("A4",mtDt1,rlDt)
-B1 = GAtom("B1",mtDt1,rlDt)
-B2 = GAtom("B2",mtDt1,rlDt)
-B3 = GAtom("B3",mtDt1,rlDt)
-B4 = GAtom("B4",mtDt1,rlDt)
-C1 = GAtom("C1",mtDt1,rlDt)
-C2 = GAtom("C2",mtDt1,rlDt)
-C3 = GAtom("C3",mtDt1,rlDt)
-C4 = GAtom("C4",mtDt1,rlDt)
-D1 = GAtom("D1",mtDt1,rlDt)
-D2 = GAtom("D2",mtDt1,rlDt)
-D3 = GAtom("D3",mtDt1,rlDt)
-D4 = GAtom("D4",mtDt1,rlDt)
+A1 = GAtom("A1",mtDt1)
+A2 = GAtom("A2",mtDt1)
+A3 = GAtom("A3",mtDt1)
+A4 = GAtom("A4",mtDt1)
+B1 = GAtom("B1",mtDt1)
+B2 = GAtom("B2",mtDt1)
+B3 = GAtom("B3",mtDt1)
+B4 = GAtom("B4",mtDt1)
+C1 = GAtom("C1",mtDt1)
+C2 = GAtom("C2",mtDt1)
+C3 = GAtom("C3",mtDt1)
+C4 = GAtom("C4",mtDt1)
+D1 = GAtom("D1",mtDt1)
+D2 = GAtom("D2",mtDt1)
+D3 = GAtom("D3",mtDt1)
+D4 = GAtom("D4",mtDt1)

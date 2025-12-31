@@ -1,13 +1,18 @@
 # Required for tests
 import sys
-sys.path.append('/app/solver')
+import os
 
-# from libs.Sygal.initial import *
+# Add /app to path for imports
+if '/app' not in sys.path:
+    sys.path.insert(0, '/app')
 
-from libs.Sygal.strategies.branch.core import (exhaust, debug, multiplex,
+from Sygal.strategies.branch.core import (exhaust, debug, multiplex,
         condition, notempty, chain, onaction, sfilter, yieldify, do_one,
         identity)
-from sympy.core.compatibility import get_function_name
+from inspect import getfullargspec
+# get_function_name is deprecated, use inspect.getfullargspec or function.__name__
+def get_function_name(func):
+    return func.__name__
 
 def posdec(x):
     if x > 0:
@@ -42,7 +47,7 @@ def test_exhaust():
     assert set(brl(5)) == {0, 10}
 
 def test_debug():
-    from sympy.core.compatibility import StringIO
+    from io import StringIO
     file = StringIO()
     rl = debug(posdec, file)
     list(rl(5))

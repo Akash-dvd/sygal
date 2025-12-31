@@ -1,8 +1,14 @@
 # Required for tests
-# import sys
-# sys.path.append('/app/solver')
+import sys
+import os
 
-from initial import *
+# Add /app to path for imports
+if '/app' not in sys.path:
+    sys.path.insert(0, '/app')
+
+from Sygal.initial import *
+from Sygal.pSC.spclst import spclst
+from Sygal.pSC.spcdct import spcdct
 
 
 def test_init():

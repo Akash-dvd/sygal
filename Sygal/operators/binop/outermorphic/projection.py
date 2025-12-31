@@ -1,10 +1,11 @@
 # Core imports - Import directly to avoid circular dependency
 from Sygal.GExpr import GExpr
 from Sygal.Box import Box
-from Sygal.imports.sympy_basic import Mul, S
-from Sygal.imports.typing_helpers import Optional
-from Sygal.imports.psc import spclst
-from Sygal.imports.utils import is_devmode
+from Sygal.imports.sympy_basic import Mul, S, subsets
+from Sygal.imports.typing_helpers import Optional, product
+from Sygal.imports.psc import spclst, grd, spcdct
+from Sygal.imports.utils import kbin_distri
+from Sygal.imports.utils import is_devmode, is_nzScalarPair
 from Sygal.imports.sympy_basic import StrPrinter
 
 from .outermorphic import outermorphic

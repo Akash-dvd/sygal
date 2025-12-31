@@ -5,6 +5,7 @@ from Sygal.imports.sympy_basic import Mul, S
 from Sygal.imports.typing_helpers import Optional, Union
 from Sygal.imports.utils import is_nzScalarPair, is_devmode
 from Sygal.imports.sympy_basic import StrPrinter
+from Sygal.imports.psc import spclst
 
 from Sygal.operators.binop.outermorphic.isomorphic.isomorphic import isomorphic
 

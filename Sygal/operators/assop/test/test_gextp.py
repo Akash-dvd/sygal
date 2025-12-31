@@ -1,6 +1,10 @@
 # Required for tests
-# import sys
-# sys.path.append('/app/solver')
+import sys
+import os
+
+# Add /app to path for imports
+if '/app' not in sys.path:
+    sys.path.insert(0, '/app')
 
 from Sygal.initial import *
 
@@ -77,7 +81,7 @@ test_cases_gmul_2proj = [
    ((A1^A2)|(B1^B2))*((A1)<(B3^(A2<(B1^B2^B3))))),
   (((A1^A2^A3)<(B1^B2^B3^C1^C2))^((A1^A2^A3)<(B1^B2^B3^D1^D2))^((A1^A2^A3)<(B1^B2^B3^B4^C4)),
    ((A1^A2^A3)|(B1^B2^B3))**2*((A1^A2^A3)<(B1^B2^B3^C1^C2^D1^D2^B4^C4))),
-  ((D1<(A1^A2^(D2<(B1^B2^(D3<(C1^C2^C3))))))^(D1<(A3^A4^(D2<(B3^B4^(D3<(C1^C2^C3^C4)))))),
+  ((D1<(A1^A2^(D2<(B1^B2^(D3<(C1^C2^C3))))))^(D1<(A3^A4^(D2<(B3^B4^(D3<(C1^C2^C3^C4))))))),
    ((D1^D2^D3)|(C1^C2^C3))*(D1<(A1^A2^A3^A4^(D2<(B1^B2^B3^B4^(D3<(C1^C2^C3^C4)))))),
   (((A1^A2)<(B1^B2^B3))^(A1<((A2<(B1^B2))^B4)),
    ((A1^A2)|(B1^B2))*(A1<((A2<(B1^B2^B3))^B4)))

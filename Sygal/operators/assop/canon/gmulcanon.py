@@ -2,8 +2,9 @@
 from Sygal.GExpr import GExpr
 from Sygal.Box import Box
 from Sygal.imports.typing_helpers import Optional
-from Sygal.imports.strategies import exhaust, do_one
+from Sygal.imports.strategies import exhaust, do_one, expand_iter
 from Sygal.imports.utils import is_scalarPair
+from Sygal.operators.binop.sclrprdct import sclrprdct
 
 # Only import operators actually used
 from Sygal.operators.assop.gmul import gmul

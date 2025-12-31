@@ -5,7 +5,8 @@ from Sygal.Box import Box
 from Sygal.imports.sympy_basic import Basic, Mul, S
 from Sygal.imports.typing_helpers import Tuple
 from Sygal.imports.strategies import exhaust, typed, do_one
-from Sygal.imports.utils import rlGSortArgs, parity
+from Sygal.imports.utils import rlGSortArgs, parity, is_unMixedGrade
+from Sygal.imports.typing_helpers import product
 from Sygal.imports.psc import spclst
 from Sygal.imports.utils import is_devmode
 from Sygal.imports.sympy_basic import StrPrinter

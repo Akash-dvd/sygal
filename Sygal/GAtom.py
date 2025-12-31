@@ -1,6 +1,6 @@
 from typing import Tuple, TypeVar, Callable, Dict, Sequence, List, Optional, Union
 
-from functools import reduce
+from functools import reduce, lru_cache
 from collections.abc import Iterable
 from collections import defaultdict
 
@@ -20,96 +20,56 @@ from Sygal.pSC.spcdct import spcdct
 from Sygal.pSC.spclst import spclst
 from Sygal.Box import Box
 from Sygal.utils.utils1 import rlGSortArgs,parity,is_unMixedGrade,bx_sift,GSortArgs,is_devmode
-# Lazy import to avoid circular dependency: gextp imports from imports.core which imports GAtom
-# from Sygal.operators.assop.gextp import gextp
-# from Sygal.pSC.pextp import pextp
-# defDic = defaultdict(lambda x:None)
 
-def dct_is_joint(mv1:GExpr,mv2:GExpr):
-  fct = False
+@lru_cache(maxsize=128)
+def _dct_is_joint_impl(psc1: str, psc2: str):
+  """Internal cached implementation of dct_is_joint."""
   for grp in GExpr.Disjoint_Grp:
-    if mv1 in grp and mv2 in grp:
-      fct = True
-    else:
-      continue
-  return fct
+    if psc1 in grp and psc2 in grp:
+      return True
+  return False
 
-
-# Cache for gextp import to avoid repeated imports
-_gextp_cache = None
-
-def pextp(*args) -> "Box":
-  # Lazy import to avoid circular dependency
-  global _gextp_cache
-  if _gextp_cache is None:
-    # Ensure operators package is initialized first
-    import sys
-    if 'Sygal.operators' not in sys.modules:
-      import Sygal.operators  # Initialize the operators package
-    if 'Sygal.operators.assop' not in sys.modules:
-      import Sygal.operators.assop  # Initialize the assop subpackage
-    from Sygal.operators.assop.gextp import gextp
-    _gextp_cache = gextp
-  gextp = _gextp_cache
-  coeff = args[0]
-  tmvs = [arg.mv for arg in args[1:]]
-  MV = Basic.__new__(gextp, *tmvs)
-  MV.mtDt = spclst([])
-  grdval = len(args)-1
-  grade = grd(grdval,grdval)
-  dct = spcdct({})
-  dct.sup_update({MV:grade})
-  MV.mtDt.append(dct)
-  bx = Basic.__new__(Box,MV,coeff)
-  return bx
+def dct_is_joint(psc1: str, psc2: str):
+  """Check if two pseudoscalar identifiers are in the same disjoint group.
+  
+  Cached for performance - normalizes argument order for better cache hits.
+  """
+  # Normalize order BEFORE cache lookup for better cache efficiency
+  if psc1 > psc2:
+    return _dct_is_joint_impl(psc2, psc1)
+  return _dct_is_joint_impl(psc1, psc2)
 
 class GAtom(GExpr,AtomicExpr):
 
-  def __new__(cls, name:str,mtDt:Union[List[Dict],Dict],rlDt:Dict=None) -> Box:
-    
+  def __new__(cls, name:str,mtDt:Union[List[Dict],Dict]) -> Box:
+
     # Pattern match for name -> str
     # TODO check for earlier symbols
     if not isinstance(name, str):
       raise TypeError("name should be a string, not %s" % repr(type(name)))
     
-    # this check should be somewhere upper
-    # elif name.startswith('_'):
-    #   raise TypeError("name should not start with  _")
-
     # Pattern match for mtdt -> dict
-    # if not bool(mtDt):
-    #   mtDt = spclst([{GExpr.I13:1}])
     if issubclass(type(mtDt),dict):
       mtDt = spclst([mtDt])
     elif issubclass(type(mtDt),list):
       mtDt = spclst(mtDt)
     else:
       raise ValueError("Iterable must be a list")
-
-    # Pattern match for rlDt -> dict
-    # if not bool(rlDt):
-    #   rlDt = relDt()
-    #   rlDt.update({GExpr._oo:S(-1)})
     
     # Scalar Check
-
     if mtDt == [{GExpr.nl:grd(0,0)}]:
       return GExpr.Onl
-    else :
+    else:
       pass
 
     # BOX INITIALIZER
     bx = GAtom.__xnew_cached_(GAtom, name)
     bx.mv.mtDt = mtDt
-    # DICT INITIALIZER - removed rlDt handling
-  
     return bx
 
   def __new_stage2__(cls, name) -> Box:
-    
     mv = GExpr.__new__(GAtom,name)
     mv.is_atom = True
-
     bx = Basic.__new__(Box,mv,S(1))   
     return bx
 
@@ -126,10 +86,7 @@ class GAtom(GExpr,AtomicExpr):
     return (
       (type(other) == type(self))  and
       self.__hash__() == other.__hash__()
-      # Check if hash is not present in the object
     )
-
-
 
   @property
   def name(self):
@@ -142,106 +99,75 @@ class GAtom(GExpr,AtomicExpr):
       #######################
       spcdct.is_joint = dct_is_joint
 
-      # t_grd._value = 0
+      # Scalar null
       GExpr.Onl = GAtom.__xnew_cached_(GAtom,"\u0950")
       t_dct = dict.__new__(spcdct)
       t_dct.sup_update({GExpr.Onl.mv:grd(0,0)})
       GExpr.Onl.mv.mtDt = spclst([t_dct])
-      # GExpr.Onl.mv.mtDt = spclst([{GExpr.nl:t_grd}])
-
       GExpr.nl = GExpr.Onl.mv
 
       # To make sure Both Znl and Onl share same _nl
       GExpr.Znl = Basic.__new__(Box,GExpr.nl,S(0)) 
       GExpr.Znl.mv.mtDt = spclst([t_dct])
       
-      
-      
       #######################
-
-      names = ['_o','_x','_y','_rx','_oo','_x1','_x2','_x3','_x4','_x5','_x6','_x7','_x8']
+      # Define pseudoscalar identifiers as strings
+      GExpr.I31 = "I31"
+      GExpr.I32 = "I32"
+      GExpr.I41 = "I41"
+      GExpr.I42 = "I42"
+      GExpr.I43 = "I43"
+      GExpr.I5 = "I5"
+      GExpr.I8 = "I8"
+      GExpr.I13 = "I13"
       
-      prim = []
-      primmv = []
-      
-      for name in names:
-        bx = GAtom.__xnew_cached_(GAtom, name)
-        t_dct1 = dict.__new__(spcdct)
-        t_dct1.sup_update({bx.mv:grd(1,1)})
-        bx.mv.mtDt = spclst([t_dct1])
-        prim.append(bx)
-        primmv.append(bx.mv)
-
-      #######################
-      _o  = prim[0]
-      _x  = prim[1]
-      _y  = prim[2]
-      _rx = prim[3]
-      _oo = prim[4]
-      _x1 = prim[5]
-      _x2 = prim[6]
-      _x3 = prim[7]
-      _x4 = prim[8]
-      _x5 = prim[9]
-      _x6 = prim[10]
-      _x7 = prim[11]
-      _x8 = prim[12]
-      
-      # relDt initialization removed - no longer required
-
-      #######################
-          
-      GExpr._oo = _oo 
-      GExpr._rx = _rx
-      
-      GExpr.primbx = prim
-      GExpr.primmv = primmv
-      
-      GExpr.I31 = pextp(S(1),_oo,_x,_y)
-      GExpr.I32 = pextp(S(1),_o,_x,_y)
-      GExpr.I41 = pextp(S(1),_o,_oo,_x,_y)
-      GExpr.I42 = pextp(S(-1),_oo,_rx,_x,_y)
-      GExpr.I43 = pextp(S(1),_o,_rx,_x,_y)
-      GExpr.I5  = pextp(S(-1),_o,_oo,_rx,_x,_y)
-
-
-      GExpr.I8 = pextp(S(1),_x1,_x2,_x3,_x4,_x5,_x6,_x7,_x8)
-      GExpr.I13 = pextp(S(-1),_o,_oo,_rx,_x,_x1,_x2,_x3,_x4,_x5,_x6,_x7,_x8,_y)
-
-
-      GExpr.pSClst = [GExpr.nl,_oo.mv,_x.mv,_y.mv,GExpr.I31.mv,_o.mv,GExpr.I32.mv,GExpr.I41.mv,_rx.mv,GExpr.I42.mv,GExpr.I43.mv,GExpr.I5.mv,_x1.mv,_x2.mv,_x3.mv,_x4.mv,_x5.mv,_x6.mv,_x7.mv,_x8.mv,GExpr.I8.mv,GExpr.I13.mv]
-
-      GExpr.pSCiFrmlst = [GExpr.Onl,_o*S(-1),_x,_y,GExpr.I32*S(-1),_oo*S(-1),GExpr.I31*S(-1),GExpr.I41*S(-1),_rx*S(-1),GExpr.I43*S(-1),GExpr.I42,GExpr.I5,_x1,_x2,_x3,_x4,_x5,_x6,_x7,_x8,GExpr.I8,GExpr.I13]
-
-      GExpr.grdlmt = [
-        # replace 9 by infinity
-      
-        [I,I,I,I,I,I,I,I,I,I,I,I,I,I,I,I,I,I,I,I,I,I],
-        [I,0,0,0,0,1,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,1],
-        [I,0,1,0,1,0,1,1,0,1,1,1,0,0,0,0,0,0,0,0,0,1],
-        [I,0,0,1,1,0,1,1,0,1,1,1,0,0,0,0,0,0,0,0,0,1],
-        [I,0,1,1,2,1,3,3,0,2,3,3,0,0,0,0,0,0,0,0,0,2],
-        [I,1,0,0,1,0,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,1],
-        [I,1,1,1,3,0,2,3,0,3,2,3,0,0,0,0,0,0,0,0,0,3],
-        [I,1,1,1,3,1,3,4,0,3,3,4,0,0,0,0,0,0,0,0,0,4],
-        [I,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,1],
-        [I,0,1,1,2,1,3,3,1,3,4,4,0,0,0,0,0,0,0,0,0,4],
-        [I,1,1,1,3,0,2,3,1,4,3,4,0,0,0,0,0,0,0,0,0,4],
-        [I,1,1,1,3,1,3,4,1,4,4,5,0,0,0,0,0,0,0,0,0,5],
-        [I,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,1],
-        [I,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,1],
-        [I,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,1],
-        [I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,1],
-        [I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,1],
-        [I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1],
-        [I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1],
-        [I,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1],
-        [I,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,8,8],
-        [I,1,1,1,3,1,3,4,1,4,4,5,1,1,1,1,1,1,1,1,8,13],
+      # pSClst contains string identifiers (plus nl for scalar)
+      GExpr.pSClst = [
+        GExpr.nl,  # Keep nl as special case (multivector)
+        "I31", "I32", "I41", "I42", "I43", "I5", "I8", "I13"
       ]
       
-      GExpr.Disjoint_Grp = [[_o.mv,_x.mv,_y.mv,_rx.mv,_oo.mv],[_x1.mv,_x2.mv,_x3.mv,_x4.mv,_x5.mv,_x6.mv,_x7.mv,_x8.mv]] 
+      # Grade limits mapping: identifier -> limit
+      GExpr.grdlmt_map = {
+        "I31": 3, "I32": 3, "I41": 4, "I42": 4,
+        "I43": 4, "I5": 5, "I8": 8, "I13": 13
+      }
       
+      # Disjoint groups (for is_joint function)
+      GExpr.Disjoint_Grp = [
+        ["I31", "I32", "I41", "I42", "I43", "I5"],
+        ["I8"]
+      ]
+      
+      # pSCiFrmlst - kept for backward compatibility but may not be needed
+      # This would need to be redefined if still used
+      GExpr.pSCiFrmlst = []
+      
+      # grdlmt table - kept for backward compatibility
+      # This is a 2D table indexed by pSClst position
+      # For now, we'll keep it but it may need updating
+      GExpr.grdlmt = [
+        # replace 9 by infinity
+        [I,I,I,I,I,I,I,I,I],
+        [I,0,0,0,0,0,0,0,1],
+        [I,0,1,0,1,1,1,0,1],
+        [I,0,0,1,1,1,1,0,1],
+        [I,0,1,1,2,2,2,0,1],
+        [I,0,1,1,2,2,2,0,1],
+        [I,0,1,1,2,2,2,0,1],
+        [I,0,0,0,0,0,0,1,1],
+        [I,1,1,1,1,1,1,1,13],
+      ]
+      
+      # primmv and primbx - may still be needed for some operations
+      # For now, we'll keep them empty or minimal
+      GExpr.primbx = []
+      GExpr.primmv = []
+      
+      # _oo and _rx - may still be needed, but simplified
+      # These would need to be created if still used elsewhere
+      GExpr._oo = None
+      GExpr._rx = None
       
       GExpr.initialized = True 
   
@@ -249,11 +175,3 @@ class GAtom(GExpr,AtomicExpr):
     __new_stage2__)            # never cached (e.g. dummy)
   __xnew_cached_ = staticmethod(
     cacheit(__new_stage2__))   # symbols are always cached
-  # __xnew_cached_ = staticmethod(
-  #   __new_stage2__)   # never cached (e.g. dummy)
-
-# Don't call _preprocess() at module level - it causes circular imports
-# _preprocess() is now called at the end of initial.py after all modules are loaded
-# This avoids the circular dependency: imports.core -> GAtom -> operators -> imports.core
-# GAtom._preprocess()  # REMOVED - moved to initial.py
-

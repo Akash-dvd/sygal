@@ -1,7 +1,7 @@
 # Core imports - Import directly to avoid circular dependency
 from Sygal.GExpr import GExpr
 from Sygal.Box import Box
-from Sygal.imports.sympy_basic import Basic, Mul, S
+from Sygal.imports.sympy_basic import Basic, Mul, S, subsets
 from Sygal.imports.typing_helpers import Tuple, product, reduce
 from Sygal.imports.strategies import exhaust, typed, do_one, flatten
 from Sygal.imports.psc import grd, spclst, spcdct

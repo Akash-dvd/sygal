@@ -1,13 +1,20 @@
 # Core imports - Import directly to avoid circular dependency
 from Sygal.GExpr import GExpr
 from Sygal.Box import Box
-from Sygal.imports.sympy_basic import Add, Expr
-from Sygal.imports.typing_helpers import Union
+from Sygal.imports.sympy_basic import Add, Expr, S
+from Sygal.imports.typing_helpers import Union, reduce
 from Sygal.imports.strategies import expand_iter, exhaust, do_one
+from Sygal.imports.utils import is_scalarPair, is_nzScalarPair, is_vecBlade, parity
 
 # Only import operators actually used
 from Sygal.operators.assop.gmul import gmul
+from Sygal.operators.assop.gextp import gextp
 from Sygal.operators.binop.sclrprdct import sclrprdct
+from Sygal.operators.binop.glcntrct import glcntrct
+from Sygal.operators.binop.grcntrct import grcntrct
+from Sygal.operators.binop.outermorphic.isomorphic.inversion import inversion
+from Sygal.operators.binop.outermorphic.projection import projection
+from Sygal.operators.binop.outermorphic.rejection import rejection
 
 # prototype func
 def diff_expand(args1,args2):

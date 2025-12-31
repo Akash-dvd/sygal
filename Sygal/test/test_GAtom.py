@@ -1,6 +1,10 @@
 # Required for tests
 import sys
-sys.path.append('/app/lib')
+import os
+
+# Add /app to path for imports
+if '/app' not in sys.path:
+    sys.path.insert(0, '/app')
 
 from Sygal.initial import *
 

@@ -4,7 +4,7 @@ from Sygal.Box import Box
 from Sygal.imports.sympy_basic import Basic, Mul, S, subsets
 from Sygal.imports.typing_helpers import product
 from Sygal.imports.psc import grd, spclst, spcdct
-from Sygal.imports.utils import kbin_distri, is_devmode
+from Sygal.imports.utils import kbin_distri, is_devmode, is_uniGraded
 from Sygal.imports.sympy_basic import StrPrinter
 
 from Sygal.operators.binop.binop import binop

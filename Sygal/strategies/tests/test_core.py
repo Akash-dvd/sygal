@@ -1,7 +1,10 @@
 from sympy import S
 from sympy.strategies.core import (null_safe, exhaust, memoize, condition,
         chain, tryit, do_one, debug, switch, minimize)
-from sympy.core.compatibility import get_function_name
+from inspect import getfullargspec
+# get_function_name is deprecated, use inspect.getfullargspec or function.__name__
+def get_function_name(func):
+    return func.__name__
 
 def test_null_safe():
     def rl(expr):
@@ -57,7 +60,7 @@ def test_do_one():
     assert rule(rule(1)) == 3
 
 def test_debug():
-    from sympy.core.compatibility import StringIO
+    from io import StringIO
     file = StringIO()
     rl = debug(posdec, file)
     rl(5)

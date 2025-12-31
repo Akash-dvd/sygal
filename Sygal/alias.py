@@ -1,7 +1,0 @@
-
-"""
-CLASS FOR 
-a) ALIAS
-b) VERSION
-c) IF ELSE = 0 FOR INV ETC
-"""

@@ -1,8 +1,18 @@
 # Required for tests
-# import sys
-# sys.path.append('/app/solver')
+import sys
+import os
+
+# Add /app to path for imports
+if '/app' not in sys.path:
+    sys.path.insert(0, '/app')
 
 from Sygal.initial import *
+from Sygal.strategies.iters import canon_iter, higher_iter
+from Sygal.operators.assop.gmul import gmul
+from Sygal.operators.binop.outermorphic.projection import projection
+from Sygal.operators.binop.outermorphic.rejection import rejection
+from Sygal.operators.binop.outermorphic.isomorphic.inversion import inversion
+from sympy import S
 
 """
 1)  Check adjacent scalar simplification

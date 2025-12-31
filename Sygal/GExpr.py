@@ -1,6 +1,7 @@
 from typing import Tuple, TypeVar, Callable, Dict, Sequence, List, Optional, Union, TYPE_CHECKING
 from collections.abc import Iterable
 from collections import defaultdict
+from functools import cached_property
 from sympy import (
   Basic,diff, Rational, Symbol, S, Mul, Add, Expr,
   expand, simplify, eye, trigsimp,sympify,
@@ -28,9 +29,31 @@ class GExpr(Expr):
   name = "zzzzzGExpr"
   initialized:bool = False
 
+  @cached_property
+  def is_commutative(self) -> bool:
+    """Cached property: Check if expression is commutative (grade 0 only)."""
+    return self.grade == {0}
+
   @property
-  def is_commutative(expr) -> bool:
-    return expr.grade == {0}
+  def isZero(self:"GExpr") -> bool:
+    """Check if this GExpr equals zero (GExpr.Znl).
+    
+    Returns:
+      True if expression equals GExpr.Znl (zero element)
+    """
+    try:
+      # Check if GExpr.Znl is initialized
+      if not hasattr(GExpr, 'Znl') or GExpr.Znl is None:
+        return False
+      
+      # Direct comparison with zero element
+      return self == GExpr.Znl
+    except:
+      # Fallback: check if it's a SymPy zero
+      try:
+        return self == 0 or (hasattr(self, 'coeff') and self.coeff == S(0))
+      except:
+        return False
 
   def __add__(self:"GExpr", A:"GExpr") -> "GExpr":
     from Sygal.operators.assop.gadd import gadd
@@ -116,16 +139,18 @@ class GExpr(Expr):
 
 
   ###########################
-  @property
+  @cached_property
   def pSC(self:"GExpr") -> set:
+    """Cached property: Get set of pseudoscalar identifiers in this expression."""
     t = set()
     for spdt in self.mtDt:
       for k,v in spdt.items():
         t.add(k)
     return t
 
-  @property
+  @cached_property
   def grade(self:"GExpr") -> set:
+    """Cached property: Get set of grades present in this expression."""
     t = set()
     for spdt in self.mtDt:
       t1 = 0
