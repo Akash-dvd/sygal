@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Thread Loom — stitch shared strands, release scalar beads, and weave expressions into normal form."
+    />
+    <title>Thread Loom — Sandhi</title>
+    <link rel="stylesheet" href="loom.css?v=5" />
+    <link rel="stylesheet" href="siteframe.css?v=3" />
+    <link rel="stylesheet" href="sitenav.css?v=4" />
+    <script src="sitenav.js?v=9" defer></script>
+  </head>
+  <body>
+    <main class="loom-shell">
+      <header class="loom-header">
+        <a class="brand" href="index.html">
+          <span class="brand-mark">⌁</span>
+          <span><strong>THREAD LOOM</strong><small>FIND · STITCH · RELEASE · WEAVE</small></span>
+        </a>
+
+        <div class="hud">
+          <div><small>SCORE</small><strong id="score">0000</strong></div>
+          <div><small>STITCHES</small><strong id="moves">00</strong></div>
+          <div><small>LEVEL</small><strong id="levelHud">1 / 5</strong></div>
+        </div>
+
+      </header>
+
+      <nav class="site-nav" data-site-nav></nav>
+
+      <section class="intro">
+        <div>
+          <p class="eyebrow">A STRING-DIAGRAM PUZZLE</p>
+          <h1>Stitch the seam.<br />Keep the open wires.</h1>
+        </div>
+        <p>
+          Each diagram is a contraction node with legs. Drag a glowing loose end
+          onto the same wire in the facing diagram: the shared legs bend into a
+          cup, the closed loop lifts off as a scalar bead, and the open wires
+          survive. A repeated wire tears the whole diagram to zero.
+        </p>
+      </section>
+
+      <section class="game-layout">
+        <aside class="level-rail">
+          <p class="eyebrow">PATTERNS</p>
+          <div id="levelList"></div>
+
+          <div class="toolbox">
+            <p class="eyebrow">LOOM TOOLS</p>
+            <button class="tool active" data-tool="stitch">
+              <span>⌁</span>
+              <b>Stitch</b>
+              <small>Join equal loose ends</small>
+            </button>
+            <button class="tool" data-tool="inspect">
+              <span>◎</span>
+              <b>Inspect</b>
+              <small>Reveal the algebra</small>
+            </button>
+          </div>
+        </aside>
+
+        <section class="loom-workbench">
+          <div class="bench-bar">
+            <div>
+              <p class="eyebrow" id="levelKicker">PATTERN 01</p>
+              <h2 id="levelTitle">One seam, one scalar</h2>
+            </div>
+            <div class="bench-actions">
+              <button class="ghost-button" id="hintButton">Hint</button>
+              <button class="ghost-button" id="resetButton">↺ Reset</button>
+            </div>
+          </div>
+
+          <div class="objective">
+            <span>ORDER</span>
+            <p id="objective">Close the shared thread and leave one open bundle.</p>
+            <div class="progress"><i id="progressBar"></i></div>
+          </div>
+
+          <div class="loom-stage" id="loomStage">
+            <svg id="loomCanvas" class="loom-canvas" aria-label="String diagram board"></svg>
+            <div id="burstLayer" class="burst-layer" aria-hidden="true"></div>
+            <div id="zeroStamp" class="zero-stamp" hidden>= 0</div>
+          </div>
+
+          <div class="shuttle">
+            <div>
+              <span class="shuttle-label">SCALAR SHUTTLE</span>
+              <div id="scalarTray" class="scalar-tray"><em>empty</em></div>
+            </div>
+            <p id="statusLine">Pick up a coloured thread end and stitch its twin.</p>
+          </div>
+        </section>
+
+        <aside class="order-panel">
+          <p class="eyebrow">WEAVE READING</p>
+          <div class="legend">
+            <article>
+              <i class="swatch ring"></i>
+              <div><b>Node</b><p>Contraction pin ⌋</p></div>
+            </article>
+            <article>
+              <i class="swatch loose"></i>
+              <div><b>Leg</b><p>One wedge factor</p></div>
+            </article>
+            <article>
+              <i class="swatch seam"></i>
+              <div><b>Gold end</b><p>Stitchable seam</p></div>
+            </article>
+            <article>
+              <i class="swatch bead"></i>
+              <div><b>Closed loop</b><p>Becomes the scalar</p></div>
+            </article>
+          </div>
+
+          <div class="scientist" id="scientist">
+            <div class="scientist-head">
+              <span>SCIENTIST TAPE</span>
+              <button id="tapeToggle" aria-label="Toggle scientist tape">+</button>
+            </div>
+            <div id="tapeBody" hidden>
+              <small>ENGINE INPUT</small>
+              <code id="engineInput">—</code>
+              <small>ENGINE TARGET</small>
+              <code id="engineTarget">—</code>
+            </div>
+          </div>
+
+          <div class="grade">
+            <span>GRADE</span>
+            <strong id="grade">APPRENTICE</strong>
+            <p id="gradeCopy">A clean stitch costs one move. Frayed attempts cost two.</p>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <div class="complete" id="complete" hidden>
+      <div>
+        <span class="complete-mark">⌁</span>
+        <p class="eyebrow">PATTERN WOVEN</p>
+        <h2 id="completeTitle">One bundle remains.</h2>
+        <p id="completeCopy">The closed seam became a scalar bead; every open wire survived.</p>
+        <div class="complete-stats">
+          <div><small>STITCHES</small><strong id="endMoves">1</strong></div>
+          <div><small>SCALARS</small><strong id="endScalars">1</strong></div>
+          <div><small>GRADE</small><strong id="endGrade">S</strong></div>
+        </div>
+        <button class="solid-button" id="nextButton">Next pattern →</button>
+      </div>
+    </div>
+
+    <script src="loom.js?v=5"></script>
+  </body>
+</html>

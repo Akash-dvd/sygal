@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Sandhi — a pattern-matching game inspired by geometric algebra."
+    />
+    <title>Sandhi — The Pattern Game</title>
+    <link rel="stylesheet" href="styles.css?v=6" />
+    <link rel="stylesheet" href="siteframe.css?v=3" />
+    <link rel="stylesheet" href="sitenav.css?v=4" />
+    <script src="sitenav.js?v=9" defer></script>
+  </head>
+  <body>
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
+
+    <main class="shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="Sandhi home">
+          <span class="brand-mark">∧</span>
+          <span>
+            <strong>SANDHI</strong>
+            <small>THE PATTERN GAME</small>
+          </span>
+        </a>
+
+        <div class="scoreboard" aria-label="Game status">
+          <div><small>SCORE</small><strong id="score">0000</strong></div>
+          <div><small>MOVES</small><strong id="moves">00</strong></div>
+          <div><small>LEVEL</small><strong id="level">1 / 5</strong></div>
+        </div>
+
+        <div class="top-actions">
+          <button class="icon-button" id="helpButton" aria-label="How to play">?</button>
+        </div>
+      </header>
+
+      <nav class="site-nav" data-site-nav></nav>
+
+      <section class="hero">
+        <div>
+          <p class="eyebrow">A GAME OF COMBINATION &amp; SPLITTING</p>
+          <h1>Find the seam.<br /><em>Reveal the invariant.</em></h1>
+        </div>
+        <p class="hero-copy">
+          Match panels with the same upper blade. Join them along a shared
+          symbol—or split a long chain to expose a better move.
+        </p>
+      </section>
+
+      <section class="game-layout">
+        <aside class="mission-card">
+          <div class="mission-number" id="missionNumber">01</div>
+          <p class="eyebrow">CURRENT THEOREM</p>
+          <h2 id="missionTitle">The Circumcenter</h2>
+          <p id="missionText">
+            Complete the triangle cycle by joining all three ∞ panels.
+          </p>
+          <div class="goal">
+            <span>GOAL</span>
+            <div id="goalExpression">∞⌋(P₁ ∧ P₂ ∧ P₃ ∧ P₁) → 0</div>
+          </div>
+          <div class="progress-label">
+            <span>PROGRESS</span><span id="progressText">0 / 1</span>
+          </div>
+          <div class="progress-track"><div id="progressBar"></div></div>
+          <button class="secondary-button" id="restartButton">↻ Restart theorem</button>
+        </aside>
+
+        <section class="board-wrap">
+          <div class="board-heading">
+            <div>
+              <p class="eyebrow">THE BOARD</p>
+              <h2 id="instruction">Select two panels to combine</h2>
+            </div>
+            <div class="mode-switch" role="group" aria-label="Move mode">
+              <button class="active" data-mode="sandhi">SANDHI <span>join</span></button>
+              <button data-mode="split">VICCHEDA <span>split</span></button>
+              <button data-mode="reverse">PARIVṚTTI <span>reverse</span></button>
+            </div>
+          </div>
+
+          <div id="message" class="message" aria-live="polite">
+            Same upper blade + shared lower symbol = a legal Sandhi.
+          </div>
+
+          <div id="board" class="board" aria-label="Pattern panels"></div>
+
+          <div class="legend">
+            <span><i class="dot dot-up"></i> Upper blade must match</span>
+            <span><i class="dot dot-seam"></i> Shared symbol is the seam</span>
+            <span><i class="dot dot-zero"></i> Closed cycle vanishes</span>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <dialog id="helpDialog">
+      <button class="dialog-close" id="closeHelp" aria-label="Close">×</button>
+      <p class="eyebrow">HOW TO PLAY</p>
+      <h2>Split. Match. Fuse.</h2>
+      <ol>
+        <li><strong>Sandhi:</strong> select two panels with the same upper blade and at least one shared lower symbol.</li>
+        <li><strong>Viccheda:</strong> select a chain of three or more symbols to split it into two overlapping panels.</li>
+        <li><strong>Parivṛtti:</strong> reverse one plate to face its seam the other way. A grade-k plate reverses with the sign (−1)<sup>k(k−1)/2</sup>, so grade 2 and 3 flip while grade 4 does not.</li>
+        <li><strong>Close a cycle:</strong> adding a panel whose two ends already lie in a chain completes an alternating cycle and clears it.</li>
+      </ol>
+      <p class="fine-print">
+        This is a visual teaching game inspired by <code>SandhiCanon</code>.
+        The Python engine additionally tracks grades, parity signs, recursive
+        contractions, and Capelli overlap coefficients.
+      </p>
+    </dialog>
+
+    <div id="levelComplete" class="level-complete" hidden>
+      <div>
+        <span class="completion-mark">◇</span>
+        <p class="eyebrow">INVARIANT REVEALED</p>
+        <h2 id="completeTitle">The three bisectors concur.</h2>
+        <p id="completeExplanation">
+          The cycle closes, so exterior alternation sends the repeated point to zero.
+        </p>
+        <button class="primary-button" id="nextButton">Next theorem →</button>
+      </div>
+    </div>
+
+    <script src="game.js?v=6"></script>
+  </body>
+</html>

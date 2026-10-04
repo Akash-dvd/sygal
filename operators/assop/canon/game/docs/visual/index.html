@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Visual theme comparison for the four Sandhi germ mutations."
+    />
+    <title>Mutation Worlds — Visual Theme Lab</title>
+    <link rel="stylesheet" href="../../siteframe.css?v=3" />
+    <link rel="stylesheet" href="../../sitenav.css?v=4" />
+    <link rel="stylesheet" href="visual.css?v=1" />
+    <script src="../../sitenav.js?v=9" defer></script>
+  </head>
+  <body>
+    <main class="shell">
+      <header>
+        <a class="brand" href="../../index.html">
+          <span class="brand-mark">⌬</span>
+          <span><strong>MUTATION WORLDS</strong><small>VISUAL THEME LAB</small></span>
+        </a>
+        <div class="formula">
+          <span>GERM</span>
+          <b>swap · reshape · dissect · merge</b>
+        </div>
+      </header>
+
+      <nav class="site-nav" data-site-nav></nav>
+
+      <section class="hero">
+        <div>
+          <p class="eyebrow">SIX BIOLOGICAL READINGS · ONE MUTATION ALGEBRA</p>
+          <h1>Choose the world where <em>every move feels natural.</em></h1>
+        </div>
+        <p>
+          Select a world, then play the same four operations through its visual
+          language. The algebra stays fixed; only the creature, motion and reward
+          metaphor change.
+        </p>
+      </section>
+
+      <section class="lab">
+        <aside class="world-picker" aria-label="Visual worlds">
+          <p class="eyebrow">WORLDS</p>
+          <div id="worldList"></div>
+        </aside>
+
+        <section class="stage-card">
+          <div class="stage-heading">
+            <div>
+              <p class="eyebrow" id="domain"></p>
+              <h2 id="title"></h2>
+            </div>
+            <span class="truth-badge" id="truthBadge"></span>
+          </div>
+
+          <div class="operation-tabs" role="group" aria-label="Mutation">
+            <button data-step="swap"><span>01</span>SWAP<small>order + sign</small></button>
+            <button data-step="shape"><span>02</span>SHAPE<small>deep ↔ flat</small></button>
+            <button data-step="cut"><span>03</span>VICCHEDA<small>cut + debt</small></button>
+            <button data-step="merge"><span>04</span>SANDHI<small>match + fuse</small></button>
+          </div>
+
+          <div class="visual-stage" id="visualStage"></div>
+
+          <div class="operation-reading">
+            <span id="operationName"></span>
+            <strong id="operationTitle"></strong>
+            <p id="operationText"></p>
+          </div>
+        </section>
+
+        <aside class="decision-panel">
+          <p class="eyebrow">FIT FOR THE GAME</p>
+          <div id="scores" class="scores"></div>
+          <div class="mapping">
+            <p class="eyebrow">VISUAL DICTIONARY</p>
+            <dl id="mapping"></dl>
+          </div>
+          <div class="verdict">
+            <span>DESIGN VERDICT</span>
+            <p id="verdict"></p>
+          </div>
+        </aside>
+      </section>
+
+      <section class="shortlist">
+        <p class="eyebrow">WHAT TO LOOK FOR</p>
+        <div>
+          <article><span>01</span><h3>Readable cuts</h3><p>Can the player see the borrowed seam and scalar debt without reading a formula?</p></article>
+          <article><span>02</span><h3>Visible orientation</h3><p>Does reversing a germ look different enough that the sign change feels earned?</p></article>
+          <article><span>03</span><h3>Shape with purpose</h3><p>Can one germ become deep or flat while staying recognizably the same object?</p></article>
+          <article><span>04</span><h3>Cascade energy</h3><p>Does a successful Sandhi produce a satisfying residual that can merge again?</p></article>
+        </div>
+      </section>
+    </main>
+
+    <script src="visual.js?v=1"></script>
+  </body>
+</html>

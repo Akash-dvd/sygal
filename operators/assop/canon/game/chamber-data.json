@@ -1,0 +1,809 @@
+[
+  {
+    "id": "flat",
+    "title": "One seam, one scalar",
+    "note": "Two panels share the symbol a3. It contracts out as the pairing (a1|a3) and the survivors wedge into a single panel.",
+    "input": {
+      "expr": "[-1!((a1\u230b(a3^a4))^(a1\u230b(a2^a3)))]",
+      "panels": [
+        [
+          {
+            "pin": "a1",
+            "nodes": [
+              "a3",
+              "a4"
+            ]
+          }
+        ],
+        [
+          {
+            "pin": "a1",
+            "nodes": [
+              "a2",
+              "a3"
+            ]
+          }
+        ]
+      ]
+    },
+    "steps": [
+      {
+        "before": "[-1!((a1\u230b(a3^a4))^(a1\u230b(a2^a3)))]",
+        "after": "[-(a1|a3)!(a1\u230b(a2^a3^a4))]",
+        "panelsBefore": [
+          [
+            {
+              "pin": "a1",
+              "nodes": [
+                "a3",
+                "a4"
+              ]
+            }
+          ],
+          [
+            {
+              "pin": "a1",
+              "nodes": [
+                "a2",
+                "a3"
+              ]
+            }
+          ]
+        ],
+        "panelsAfter": [
+          [
+            {
+              "pin": "a1",
+              "nodes": [
+                "a2",
+                "a3",
+                "a4"
+              ]
+            }
+          ]
+        ],
+        "coeff": "(a1|a3)",
+        "zero": false,
+        "seam": {
+          "label": "(a1|a3)",
+          "rows": [
+            "a1"
+          ],
+          "cols": [
+            "a3"
+          ],
+          "terms": [
+            {
+              "sign": 1,
+              "factors": [
+                "a1|a3"
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "result": {
+      "expr": "[-(a1|a3)!(a1\u230b(a2^a3^a4))]",
+      "coeff": "-(a1|a3)",
+      "panels": [
+        [
+          {
+            "pin": "a1",
+            "nodes": [
+              "a2",
+              "a3",
+              "a4"
+            ]
+          }
+        ]
+      ],
+      "zero": false
+    }
+  },
+  {
+    "id": "chain",
+    "title": "A chain of two collapses",
+    "note": "Three panels, two seams. The residual of the first merge is still mergeable, so the scalars multiply.",
+    "input": {
+      "expr": "[-1!((a1\u230b(a4^b1))^(a1\u230b(a3^a4))^(a1\u230b(a2^a3)))]",
+      "panels": [
+        [
+          {
+            "pin": "a1",
+            "nodes": [
+              "a4",
+              "b1"
+            ]
+          }
+        ],
+        [
+          {
+            "pin": "a1",
+            "nodes": [
+              "a3",
+              "a4"
+            ]
+          }
+        ],
+        [
+          {
+            "pin": "a1",
+            "nodes": [
+              "a2",
+              "a3"
+            ]
+          }
+        ]
+      ]
+    },
+    "steps": [
+      {
+        "before": "[-1!((a1\u230b(a4^b1))^(a1\u230b(a3^a4))^(a1\u230b(a2^a3)))]",
+        "after": "[-(a1|a4)!((a1\u230b(a2^a3))^(a1\u230b(a3^a4^b1)))]",
+        "panelsBefore": [
+          [
+            {
+              "pin": "a1",
+              "nodes": [
+                "a4",
+                "b1"
+              ]
+            }
+          ],
+          [
+            {
+              "pin": "a1",
+              "nodes": [
+                "a3",
+                "a4"
+              ]
+            }
+          ],
+          [
+            {
+              "pin": "a1",
+              "nodes": [
+                "a2",
+                "a3"
+              ]
+            }
+          ]
+        ],
+        "panelsAfter": [
+          [
+            {
+              "pin": "a1",
+              "nodes": [
+                "a2",
+                "a3"
+              ]
+            }
+          ],
+          [
+            {
+              "pin": "a1",
+              "nodes": [
+                "a3",
+                "a4",
+                "b1"
+              ]
+            }
+          ]
+        ],
+        "coeff": "(a1|a4)",
+        "zero": false,
+        "seam": {
+          "label": "(a1|a4)",
+          "rows": [
+            "a1"
+          ],
+          "cols": [
+            "a4"
+          ],
+          "terms": [
+            {
+              "sign": 1,
+              "factors": [
+                "a1|a4"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "before": "[-(a1|a4)!((a1\u230b(a2^a3))^(a1\u230b(a3^a4^b1)))]",
+        "after": "[-(a1|a3)*(a1|a4)!(a1\u230b(a2^a3^a4^b1))]",
+        "panelsBefore": [
+          [
+            {
+              "pin": "a1",
+              "nodes": [
+                "a2",
+                "a3"
+              ]
+            }
+          ],
+          [
+            {
+              "pin": "a1",
+              "nodes": [
+                "a3",
+                "a4",
+                "b1"
+              ]
+            }
+          ]
+        ],
+        "panelsAfter": [
+          [
+            {
+              "pin": "a1",
+              "nodes": [
+                "a2",
+                "a3",
+                "a4",
+                "b1"
+              ]
+            }
+          ]
+        ],
+        "coeff": "(a1|a3)",
+        "zero": false,
+        "seam": {
+          "label": "(a1|a3)",
+          "rows": [
+            "a1"
+          ],
+          "cols": [
+            "a3"
+          ],
+          "terms": [
+            {
+              "sign": 1,
+              "factors": [
+                "a1|a3"
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "result": {
+      "expr": "[-(a1|a3)*(a1|a4)!(a1\u230b(a2^a3^a4^b1))]",
+      "coeff": "-(a1|a3)*(a1|a4)",
+      "panels": [
+        [
+          {
+            "pin": "a1",
+            "nodes": [
+              "a2",
+              "a3",
+              "a4",
+              "b1"
+            ]
+          }
+        ]
+      ],
+      "zero": false
+    }
+  },
+  {
+    "id": "rank2",
+    "title": "A two-blade seam",
+    "note": "The shared core is a 2-blade, so the overlap scalar is a 2x2 determinant rather than a single pairing.",
+    "input": {
+      "expr": "[-1!(((A1^A2)\u230b(B1^B2^C2))^((A1^A2)\u230b(B1^B2^C1)))]",
+      "panels": [
+        [
+          {
+            "pin": "(A1^A2)",
+            "nodes": [
+              "B1",
+              "B2",
+              "C2"
+            ]
+          }
+        ],
+        [
+          {
+            "pin": "(A1^A2)",
+            "nodes": [
+              "B1",
+              "B2",
+              "C1"
+            ]
+          }
+        ]
+      ]
+    },
+    "steps": [
+      {
+        "before": "[-1!(((A1^A2)\u230b(B1^B2^C2))^((A1^A2)\u230b(B1^B2^C1)))]",
+        "after": "[((A1^A2)|(B1^B2))!((A1^A2)\u230b(B1^B2^C1^C2))]",
+        "panelsBefore": [
+          [
+            {
+              "pin": "(A1^A2)",
+              "nodes": [
+                "B1",
+                "B2",
+                "C2"
+              ]
+            }
+          ],
+          [
+            {
+              "pin": "(A1^A2)",
+              "nodes": [
+                "B1",
+                "B2",
+                "C1"
+              ]
+            }
+          ]
+        ],
+        "panelsAfter": [
+          [
+            {
+              "pin": "(A1^A2)",
+              "nodes": [
+                "B1",
+                "B2",
+                "C1",
+                "C2"
+              ]
+            }
+          ]
+        ],
+        "coeff": "-((A1^A2)|(B1^B2))",
+        "zero": false,
+        "seam": {
+          "label": "-((A1^A2)|(B1^B2))",
+          "rows": [
+            "A1",
+            "A2"
+          ],
+          "cols": [
+            "B1",
+            "B2"
+          ],
+          "terms": [
+            {
+              "sign": -1,
+              "factors": [
+                "A1|B2",
+                "A2|B1"
+              ]
+            },
+            {
+              "sign": 1,
+              "factors": [
+                "A1|B1",
+                "A2|B2"
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "result": {
+      "expr": "[((A1^A2)|(B1^B2))!((A1^A2)\u230b(B1^B2^C1^C2))]",
+      "coeff": "((A1^A2)|(B1^B2))",
+      "panels": [
+        [
+          {
+            "pin": "(A1^A2)",
+            "nodes": [
+              "B1",
+              "B2",
+              "C1",
+              "C2"
+            ]
+          }
+        ]
+      ],
+      "zero": false
+    }
+  },
+  {
+    "id": "deep",
+    "title": "Three nested shells",
+    "note": "The seam sits three shells down. One merge collapses the whole tower and emits a 3x3 determinant of pin-core pairings.",
+    "input": {
+      "expr": "[((d1\u230b(a1^a2^(d2\u230b(b1^b2^(d3\u230b(c1^c2^c3))))))^(d1\u230b(a3^a4^(d2\u230b(b3^b4^(d3\u230b(c1^c2^c3^c4)))))))]",
+      "panels": [
+        [
+          {
+            "pin": "d1",
+            "nodes": [
+              "a1",
+              "a2"
+            ]
+          },
+          {
+            "pin": "d2",
+            "nodes": [
+              "b1",
+              "b2"
+            ]
+          },
+          {
+            "pin": "d3",
+            "nodes": [
+              "c1",
+              "c2",
+              "c3"
+            ]
+          }
+        ],
+        [
+          {
+            "pin": "d1",
+            "nodes": [
+              "a3",
+              "a4"
+            ]
+          },
+          {
+            "pin": "d2",
+            "nodes": [
+              "b3",
+              "b4"
+            ]
+          },
+          {
+            "pin": "d3",
+            "nodes": [
+              "c1",
+              "c2",
+              "c3",
+              "c4"
+            ]
+          }
+        ]
+      ]
+    },
+    "steps": [
+      {
+        "before": "[((d1\u230b(a1^a2^(d2\u230b(b1^b2^(d3\u230b(c1^c2^c3))))))^(d1\u230b(a3^a4^(d2\u230b(b3^b4^(d3\u230b(c1^c2^c3^c4)))))))]",
+        "after": "[((d1^d2^d3)|(c1^c2^c3))!(d1\u230b(a1^a2^a3^a4^(d2\u230b(b1^b2^b3^b4^(d3\u230b(c1^c2^c3^c4))))))]",
+        "panelsBefore": [
+          [
+            {
+              "pin": "d1",
+              "nodes": [
+                "a1",
+                "a2"
+              ]
+            },
+            {
+              "pin": "d2",
+              "nodes": [
+                "b1",
+                "b2"
+              ]
+            },
+            {
+              "pin": "d3",
+              "nodes": [
+                "c1",
+                "c2",
+                "c3"
+              ]
+            }
+          ],
+          [
+            {
+              "pin": "d1",
+              "nodes": [
+                "a3",
+                "a4"
+              ]
+            },
+            {
+              "pin": "d2",
+              "nodes": [
+                "b3",
+                "b4"
+              ]
+            },
+            {
+              "pin": "d3",
+              "nodes": [
+                "c1",
+                "c2",
+                "c3",
+                "c4"
+              ]
+            }
+          ]
+        ],
+        "panelsAfter": [
+          [
+            {
+              "pin": "d1",
+              "nodes": [
+                "a1",
+                "a2",
+                "a3",
+                "a4"
+              ]
+            },
+            {
+              "pin": "d2",
+              "nodes": [
+                "b1",
+                "b2",
+                "b3",
+                "b4"
+              ]
+            },
+            {
+              "pin": "d3",
+              "nodes": [
+                "c1",
+                "c2",
+                "c3",
+                "c4"
+              ]
+            }
+          ]
+        ],
+        "coeff": "((d1^d2^d3)|(c1^c2^c3))",
+        "zero": false,
+        "seam": {
+          "label": "((d1^d2^d3)|(c1^c2^c3))",
+          "rows": [
+            "d1",
+            "d2",
+            "d3"
+          ],
+          "cols": [
+            "c1",
+            "c2",
+            "c3"
+          ],
+          "terms": [
+            {
+              "sign": 1,
+              "factors": [
+                "c1|d1",
+                "c2|d3",
+                "c3|d2"
+              ]
+            },
+            {
+              "sign": 1,
+              "factors": [
+                "c1|d2",
+                "c2|d1",
+                "c3|d3"
+              ]
+            },
+            {
+              "sign": 1,
+              "factors": [
+                "c1|d3",
+                "c2|d2",
+                "c3|d1"
+              ]
+            },
+            {
+              "sign": -1,
+              "factors": [
+                "c1|d1",
+                "c2|d2",
+                "c3|d3"
+              ]
+            },
+            {
+              "sign": -1,
+              "factors": [
+                "c1|d2",
+                "c2|d3",
+                "c3|d1"
+              ]
+            },
+            {
+              "sign": -1,
+              "factors": [
+                "c1|d3",
+                "c2|d1",
+                "c3|d2"
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "result": {
+      "expr": "[((d1^d2^d3)|(c1^c2^c3))!(d1\u230b(a1^a2^a3^a4^(d2\u230b(b1^b2^b3^b4^(d3\u230b(c1^c2^c3^c4))))))]",
+      "coeff": "((d1^d2^d3)|(c1^c2^c3))",
+      "panels": [
+        [
+          {
+            "pin": "d1",
+            "nodes": [
+              "a1",
+              "a2",
+              "a3",
+              "a4"
+            ]
+          },
+          {
+            "pin": "d2",
+            "nodes": [
+              "b1",
+              "b2",
+              "b3",
+              "b4"
+            ]
+          },
+          {
+            "pin": "d3",
+            "nodes": [
+              "c1",
+              "c2",
+              "c3",
+              "c4"
+            ]
+          }
+        ]
+      ],
+      "zero": false
+    }
+  },
+  {
+    "id": "bisector",
+    "title": "Three perpendicular bisectors",
+    "note": "Each panel is a bisector. Merging all three repeats a symbol inside the wedge, so the product is exactly zero: the three lines are concurrent.",
+    "input": {
+      "expr": "[-1!((A1\u230b(a1^a2))^(A1\u230b(a2^a3))^(A1\u230b(a1^a3)))]",
+      "panels": [
+        [
+          {
+            "pin": "A1",
+            "nodes": [
+              "a1",
+              "a2"
+            ]
+          }
+        ],
+        [
+          {
+            "pin": "A1",
+            "nodes": [
+              "a2",
+              "a3"
+            ]
+          }
+        ],
+        [
+          {
+            "pin": "A1",
+            "nodes": [
+              "a1",
+              "a3"
+            ]
+          }
+        ]
+      ]
+    },
+    "steps": [
+      {
+        "before": "[-1!((A1\u230b(a1^a2))^(A1\u230b(a2^a3))^(A1\u230b(a1^a3)))]",
+        "after": "[-(A1|a2)!((A1\u230b(a1^a3))^(A1\u230b(a1^a2^a3)))]",
+        "panelsBefore": [
+          [
+            {
+              "pin": "A1",
+              "nodes": [
+                "a1",
+                "a2"
+              ]
+            }
+          ],
+          [
+            {
+              "pin": "A1",
+              "nodes": [
+                "a2",
+                "a3"
+              ]
+            }
+          ],
+          [
+            {
+              "pin": "A1",
+              "nodes": [
+                "a1",
+                "a3"
+              ]
+            }
+          ]
+        ],
+        "panelsAfter": [
+          [
+            {
+              "pin": "A1",
+              "nodes": [
+                "a1",
+                "a3"
+              ]
+            }
+          ],
+          [
+            {
+              "pin": "A1",
+              "nodes": [
+                "a1",
+                "a2",
+                "a3"
+              ]
+            }
+          ]
+        ],
+        "coeff": "(A1|a2)",
+        "zero": false,
+        "seam": {
+          "label": "(A1|a2)",
+          "rows": [
+            "A1"
+          ],
+          "cols": [
+            "a2"
+          ],
+          "terms": [
+            {
+              "sign": 1,
+              "factors": [
+                "A1|a2"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "before": "[-(A1|a2)!((A1\u230b(a1^a3))^(A1\u230b(a1^a2^a3)))]",
+        "after": "[0!\u0950]",
+        "panelsBefore": [
+          [
+            {
+              "pin": "A1",
+              "nodes": [
+                "a1",
+                "a3"
+              ]
+            }
+          ],
+          [
+            {
+              "pin": "A1",
+              "nodes": [
+                "a1",
+                "a2",
+                "a3"
+              ]
+            }
+          ]
+        ],
+        "panelsAfter": [],
+        "coeff": "0",
+        "zero": true,
+        "seam": {
+          "label": "0",
+          "rows": [],
+          "cols": [],
+          "terms": []
+        }
+      }
+    ],
+    "result": {
+      "expr": "[0!\u0950]",
+      "coeff": "0",
+      "panels": [],
+      "zero": true
+    }
+  }
+]

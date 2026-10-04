@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Interactive grammar lab for the Seam Phage visual language."
+    />
+    <title>Seam Phage — Germ Grammar Lab</title>
+    <link rel="stylesheet" href="../../siteframe.css?v=3" />
+    <link rel="stylesheet" href="../../sitenav.css?v=4" />
+    <link rel="stylesheet" href="phage.css?v=2" />
+    <script src="../../sitenav.js?v=9" defer></script>
+  </head>
+  <body>
+    <main class="phage-shell">
+      <header class="phage-header">
+        <a class="brand" href="../../index.html">
+          <span class="brand-mark">φ</span>
+          <span><strong>SEAM PHAGE</strong><small>GERM GRAMMAR LAB</small></span>
+        </a>
+        <div class="status">
+          <span>GRAMMAR</span>
+          <b>DRAFT 01</b>
+          <i>VECTOR ATOMS ONLY</i>
+        </div>
+      </header>
+
+      <nav class="site-nav" data-site-nav></nav>
+
+      <section class="hero">
+        <div>
+          <p class="eyebrow">EXPRESSION IS TRUTH · PHAGE IS THE SKIN</p>
+          <h1>Give every algebraic germ <em>one readable body.</em></h1>
+        </div>
+        <p>
+          This page develops a deterministic visual grammar. The genome packet,
+          shell and tokens encode an expression tree; biological language explains
+          the motion but never decides whether a rewrite is legal. Every named
+          atom is fixed to be a grade-1 vector.
+        </p>
+      </section>
+
+      <div class="truth-strip">
+        <span>SOURCE OF TRUTH</span>
+        <strong>Sygal expression tree</strong>
+        <i>→</i>
+        <strong>deterministic visual encoding</strong>
+        <i>→</i>
+        <strong>player mutation</strong>
+        <i>→</i>
+        <strong>engine-validated result</strong>
+      </div>
+
+      <section class="workbench">
+        <aside class="example-rail">
+          <p class="eyebrow">GERM SPECIMENS</p>
+          <div id="exampleList"></div>
+
+          <div class="anatomy-key">
+            <p class="eyebrow">ANATOMY</p>
+            <div><i class="key-gene"></i><span><b>Gene bead</b><small>one grade-1 vector</small></span></div>
+            <div><i class="key-shell"></i><span><b>Shell gate</b><small>one vector contraction</small></span></div>
+            <div><i class="key-arrow"></i><span><b>Genome direction</b><small>wedge order</small></span></div>
+            <div><i class="key-token"></i><span><b>κ token</b><small>scalar or scalar debt</small></span></div>
+          </div>
+        </aside>
+
+        <section class="grammar-stage">
+          <div class="stage-heading">
+            <div>
+              <p class="eyebrow" id="specimenLabel"></p>
+              <h2 id="specimenTitle"></h2>
+            </div>
+            <span class="sign-badge" id="signBadge">SIGN +</span>
+          </div>
+
+          <div class="mutation-switch" role="group" aria-label="Phage mutation">
+            <button data-operation="encode">ANATOMY<small>expression → body</small></button>
+            <button data-operation="swap">SWAP<small>order + parity</small></button>
+            <button data-operation="shape">SHAPE<small>flat ↔ nested</small></button>
+            <button data-operation="cut">VICCHEDA<small>split + debt</small></button>
+            <button data-operation="merge">SANDHI<small>match + scalar</small></button>
+          </div>
+
+          <div class="visual-stage" id="phageStage"></div>
+
+          <div class="step-reading">
+            <span id="stepNumber"></span>
+            <div><strong id="stepTitle"></strong><p id="stepText"></p></div>
+          </div>
+        </section>
+
+        <aside class="ledger">
+          <p class="eyebrow">LIVE LEDGER</p>
+          <div class="ledger-expression">
+            <span>ALGEBRA</span>
+            <code id="algebraExpression"></code>
+          </div>
+          <dl>
+            <div><dt>BODY</dt><dd id="bodyReading"></dd></div>
+            <div><dt>ORIENTATION</dt><dd id="orientationReading"></dd></div>
+            <div><dt>SCALAR</dt><dd id="scalarReading"></dd></div>
+            <div><dt>LEGAL WHEN</dt><dd id="legalReading"></dd></div>
+          </dl>
+          <div class="boundary">
+            <span>HONEST BOUNDARY</span>
+            <p id="boundaryText"></p>
+          </div>
+        </aside>
+      </section>
+
+      <section class="grammar">
+        <div class="section-heading">
+          <p class="eyebrow">CANDIDATE VISUAL GRAMMAR</p>
+          <h2>A small alphabet, recursively composed.</h2>
+        </div>
+
+        <div class="grammar-grid">
+          <article class="syntax">
+            <span>01 · SYNTAX</span>
+            <pre>Vector ::= grade-1 atom
+Blade  ::= Vector | Wedge(Vector, Vector...)
+Expr   ::= Blade | LContract(Blade, Expr)
+Germ   ::= Sign · Scalar · Expr
+
+Packet ::= Direction · VectorBeads
+Body   ::= Packet | Shell(Vector, Body)
+Flat   ::= GroupedGate(Blade, Body)</pre>
+          </article>
+
+          <article>
+            <span>02 · ENCODING</span>
+            <h3>Vectors become ordered beads</h3>
+            <p><code>A∧B∧C</code> becomes one directed genome packet <code>A—B—C</code>. Each symbol is grade 1; the arrow fixes wedge order.</p>
+          </article>
+
+          <article>
+            <span>03 · RECURSION</span>
+            <h3>Contractions become shell gates</h3>
+            <p><code>d₁⌋(A∧d₂⌋B)</code> becomes shell <code>d₁</code> containing packet <code>A</code> and shell <code>d₂</code> containing <code>B</code>.</p>
+          </article>
+
+          <article>
+            <span>04 · ACCOUNTING</span>
+            <h3>Scalars never hide in decoration</h3>
+            <p>Every coefficient, sign, overlap and Capelli factor is a visible token attached to the germ or mutation seam.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="invariants">
+        <p class="eyebrow">NON-NEGOTIABLE INVARIANTS</p>
+        <div>
+          <article><b>Unique reading</b><p>One rendered body must decode to one normalized expression plus its explicit coefficient.</p></article>
+          <article><b>No free reversal</b><p>Changing genome direction changes the sign whenever the blade-reversal parity is odd.</p></article>
+          <article><b>No free cut</b><p>Viccheda produces children and a scalar-debt token; it cannot silently duplicate a seam.</p></article>
+          <article><b>No visual-only merge</b><p>Sticky ends may suggest a match, but only SandhiCanon can authorize the resulting residual.</p></article>
+          <article><b>No general versors</b><p>Atomic symbols cannot be rotors, spinors or mixed-grade multivectors. Higher blades are built only by wedging vectors.</p></article>
+        </div>
+      </section>
+    </main>
+
+    <script src="phage.js?v=2"></script>
+  </body>
+</html>

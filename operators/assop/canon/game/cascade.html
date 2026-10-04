@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Orbital Cascade — dock nested shell towers, collapse the shared core, ride the chain."
+    />
+    <title>Orbital Cascade — Sandhi</title>
+    <link rel="stylesheet" href="cascade.css?v=3" />
+    <link rel="stylesheet" href="siteframe.css?v=3" />
+    <link rel="stylesheet" href="sitenav.css?v=4" />
+    <script src="sitenav.js?v=9" defer></script>
+  </head>
+  <body>
+    <div class="stage-glow"></div>
+
+    <main class="cascade-shell">
+      <header class="cascade-header">
+        <a class="brand" href="index.html">
+          <span class="brand-mark">∧</span>
+          <span><strong>ORBITAL CASCADE</strong><small>DOCK · COLLAPSE · CHAIN</small></span>
+        </a>
+
+        <div class="hud">
+          <div><small>SCORE</small><strong id="score">000000</strong></div>
+          <div class="hud-chain"><small>CHAIN</small><strong id="chain">×1</strong></div>
+          <div><small>DEPTH</small><strong id="depth">3</strong></div>
+        </div>
+
+      </header>
+
+      <nav class="site-nav" data-site-nav></nav>
+
+      <section class="goalbar">
+        <div>
+          <p class="eyebrow" id="levelLabel">SHELL 01</p>
+          <h1 id="goalTitle">Collapse three shared cores</h1>
+        </div>
+        <div class="goal-progress">
+          <div class="goal-track"><div id="goalBar"></div></div>
+          <span id="goalText">0 / 3</span>
+        </div>
+        <button class="ghost-button" id="resetButton">↻ Reset shell</button>
+      </section>
+
+      <section class="play">
+        <div class="board-panel">
+          <div class="board-top">
+            <span id="statusLine">Select a tower, then dock it into a glowing partner.</span>
+            <span class="legend"><i class="seam-dot"></i> shared core = dockable</span>
+          </div>
+
+          <div id="board" class="board" aria-label="Orbital towers"></div>
+
+          <div id="sparkLayer" class="spark-layer" aria-hidden="true"></div>
+        </div>
+
+        <aside class="readout">
+          <p class="eyebrow">LAST COLLAPSE</p>
+          <div id="scalarCard" class="scalar-card empty">
+            <span>◇</span>
+            <p>No collapse yet. Dock two towers sharing a deep core.</p>
+          </div>
+
+          <div class="rules">
+            <article>
+              <b>DOCK</b>
+              <p>Two towers with the same pin lineage and at least one shared core symbol can fuse.</p>
+            </article>
+            <article>
+              <b>SPARK</b>
+              <p>The shared core contracts away as a scalar — your score burst. Those symbols leave the tower for good.</p>
+            </article>
+            <article>
+              <b>RESIDUAL</b>
+              <p>What survives is one wider tower. If it still shares a core with a neighbour it docks again: that is the chain.</p>
+            </article>
+            <article class="warn">
+              <b>ZERO</b>
+              <p>Dashed blue partners annihilate: a symbol repeats inside a wedge, so the whole term is 0. Small bonus, chain broken.</p>
+            </article>
+          </div>
+
+          <p class="footnote">
+            Teaching model of <code>SandhiCanon</code>. The engine additionally tracks
+            grade gates, parity, and Capelli overlap coefficients.
+          </p>
+        </aside>
+      </section>
+    </main>
+
+    <div id="banner" class="banner" hidden>
+      <div>
+        <span id="bannerMark">◇</span>
+        <p class="eyebrow" id="bannerKicker">SHELL COMPLETE</p>
+        <h2 id="bannerTitle">The cascade closed.</h2>
+        <p id="bannerText">Every shared core collapsed into a single residual tower.</p>
+        <button class="solid-button" id="bannerButton">Next shell →</button>
+      </div>
+    </div>
+
+    <script src="cascade.js?v=3"></script>
+  </body>
+</html>

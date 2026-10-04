@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Candy merge — the annihilator is the wrapper, Dr is the candy, merge grows the pool."
+    />
+    <title>Candy Merge — Sandhi</title>
+    <link rel="stylesheet" href="packets.css?v=16" />
+    <link rel="stylesheet" href="siteframe.css?v=3" />
+    <link rel="stylesheet" href="sitenav.css?v=4" />
+    <script src="sitenav.js?v=10" defer></script>
+  </head>
+  <body>
+    <div class="stage-glow"></div>
+
+    <main class="packets-shell">
+      <header class="packets-header">
+        <a class="brand" href="index.html">
+          <span class="brand-mark">∧</span>
+          <span><strong>CANDY MERGE</strong><small>WRAPPER · CANDY · POOL</small></span>
+        </a>
+        <div class="hud">
+          <div><small>WRAP L</small><strong id="signL">+</strong></div>
+          <div><small>WRAP R</small><strong id="signR">+</strong></div>
+          <div><small>GRADE</small><strong id="rungCount">0</strong></div>
+        </div>
+      </header>
+
+      <nav class="site-nav" data-site-nav></nav>
+
+      <section class="goalbar">
+        <div>
+          <p class="eyebrow" id="levelLabel">LAB 01</p>
+          <h1 id="goalTitle">Candy merge the test1 towers.</h1>
+        </div>
+        <button class="ghost-button" id="resetButton">↻ Reset</button>
+      </section>
+
+      <section class="play">
+        <div class="table-wrap">
+          <div class="table-status">
+            <span id="statusLine">Same d1,d2,d3 foil. Inner c-candy is the seam. Candy merge.</span>
+            <span class="legend light"><i class="seam-dot"></i> foil = wrapper · sweet = candy</span>
+          </div>
+
+          <div class="kit" role="toolbar" aria-label="Piece controls">
+            <button type="button" id="reshapeButton">Peel wrap</button>
+            <button type="button" id="rotateButton">Fold wrap</button>
+            <button type="button" class="candy" id="candyButton">Candy merge</button>
+            <span class="kit-move">
+              <button type="button" data-move="0,-1" aria-label="Move up">↑</button>
+              <button type="button" data-move="-1,0" aria-label="Move left">←</button>
+              <button type="button" data-move="1,0" aria-label="Move right">→</button>
+              <button type="button" data-move="0,1" aria-label="Move down">↓</button>
+            </span>
+            <span class="kit-hint">peel candy up · fold it back · candy merge</span>
+          </div>
+
+          <div class="card-table" id="table">
+            <div class="yard" id="yard" aria-hidden="true"></div>
+            <div id="hand" class="pieces" aria-label="Wrapped candy"></div>
+            <svg id="arcLayer" class="arc-layer" aria-hidden="true"></svg>
+            <div id="fxLayer" class="fx-layer" aria-hidden="true"></div>
+          </div>
+        </div>
+
+        <aside class="readout">
+          <p class="eyebrow">TWO WRAPS</p>
+          <div id="scalarCard" class="scalar-card fired">
+            <div class="scalar-expr" id="exprL">+</div>
+            <div class="scalar-meta"><span>left</span><b id="metaL">+</b></div>
+            <div class="scalar-expr" id="exprR">+</div>
+            <div class="scalar-meta"><span>right</span><b id="metaR">+</b></div>
+            <div class="scalar-expr" id="kappaExpr">—</div>
+            <div class="scalar-meta"><span>κ</span><b id="kappaMeta">waiting for sandhi</b></div>
+          </div>
+
+          <div class="rules">
+            <article>
+              <b>WRAPPER</b>
+              <p>The annihilator is foil. Here the tower is nested: <code>d1 &lt; (a ∧ (d2 &lt; (b ∧ (d3 &lt; c))))</code>. Same d-lineage on both packs.</p>
+            </article>
+            <article>
+              <b>CANDY</b>
+              <p>Each shell keeps leftover sweets beside the next wrap. Inner <code>c</code> is Dr for the whole d-tower. Shared <code>c1∧c2∧c3</code> is the seam.</p>
+            </article>
+            <article>
+              <b>FOLD / PEEL</b>
+              <p>Peel leftover candy into a nested wrap: <code>d2 &lt; (b1∧b2 ∧ inner)</code> becomes <code>d2 &lt; (b1 &lt; (b2 ∧ inner))</code>. Fold puts the sweet back in the wedge. Drag a sweet up to peel.</p>
+            </article>
+            <article>
+              <b>TWIST</b>
+              <p>Swap two neighbours in one wrap. The foil turns the other way and the sign flips. Same wrap, opposite orientation. We can grow this later.</p>
+            </article>
+            <article class="warn">
+              <b>CANDY MERGE</b>
+              <p>Candy merge is sandhi. Matching <code>d1,d2,d3</code> eat the shared inner candy and release <code>κ = (d1∧d2∧d3)|(c1∧c2∧c3)</code>. a, b, and leftover c pool into one residual tower.</p>
+            </article>
+          </div>
+
+          <p class="footnote">
+            Fold preserves the leftover wedge. Twist changes only orientation.
+            Candy merge is the test1 nested sandhi.
+          </p>
+        </aside>
+      </section>
+    </main>
+
+    <script src="packets.js?v=21"></script>
+  </body>
+</html>

@@ -1,0 +1,263 @@
+<mxfile host="65bd71144e" pages="2">
+    <diagram id="sandhi-gextpcanon" name="1. Sandhi (gextpcanon)">
+        <mxGraphModel dx="1930" dy="1247" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="1600" background="#1e1e1e" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" value="&lt;b&gt;Page 1 — SandhiCanon&lt;/b&gt; — gextpcanon.py (&lt;code&gt;concat&lt;/code&gt; alias)&lt;br&gt;exhaust(do_one(sandhi, inv, proj, rej)) · overlap coeff → Page 2" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=14;fontColor=#e0e0e0;" parent="1" vertex="1">
+                    <mxGeometry x="200" y="20" width="700" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="start" value="&lt;b&gt;SandhiCanon.sandhi(expr, blade1)&lt;/b&gt;&lt;br&gt;acc path defaults to scalar 1 (Onl)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="420" y="80" width="260" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_start_guard" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#e8e8e8;strokeWidth=3;endArrow=block;endFill=1;fontColor=#f0f0f0;fontSize=11;" parent="1" source="start" target="guard" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="guard" value="&lt;b&gt;Guards&lt;/b&gt; (lines 51–56)&lt;br&gt;• blade1 callable? → evaluate&lt;br&gt;• expr is Box &amp;amp; uniGraded(expr) &amp;amp; uniGraded(blade1)?&lt;br&gt;• BX.mv is gextp ?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="390" y="160" width="320" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_guard_no" value="no" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#ffb4b4;strokeWidth=3;endArrow=block;endFill=1;fontSize=11;fontColor=#ffe0e0;" parent="1" source="guard" target="return_unchanged" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_guard_yes" value="yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#b8f0b8;strokeWidth=3;endArrow=block;endFill=1;fontSize=11;fontColor=#e8ffe8;" parent="1" source="guard" target="iter" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="return_unchanged" value="return expr unchanged" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="185" width="160" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="iter" value="&lt;b&gt;try_merge_first_pair(BX, acc_blade)&lt;/b&gt;&lt;br&gt;glcntrct↓gextp slot indices; subset pairs&lt;br&gt;&lt;b&gt;first successful merge wins&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="290" width="300" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_iter_bo" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#a8d4ff;strokeWidth=3;endArrow=block;endFill=1;fontColor=#f0f0f0;fontSize=11;" parent="1" source="iter" target="swim_binary" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="swim_binary" value="&lt;b&gt;try_merge_two_contractions(Ti, Tj, acc_blade)&lt;/b&gt;" style="swimlane;startSize=28;fillColor=#1a2433;strokeColor=#6c8ebf;strokeWidth=2;fontSize=12;fontStyle=1;fontColor=#e0e0e0;" parent="1" vertex="1">
+                    <mxGeometry x="280" y="400" width="540" height="520" as="geometry">
+                        <mxRectangle x="280" y="400" width="350" height="30" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="up_vich" value="&lt;b&gt;1. align_up_blades_vichcheda&lt;/b&gt;&lt;br&gt;shared_up; acc_blade = acc_path ^ shared_up&lt;br&gt;peel non-common UP wedge into dn (parity ±)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" parent="swim_binary" vertex="1">
+                    <mxGeometry x="20" y="45" width="240" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="up_fail" value="no match → (False, 0)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" parent="swim_binary" vertex="1">
+                    <mxGeometry x="280" y="55" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="down_vich" value="&lt;b&gt;2. vichcheda_split_down&lt;/b&gt;&lt;br&gt;unwrap_down_multivectors&lt;br&gt;→ merged_down_args, signs, seam_blade&lt;br&gt;merged_down = gextp(*args)*cf*signs" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" parent="swim_binary" vertex="1">
+                    <mxGeometry x="20" y="140" width="280" height="95" as="geometry"/>
+                </mxCell>
+                <mxCell id="grade_x" value="&lt;b&gt;3. grade_balance_deficit&lt;/b&gt;&lt;br&gt;x = grd(dn11)+grd(dn21) − grd(merged_down) − grd(acc_blade)" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" parent="swim_binary" vertex="1">
+                    <mxGeometry x="160" y="250" width="220" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_up_down" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#ffe8a3;strokeWidth=3;endArrow=block;endFill=1;fontColor=#fff8e0;fontSize=10;" parent="swim_binary" source="up_vich" target="down_vich" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_down_grade" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#ffcc80;strokeWidth=3;endArrow=block;endFill=1;fontColor=#ffe8cc;fontSize=10;" parent="swim_binary" source="down_vich" target="grade_x" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="branch_lt0" value="&lt;b&gt;x &amp;lt; 0&lt;/b&gt;&lt;br&gt;nested core" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" parent="swim_binary" vertex="1">
+                    <mxGeometry x="20" y="360" width="150" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="branch_eq0" value="&lt;b&gt;x == 0&lt;/b&gt;&lt;br&gt;coeff level" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="swim_binary" vertex="1">
+                    <mxGeometry x="195" y="360" width="150" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="branch_gt0" value="&lt;b&gt;x &amp;gt; 0&lt;/b&gt;&lt;br&gt;zero" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" parent="swim_binary" vertex="1">
+                    <mxGeometry x="370" y="360" width="130" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_g_lt0" value="&amp;lt;0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#d4b8e8;strokeWidth=3;endArrow=block;endFill=1;fontSize=10;fontColor=#f0e8ff;" parent="swim_binary" source="grade_x" target="branch_lt0" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_g_eq0" value="==0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#b8f0b8;strokeWidth=3;endArrow=block;endFill=1;fontSize=10;fontColor=#e8ffe8;" parent="swim_binary" source="grade_x" target="branch_eq0" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_g_gt0" value="&amp;gt;0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#ffb4b4;strokeWidth=3;endArrow=block;endFill=1;fontSize=10;fontColor=#ffe0e0;" parent="swim_binary" source="grade_x" target="branch_gt0" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="recurse" value="&lt;b&gt;emit_merge_by_grade (x&amp;lt;0)&lt;/b&gt;&lt;br&gt;inner = sandhi(merged_down, acc_blade) ←──┐&lt;br&gt;return shared_up &amp;lt; inner&lt;br&gt;(no overlap coeff)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="960" width="280" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="coeff" value="&lt;b&gt;emit_merge_by_grade (x==0)&lt;/b&gt;&lt;br&gt;inner = sandhi(merged_down, acc_blade)&lt;br&gt;κ = overlap_coefficient_at_seam(acc, seam, sign)&lt;br&gt;return κ * (shared_up &amp;lt; inner) → &lt;u&gt;Page 2&lt;/u&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;link=data:page/id,capelli-optionb;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="960" width="320" height="105" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_lt0_recurse" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;dashPattern=8 6;strokeColor=#c4b5fd;strokeWidth=3;endArrow=block;endFill=1;fontColor=#e8e0ff;fontSize=10;" parent="1" source="branch_lt0" target="recurse" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="175" y="930"/>
+                            <mxPoint x="200" y="930"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e_recurse_back" value="recursive call" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;dashPattern=8 6;strokeColor=#d4b8e8;strokeWidth=3;endArrow=block;endFill=1;startArrow=block;fontSize=11;fontColor=#f0e8ff;" parent="1" source="recurse" target="start" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="30" y="1000"/>
+                            <mxPoint x="30" y="108"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e_eq0_coeff" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;dashPattern=8 6;strokeColor=#b8f0b8;strokeWidth=3;endArrow=block;endFill=1;fontColor=#e8ffe8;fontSize=10;" parent="1" source="branch_eq0" target="coeff" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="570" y="930"/>
+                            <mxPoint x="560" y="930"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="remake" value="&lt;b&gt;replace_merged_pair_in_box&lt;/b&gt;&lt;br&gt;merged == 0 → return zero&lt;br&gt;else swap pair (i,j) for merged term&lt;br&gt;wedge slot parity (±)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="380" y="1080" width="340" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_coeff_remake" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#b8f0b8;strokeWidth=3;endArrow=block;endFill=1;fontColor=#e8ffe8;fontSize=11;" parent="1" source="coeff" target="remake" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_recurse_remake" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#c4b5fd;strokeWidth=3;endArrow=block;endFill=1;fontColor=#e8e0ff;fontSize=11;" parent="1" source="recurse" target="remake" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_iter_fail" value="no pair merges" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#c8c8c8;strokeWidth=3;endArrow=block;endFill=1;fontSize=10;fontColor=#f0f0f0;" parent="1" source="iter" target="return_bx" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="820" y="330"/>
+                            <mxPoint x="820" y="1195"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="return_bx" value="return BX unchanged&lt;br&gt;(or merged Box)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="420" y="1190" width="260" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="e_remake_ret" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#a8d4ff;strokeWidth=3;endArrow=block;endFill=1;fontColor=#f0f0f0;fontSize=11;" parent="1" source="remake" target="return_bx" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend" value="&lt;b&gt;Legend&lt;/b&gt; (swatches = block fill / stroke)&lt;br&gt;&lt;span style=&quot;display:inline-block;width:21px;height:15px;background:#fff2cc;border:1px solid #d6b656;vertical-align:middle;margin-right:6px;&quot;&gt;&lt;/span&gt; Vichcheda — guards, UP/DOWN split&lt;br&gt;&lt;span style=&quot;display:inline-block;width:21px;height:15px;background:#ffe6cc;border:1px solid #d79b00;vertical-align:middle;margin-right:6px;&quot;&gt;&lt;/span&gt; Grade gate — x = grd(...) − grd(...)&lt;br&gt;&lt;span style=&quot;display:inline-block;width:21px;height:15px;background:#d5e8d4;border:1px solid #82b366;vertical-align:middle;margin-right:6px;&quot;&gt;&lt;/span&gt; Sandhi — merge, coeff (x==0), entry/return&lt;br&gt;&lt;span style=&quot;display:inline-block;width:21px;height:15px;background:#e1d5e7;border:1px solid #9673a6;vertical-align:middle;margin-right:6px;&quot;&gt;&lt;/span&gt; Recursion — x&amp;lt;0 → sandhi(dbx_U, blade2)&lt;br&gt;&lt;span style=&quot;display:inline-block;width:21px;height:15px;background:#dae8fc;border:1px solid #6c8ebf;vertical-align:middle;margin-right:6px;&quot;&gt;&lt;/span&gt; iter/remake — pairwise merge loop&lt;br&gt;&lt;span style=&quot;display:inline-block;width:21px;height:15px;background:#f8cecc;border:1px solid #b85450;vertical-align:middle;margin-right:6px;&quot;&gt;&lt;/span&gt; Fail/zero — no match, x&amp;gt;0, guard reject&lt;br&gt;↻ exhaust() repeats sandhi until fixed point&lt;br&gt;&lt;font color=&quot;#9ec5ff&quot;&gt;Teal (page 2): Capelli virtual + devirtualize at x==0&lt;/font&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#2d333b;strokeColor=#6c8ebf;fontColor=#e0e0e0;align=left;fontSize=15;size=21;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="1280" width="630" height="235" as="geometry"/>
+                </mxCell>
+                <mxCell id="example" value="&lt;b&gt;Example&lt;/b&gt;&lt;br&gt;(A&amp;lt;(B1^B2)) ^ (A&amp;lt;(B2^B3))&lt;br&gt;→ seam B2, merge → A&amp;lt;(B1^B2^B3)&lt;br&gt;± via parity; scalar via Capelli if x==0" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#252526;strokeColor=#666666;fontColor=#e0e0e0;align=left;fontSize=10;size=14;" parent="1" vertex="1">
+                    <mxGeometry x="710" y="1280" width="280" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="obsolete" value="&lt;s&gt;Obsolete in this file:&lt;/s&gt; sub_sandhi1, rlZero loop, Aggregator metadata — see old/gextpsimp-o.py" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=9;fontColor=#999999;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="1510" width="500" height="30" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="capelli-optionb" name="2. Capelli (gextpcapelli)">
+        <mxGraphModel dx="830" dy="1247" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="1300" background="#1e1e1e" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="c2_title" value="&lt;b&gt;CapelliOptionB&lt;/b&gt; — overlap scalar κ at seam&lt;br&gt;&lt;code&gt;overlap_coefficient_at_seam&lt;/code&gt; ← Page 1 &lt;code&gt;overlap_coefficient_at_seam&lt;/code&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=14;fontColor=#e0e0e0;link=data:page/id,sandhi-gextpcanon;" parent="1" vertex="1">
+                    <mxGeometry x="120" y="20" width="660" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="c2_entry" value="&lt;b&gt;overlap_scalar_at_seam(acc, seam, local_sign)&lt;/b&gt;&lt;br&gt;alias: coefficient()&lt;br&gt;local_sign = vichcheda parity product" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="250" y="100" width="400" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="c2_e_entry_build" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#e8e8e8;strokeWidth=3;endArrow=block;endFill=1;fontColor=#f0f0f0;" parent="1" source="c2_entry" target="c2_build" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="c2_build" value="&lt;b&gt;build_seam_wiring(acc, seam)&lt;/b&gt;&lt;br&gt;alias: build_balanced_monomial&lt;br&gt;γᵢ couples accᵢ to seamᵢ; len mismatch → None" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="250" y="200" width="400" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="c2_e_build_devirt" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#ffe8a3;strokeWidth=3;endArrow=block;endFill=1;" parent="1" source="c2_build" target="c2_devirt" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="c2_devirt" value="&lt;b&gt;collapse_wiring_to_scalar(acc, seam, wiring)&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;fontStyle=1" parent="1" vertex="1">
+                    <mxGeometry x="300" y="310" width="300" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="c2_e_devirt_onl" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#e8e8e8;strokeWidth=3;endArrow=block;endFill=1;" parent="1" source="c2_devirt" target="c2_onl" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="c2_onl" value="common_part == Onl ?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="340" y="370" width="220" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="c2_onl_yes" value="return S(1)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="385" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="c2_e_onl_yes" value="yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#b8f0b8;strokeWidth=3;endArrow=block;endFill=1;fontSize=10;fontColor=#e8ffe8;" parent="1" source="c2_onl" target="c2_onl_yes" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="c2_balanced_null" value="balanced is None ?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="340" y="470" width="220" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="c2_e_onl_no" value="no" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#e8e8e8;strokeWidth=3;endArrow=block;endFill=1;fontSize=10;fontColor=#f0f0f0;" parent="1" source="c2_onl" target="c2_balanced_null" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="c2_zero" value="return S(0)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="680" y="485" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="c2_e_bal_null_yes" value="yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#ffb4b4;strokeWidth=3;endArrow=block;endFill=1;fontSize=10;fontColor=#ffe0e0;" parent="1" source="c2_balanced_null" target="c2_zero" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="c2_swim_c1" value="&lt;b&gt;C1 — Virtual algebra&lt;/b&gt;" style="swimlane;startSize=26;fillColor=#352d45;strokeColor=#c4b5fd;strokeWidth=2;fontSize=11;fontStyle=1;fontColor=#e8e0ff;" parent="1" vertex="1">
+                    <mxGeometry x="180" y="570" width="540" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="c2_edges_ops" value="&lt;b&gt;_edge_to_op&lt;/b&gt; on creation / annihilation edges → VirtualOp list" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" parent="c2_swim_c1" vertex="1">
+                    <mxGeometry x="20" y="40" width="240" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="c2_iter_ad" value="&lt;b&gt;expand_acc_constraints_on_seam&lt;/b&gt;&lt;br&gt;lie_derivation_on_wiring [op,·] on seam product&lt;br&gt;commutator_on_wiring (direct / twisted)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" parent="c2_swim_c1" vertex="1">
+                    <mxGeometry x="280" y="35" width="240" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="c2_vexpr" value="→ VirtualExpr (sum of VirtualMonomials)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontStyle=2" parent="c2_swim_c1" vertex="1">
+                    <mxGeometry x="20" y="130" width="500" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="c2_e_bal_no_c1" value="no" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#d4b8e8;strokeWidth=3;endArrow=block;endFill=1;fontSize=10;fontColor=#f0e8ff;" parent="1" source="c2_balanced_null" target="c2_swim_c1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="c2_swim_c2" value="&lt;b&gt;C2 — Devirtualize / Capelli map&lt;/b&gt;" style="swimlane;startSize=26;fillColor=#1a2433;strokeColor=#6c8ebf;strokeWidth=2;fontSize=11;fontStyle=1;fontColor=#e0e0e0;" parent="1" vertex="1">
+                    <mxGeometry x="180" y="800" width="540" height="220" as="geometry"/>
+                </mxCell>
+                <mxCell id="c2_capelli" value="&lt;b&gt;project_virtual_expr_to_scalar&lt;/b&gt;&lt;br&gt;strict sum OR coeff_sum * (acc | seam)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" parent="c2_swim_c2" vertex="1">
+                    <mxGeometry x="20" y="40" width="240" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="c2_strict" value="All terms op-free ?&lt;br&gt;(strict devirtualize)" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;" parent="c2_swim_c2" vertex="1">
+                    <mxGeometry x="300" y="35" width="200" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="c2_strict_yes" value="return Σ term.coeff" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="c2_swim_c2" vertex="1">
+                    <mxGeometry x="300" y="120" width="200" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="c2_strict_no" value="coeff_sum == 0 ? → S(0)&lt;br&gt;else coeff_sum * (acc_blade | common_part)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" parent="c2_swim_c2" vertex="1">
+                    <mxGeometry x="20" y="120" width="240" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="c2_e_cap_strict" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#a8d4ff;strokeWidth=3;endArrow=block;endFill=1;" parent="c2_swim_c2" source="c2_capelli" target="c2_strict" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="c2_e_strict_yes" value="yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#b8f0b8;strokeWidth=3;endArrow=block;endFill=1;fontSize=9;fontColor=#e8ffe8;" parent="c2_swim_c2" source="c2_strict" target="c2_strict_yes" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="c2_e_strict_no" value="no" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#ffb4b4;strokeWidth=3;endArrow=block;endFill=1;fontSize=9;fontColor=#ffe0e0;" parent="c2_swim_c2" source="c2_strict" target="c2_strict_no" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="c2_e_c1_c2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#a8d4ff;strokeWidth=3;endArrow=block;endFill=1;" parent="1" source="c2_swim_c1" target="c2_swim_c2" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="c2_merge" value="&lt;b&gt;scalar&lt;/b&gt; (from Onl shortcut, S(0), C1→C2, or branches above)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="250" y="1050" width="400" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="c2_e_onl_merge" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#b8f0b8;strokeWidth=3;endArrow=block;endFill=1;dashed=1;dashPattern=8 6;" parent="1" source="c2_onl_yes" target="c2_merge" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="140" y="1040"/>
+                            <mxPoint x="450" y="1040"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="c2_e_zero_merge" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#ffb4b4;strokeWidth=3;endArrow=block;endFill=1;dashed=1;dashPattern=8 6;" parent="1" source="c2_zero" target="c2_merge" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="740" y="1040"/>
+                            <mxPoint x="450" y="1040"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="c2_e_c2_merge" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#a8d4ff;strokeWidth=3;endArrow=block;endFill=1;" parent="1" source="c2_swim_c2" target="c2_merge" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="c2_mul_sign" value="&lt;b&gt;κ * local_sign&lt;/b&gt;&lt;br&gt;→ Page 1: κ * (shared_up &amp;lt; inner)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;fontStyle=1;link=data:page/id,sandhi-gextpcanon;" parent="1" vertex="1">
+                    <mxGeometry x="250" y="1120" width="400" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="c2_e_merge_out" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#b8f0b8;strokeWidth=3;endArrow=block;endFill=1;" parent="1" source="c2_merge" target="c2_mul_sign" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="c2_legend" value="&lt;b&gt;Legend (page 2)&lt;/b&gt;&lt;br&gt;&lt;span style=&quot;display:inline-block;width:21px;height:15px;background:#fff2cc;border:1px solid #d6b656;vertical-align:middle;margin-right:6px;&quot;&gt;&lt;/span&gt; Balanced monomial build&lt;br&gt;&lt;span style=&quot;display:inline-block;width:21px;height:15px;background:#e1d5e7;border:1px solid #9673a6;vertical-align:middle;margin-right:6px;&quot;&gt;&lt;/span&gt; C1 virtual / adjoint&lt;br&gt;&lt;span style=&quot;display:inline-block;width:21px;height:15px;background:#dae8fc;border:1px solid #6c8ebf;vertical-align:middle;margin-right:6px;&quot;&gt;&lt;/span&gt; C2 map / fallback kernel&lt;br&gt;&lt;span style=&quot;display:inline-block;width:21px;height:15px;background:#d5e8d4;border:1px solid #82b366;vertical-align:middle;margin-right:6px;&quot;&gt;&lt;/span&gt; Scalar return to sandhi&lt;br&gt;&lt;font color=&quot;#888&quot;&gt;Optional: trace_coefficient() for game/debug traces&lt;/font&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#2d333b;strokeColor=#9673a6;fontColor=#e0e0e0;align=left;fontSize=12;size=18;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="1200" width="380" height="120" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

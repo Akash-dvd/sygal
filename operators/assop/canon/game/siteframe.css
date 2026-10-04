@@ -1,0 +1,322 @@
+/* Shared outer frame for every Sandhi page.
+ * Page styles own their content; this file owns the viewport, shell, header,
+ * brand, HUD and mobile frame geometry. */
+
+:root {
+  --ink: #161713;
+  --deep: #1b1d16;
+  --paper: #f1ede0;
+  --cream: #fbf8ec;
+  --orange: #ef6a2e;
+  --amber: #f2a541;
+  --blue: #4d8b98;
+  --line: rgba(22, 23, 19, .15);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  font-family: "Manrope", sans-serif;
+  background:
+    radial-gradient(circle at 15% 5%, rgba(239, 106, 46, .10), transparent 30%),
+    linear-gradient(rgba(22, 23, 19, .025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22, 23, 19, .025) 1px, transparent 1px),
+    var(--paper);
+  background-size: auto, 26px 26px, 26px 26px;
+  overflow-x: hidden;
+}
+
+.shell,
+.field-shell,
+.cascade-shell,
+.foundry-shell,
+.packets-shell,
+.germ-shell,
+.chamber-shell,
+.loom-shell,
+.themes-shell {
+  width: min(1500px, calc(100% - 44px));
+  margin: 0 auto;
+  padding-bottom: 44px;
+}
+
+.topbar,
+.field-header,
+.cascade-header,
+.foundry-header,
+.packets-header,
+.germ-header,
+.chamber-header,
+.loom-header,
+.themes-shell > header {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  height: 82px;
+  min-height: 82px;
+  padding: 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  color: var(--paper);
+  background: var(--ink);
+  border-radius: 4px;
+  box-shadow: none;
+  font-size: 21px;
+  transform: rotate(45deg);
+}
+
+.brand strong,
+.brand small {
+  display: block;
+  letter-spacing: .15em;
+}
+
+.brand strong { font-size: 12px; }
+.brand small { margin-top: 3px; font-size: 7px; opacity: .5; }
+
+.hud,
+.scoreboard {
+  display: flex;
+  justify-self: center;
+  width: auto;
+  height: 46px;
+  min-height: 46px;
+  color: inherit;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: rgba(255, 255, 255, .4);
+  box-shadow: none;
+}
+
+.hud div,
+.scoreboard div {
+  min-width: 96px;
+  padding: 6px 18px;
+  text-align: center;
+  border-right: 1px solid var(--line);
+}
+
+.hud div:last-child,
+.scoreboard div:last-child { border-right: 0; }
+
+.hud small,
+.hud strong,
+.scoreboard small,
+.scoreboard strong {
+  display: block;
+  font-family: "DM Mono", monospace;
+}
+
+.hud small,
+.scoreboard small {
+  font-size: 7px;
+  line-height: 1;
+  letter-spacing: .15em;
+  opacity: .45;
+}
+
+.hud strong,
+.scoreboard strong {
+  margin-top: 5px;
+  font-size: 15px;
+  line-height: 1;
+}
+
+.top-actions {
+  justify-self: end;
+}
+
+/* Shared play layout: goal, board, rules column, complete banner. */
+
+.eyebrow {
+  margin: 0 0 8px;
+  font: 500 9px "DM Mono", monospace;
+  letter-spacing: .17em;
+  opacity: .55;
+}
+
+.goalbar {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 34px;
+  align-items: center;
+  padding: 32px 0 24px;
+}
+.goalbar h1 {
+  margin: 0;
+  font-size: clamp(26px, 3.2vw, 42px);
+  letter-spacing: -.045em;
+}
+.goal-progress { display: flex; align-items: center; gap: 12px; min-width: 210px; }
+.goal-track {
+  flex: 1; height: 4px; overflow: hidden;
+  background: rgba(20, 21, 15, .14); border-radius: 3px;
+}
+.goal-track div {
+  width: 0%; height: 100%; background: var(--orange); transition: width .4s ease;
+}
+.goal-progress span { font: 500 10px "DM Mono", monospace; }
+
+.ghost-button {
+  padding: 11px 15px; border: 1px solid var(--line); border-radius: 4px;
+  background: transparent; cursor: pointer; font: 500 9px "DM Mono", monospace;
+}
+.ghost-button:hover { border-color: var(--ink); background: rgba(255, 255, 255, .45); }
+
+.play {
+  display: grid;
+  grid-template-columns: minmax(560px, 1fr) 300px;
+  gap: 16px;
+  align-items: start;
+}
+
+.board-panel {
+  position: relative;
+  padding: 22px;
+  border: 1px solid rgba(20, 21, 15, .1);
+  border-radius: 7px;
+  background: var(--deep);
+  box-shadow: 0 24px 60px rgba(28, 22, 10, .22);
+}
+.board-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+  color: rgba(251, 248, 236, .62);
+  font: 9px "DM Mono", monospace;
+}
+.legend { display: flex; align-items: center; gap: 7px; opacity: .8; }
+.seam-dot {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--amber);
+  box-shadow: 0 0 0 4px rgba(242, 165, 65, .18);
+}
+
+.readout {
+  padding: 20px;
+  border: 1px solid rgba(20, 21, 15, .1);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, .36);
+  box-shadow: 0 18px 44px rgba(35, 28, 16, .08);
+}
+.scalar-card {
+  padding: 15px; border-radius: 5px; background: var(--deep); color: var(--cream);
+}
+.scalar-card.empty { text-align: center; color: rgba(251, 248, 236, .5); }
+.scalar-card.empty span { display: block; font-size: 30px; color: var(--orange); }
+.scalar-card.empty p { margin: 8px 0 0; font-size: 10px; line-height: 1.6; }
+.scalar-card.fired { box-shadow: 0 0 0 2px rgba(242, 165, 65, .55); }
+.scalar-expr { color: var(--amber); font: 500 12px/1.5 "DM Mono", monospace; overflow-wrap: anywhere; }
+.scalar-meta {
+  display: flex; justify-content: space-between; gap: 10px;
+  margin-top: 11px; padding-top: 11px; border-top: 1px solid rgba(251, 248, 236, .14);
+  color: rgba(251, 248, 236, .6); font: 9px "DM Mono", monospace;
+}
+.scalar-meta b { color: var(--orange); }
+.scalar-meta b.cold { color: var(--blue); }
+
+.rules { margin-top: 18px; }
+.rules article { padding: 10px 0; border-bottom: 1px solid var(--line); }
+.rules b { font: 500 8px "DM Mono", monospace; letter-spacing: .13em; color: var(--orange); }
+.rules p { margin: 5px 0 0; color: rgba(20, 21, 15, .55); font-size: 10px; line-height: 1.55; }
+.rules .warn b { color: var(--blue); }
+.footnote { margin: 15px 0 0; color: rgba(20, 21, 15, .45); font-size: 9px; line-height: 1.6; }
+.footnote code { font-size: 9px; }
+
+.banner {
+  position: fixed; z-index: 20; inset: 0; display: grid; place-items: center;
+  padding: 20px; background: rgba(20, 21, 15, .78); backdrop-filter: blur(7px);
+}
+.banner[hidden] { display: none; }
+.banner > div {
+  width: min(460px, 100%); padding: 42px; text-align: center;
+  color: var(--ink); background: var(--paper); border-radius: 8px;
+}
+.banner span { display: block; font-size: 50px; color: var(--orange); line-height: 1; }
+.banner h2 { margin: 8px 0 10px; font-size: 27px; letter-spacing: -.035em; }
+.banner p:not(.eyebrow) { margin: 0; color: rgba(20, 21, 15, .58); font-size: 12px; line-height: 1.7; }
+.solid-button {
+  margin-top: 20px; padding: 13px 22px; color: var(--cream); border: 0;
+  border-radius: 4px; background: var(--orange); cursor: pointer; font-weight: 600;
+}
+.solid-button:hover { background: #d1521a; }
+
+@media (max-width: 1080px) {
+  .play { grid-template-columns: 1fr; }
+  .readout { order: -1; }
+  .rules { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 22px; }
+}
+
+@media (max-width: 780px) {
+  .shell,
+  .field-shell,
+  .cascade-shell,
+  .foundry-shell,
+  .packets-shell,
+  .germ-shell,
+  .chamber-shell,
+  .loom-shell,
+  .themes-shell {
+    width: calc(100% - 22px);
+    padding-bottom: 40px;
+  }
+
+  .topbar,
+  .field-header,
+  .cascade-header,
+  .foundry-header,
+  .packets-header,
+  .germ-header,
+  .chamber-header,
+  .loom-header,
+  .themes-shell > header {
+    grid-template-columns: 1fr auto;
+    height: auto;
+    min-height: 0;
+    padding: 14px 0;
+    gap: 10px;
+  }
+
+  .hud,
+  .scoreboard {
+    position: static;
+    grid-column: 1 / -1;
+    width: 100%;
+    height: 46px;
+    color: inherit;
+    background: rgba(255, 255, 255, .4);
+    border: 1px solid var(--line);
+    box-shadow: none;
+  }
+
+  .hud div,
+  .scoreboard div {
+    flex: 1;
+    min-width: 0;
+    padding: 6px 8px;
+  }
+
+  .play { grid-template-columns: 1fr; }
+  .readout { order: -1; }
+  .goalbar { grid-template-columns: 1fr; gap: 16px; padding: 22px 0; }
+  .ghost-button { justify-self: start; }
+  .rules { display: grid; grid-template-columns: 1fr; }
+}

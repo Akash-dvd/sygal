@@ -1,0 +1,409 @@
+/* Germ Culture — biological reading of the same sandhi rewrite.
+ * Deliberately unlike the foundry: a round dish instead of a belt, creatures
+ * that drift instead of parts that queue, and actions that live on the
+ * creature instead of in a rail of machines. */
+
+@import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap");
+
+:root {
+  --ink: #14150f;
+  --paper: #f1ede0;
+  --cream: #fbf8ec;
+  --agar: #101710;
+  --agar-lit: #17211a;
+  --bio: #86c26b;
+  --primed: #9fe870;
+  --match: #ffd166;
+  --lethal: #b58ad1;
+  --hot: #f06a2a;
+  --line: rgba(20, 21, 15, .15);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  color: var(--ink);
+  font-family: "Instrument Sans", system-ui, sans-serif;
+}
+
+button { color: inherit; font: inherit; }
+
+body.shake { animation: shake .3s ease; }
+@keyframes shake {
+  25% { transform: translate(3px, -2px); }
+  50% { transform: translate(-3px, 2px); }
+  75% { transform: translate(2px, 1px); }
+}
+
+/* Goal bar ------------------------------------------------------------- */
+
+.eyebrow { margin: 0 0 8px; font: 500 9px "DM Mono", monospace; letter-spacing: .17em; opacity: .55; }
+
+.goalbar {
+  display: grid; grid-template-columns: 1fr auto auto; gap: 34px;
+  align-items: center; padding: 32px 0 24px;
+}
+.goalbar h1 { margin: 0; font-size: clamp(26px, 3.2vw, 42px); letter-spacing: -.045em; }
+.goal-progress { display: flex; align-items: center; gap: 12px; min-width: 210px; }
+.goal-track { flex: 1; height: 4px; overflow: hidden; background: rgba(20, 21, 15, .14); border-radius: 3px; }
+.goal-track div { width: 0%; height: 100%; background: var(--bio); transition: width .4s ease; }
+.goal-progress span { font: 500 10px "DM Mono", monospace; }
+
+.ghost-button {
+  padding: 11px 15px; border: 1px solid var(--line); border-radius: 4px;
+  background: transparent; cursor: pointer; font: 500 9px "DM Mono", monospace;
+}
+.ghost-button:hover { border-color: var(--ink); background: rgba(255, 255, 255, .45); }
+
+.hud-virulence.hot b { color: var(--hot); animation: virulence-pop .4s ease; }
+@keyframes virulence-pop { 40% { transform: scale(1.4); } }
+.hud div.tick b { color: var(--bio); animation: tick .4s ease; }
+@keyframes tick { 40% { transform: translateY(-3px) scale(1.12); } }
+
+/* Layout --------------------------------------------------------------- */
+
+.play { display: grid; grid-template-columns: minmax(560px, 1fr) 300px; gap: 16px; align-items: start; }
+
+.culture {
+  padding: 18px; border: 1px solid rgba(20, 21, 15, .1); border-radius: 7px;
+  background: var(--agar); box-shadow: 0 24px 60px rgba(12, 24, 14, .26);
+}
+.hint {
+  margin: 0 0 14px; color: rgba(251, 248, 236, .62);
+  font: 9px "DM Mono", monospace; letter-spacing: .04em;
+}
+
+/* Petri dish ----------------------------------------------------------- */
+
+.dish {
+  position: relative; width: min(100%, 620px); margin: 0 auto;
+  aspect-ratio: 1; border-radius: 50%;
+}
+
+.agar {
+  position: absolute; inset: 0; border-radius: 50%;
+  background:
+    radial-gradient(circle at 34% 28%, rgba(134, 194, 107, .16), transparent 46%),
+    radial-gradient(circle at 72% 74%, rgba(134, 194, 107, .1), transparent 52%),
+    radial-gradient(circle at 50% 50%, var(--agar-lit), #0b100c 78%);
+  box-shadow: inset 0 0 60px rgba(0, 0, 0, .7);
+}
+/* Slow culture bloom so the plate is never quite still. */
+.agar::after {
+  content: ""; position: absolute; inset: 0; border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, rgba(134, 194, 107, .1), transparent 60%);
+  animation: bloom 9s ease-in-out infinite;
+}
+@keyframes bloom {
+  0%, 100% { opacity: .35; transform: scale(.9); }
+  50% { opacity: .8; transform: scale(1.04); }
+}
+
+.rim {
+  position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+  border: 1px solid rgba(134, 194, 107, .22);
+  box-shadow: 0 0 0 7px rgba(251, 248, 236, .03), inset 0 0 0 1px rgba(251, 248, 236, .04);
+}
+
+/* Host cell ------------------------------------------------------------ */
+
+.host {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  display: grid; place-items: center; width: 27%; aspect-ratio: 1;
+  padding: 0; border: 0; background: transparent; cursor: pointer;
+}
+.host-shell { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.host-wall {
+  fill: none; stroke: rgba(255, 209, 102, .5); stroke-width: 2; stroke-dasharray: 3 7;
+  animation: host-spin 34s linear infinite;
+  transform-box: fill-box; transform-origin: center;
+}
+@keyframes host-spin { to { transform: rotate(360deg); } }
+.host-cyto {
+  fill: rgba(255, 209, 102, .07); stroke: rgba(255, 209, 102, .3); stroke-width: 1;
+}
+.host-nucleus {
+  fill: rgba(255, 209, 102, .16); stroke: rgba(255, 209, 102, .55); stroke-width: 1.2;
+  transform-box: fill-box; transform-origin: center;
+  animation: nucleus 3.6s ease-in-out infinite;
+}
+@keyframes nucleus { 50% { transform: scale(1.09); opacity: .8; } }
+
+.host-read { position: relative; text-align: center; color: var(--cream); }
+.host-read small { display: block; font: 500 7px "DM Mono", monospace; letter-spacing: .16em; opacity: .55; }
+.host-read b { display: block; margin: 2px 0; font: 500 22px "DM Mono", monospace; color: var(--match); }
+.host-read em { display: block; font: 7px "DM Mono", monospace; font-style: normal; opacity: .45; }
+
+.host:hover .host-cyto { fill: rgba(255, 209, 102, .12); }
+.host.ready .host-wall { stroke: var(--match); animation-duration: 9s; }
+.host.hit { animation: host-hit .5s ease; }
+.host.reject { animation: host-reject .5s ease; }
+@keyframes host-hit {
+  40% { transform: translate(-50%, -50%) scale(1.12); filter: brightness(1.7); }
+}
+@keyframes host-reject {
+  25% { transform: translate(-52%, -50%) scale(.96); }
+  70% { transform: translate(-48%, -50%) scale(.96); }
+}
+
+/* Phage ---------------------------------------------------------------- */
+
+.colony { position: absolute; inset: 0; }
+
+.phage {
+  position: absolute; left: var(--x); top: var(--y);
+  width: 122px; padding: 0; border: 0; background: transparent; cursor: pointer;
+  transform: translate(-50%, -50%);
+  transition: left .62s cubic-bezier(.3, .8, .3, 1), top .62s cubic-bezier(.3, .8, .3, 1);
+}
+.phage-body {
+  display: flex; flex-direction: column; align-items: center;
+  animation: drift 7s ease-in-out infinite;
+}
+@keyframes drift {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  35% { transform: translateY(-5px) rotate(-1.4deg); }
+  70% { transform: translateY(4px) rotate(1.2deg); }
+}
+
+.gene-count {
+  display: flex; align-items: baseline; gap: 5px; margin-bottom: 4px;
+  color: rgba(251, 248, 236, .5); font: 500 8px "DM Mono", monospace;
+}
+.gene-count b { color: var(--cream); font-weight: 500; }
+.gene-count b.match { color: var(--match); }
+
+/* Icosahedral head around a hot core. */
+.capsid { display: block; width: 66px; height: 60px; overflow: visible; }
+.capsid-shell {
+  fill: color-mix(in srgb, var(--capsid) 26%, #0d120e);
+  stroke: var(--capsid); stroke-width: 1.4;
+  vector-effect: non-scaling-stroke;
+  transition: stroke .16s, stroke-width .16s, fill .16s;
+}
+.capsid-facet {
+  fill: none; stroke: var(--capsid); stroke-width: .8; opacity: .32;
+  vector-effect: non-scaling-stroke;
+}
+.capsid-core {
+  fill: var(--bio); filter: drop-shadow(0 0 6px rgba(134, 194, 107, .8));
+  transform-box: fill-box; transform-origin: center;
+  animation: core-beat 2.8s ease-in-out infinite;
+}
+@keyframes core-beat { 50% { transform: scale(.68); opacity: .6; } }
+
+/* Collars carry the outer shells. */
+.collars { display: grid; gap: 3px; margin-top: 5px; }
+.collar {
+  display: flex; align-items: center; gap: 4px; padding: 3px 6px;
+  border-radius: 9px; background: rgba(251, 248, 236, .05);
+}
+.collar-pin {
+  padding: 1px 4px; border-radius: 6px; color: #0d120e; background: var(--pin);
+  font: 500 7px "DM Mono", monospace;
+}
+.collar .gene { font-size: 7px; }
+
+/* Contractile sheath. */
+.sheath { display: grid; gap: 2px; width: 18px; margin-top: 4px; }
+.sheath i { height: 2.5px; border-radius: 1px; background: rgba(251, 248, 236, .22); }
+
+/* Base plate holds the genome. */
+.baseplate { position: relative; margin-top: 3px; padding: 7px 9px 6px; }
+.plate-shell { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.plate-shell path {
+  fill: color-mix(in srgb, var(--plate) 20%, #0d120e);
+  stroke: color-mix(in srgb, var(--plate) 65%, transparent); stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.genome { position: relative; display: flex; justify-content: center; gap: 3px; }
+
+.gene {
+  padding: 2px 4px; border-radius: 7px;
+  color: rgba(251, 248, 236, .8); background: rgba(251, 248, 236, .08);
+  font: 500 8px "DM Mono", monospace;
+  transition: background .16s, color .16s, transform .16s;
+}
+.gene.shared {
+  color: #0d120e; background: var(--match);
+  box-shadow: 0 0 9px rgba(255, 209, 102, .6);
+  animation: gene-pulse 1.5s ease-in-out infinite;
+}
+@keyframes gene-pulse { 50% { transform: translateY(-1.5px) scale(1.08); } }
+.gene.lethal { color: var(--lethal); text-decoration: line-through; opacity: .75; }
+
+/* Tail fibers. */
+.fibers { display: flex; justify-content: center; gap: 11px; height: 17px; margin-top: 1px; }
+.fibers i {
+  width: 1.4px; height: 17px; background: rgba(251, 248, 236, .3);
+  transform-origin: top center;
+  animation: fiber-twitch 4.4s ease-in-out infinite;
+}
+/* Base splay uses rotate so the twitch keeps transform to itself. */
+.fibers i:nth-child(1) { rotate: -36deg; animation-delay: .1s; }
+.fibers i:nth-child(2) { rotate: -18deg; animation-delay: .5s; }
+.fibers i:nth-child(3) { animation-delay: .9s; }
+.fibers i:nth-child(4) { rotate: 18deg; animation-delay: 1.3s; }
+.fibers i:nth-child(5) { rotate: 36deg; animation-delay: 1.7s; }
+@keyframes fiber-twitch {
+  50% { transform: skewX(9deg) scaleY(1.12); background: rgba(251, 248, 236, .48); }
+}
+
+/* Phage states --------------------------------------------------------- */
+
+.phage:hover .capsid-shell { stroke-width: 2.2; }
+
+.phage.primed .capsid-shell { stroke: var(--primed); stroke-width: 2.6; }
+.phage.primed .capsid-core { fill: var(--primed); }
+.phage.primed .fibers i { background: var(--primed); rotate: 0deg; }
+
+.phage.compatible .capsid-shell { stroke: var(--match); animation: ready 1.4s ease-in-out infinite; }
+@keyframes ready { 50% { stroke-width: 3.4; } }
+
+.phage.lethal-pair .capsid-shell { stroke: var(--lethal); stroke-dasharray: 5 4; }
+.phage.lethal-pair .capsid-core { fill: var(--lethal); filter: none; }
+
+.dead-mark {
+  position: absolute; top: -6px; right: 2px; padding: 2px 5px; border-radius: 7px;
+  color: #0d120e; background: var(--lethal); font: 500 7px "DM Mono", monospace;
+}
+
+.phage.injecting .sheath { animation: sheath-punch .42s cubic-bezier(.3, .8, .3, 1); }
+@keyframes sheath-punch { 55% { transform: scaleY(.4); } }
+.phage.bursting .capsid { animation: burst-capsid .44s cubic-bezier(.3, .1, .6, 1) forwards; }
+@keyframes burst-capsid {
+  45% { transform: scale(1.4); filter: brightness(2.2); }
+  100% { transform: scale(.2) rotate(12deg); opacity: 0; }
+}
+.phage.leaving .phage-body { animation: leave .5s ease forwards; }
+@keyframes leave { to { transform: scale(.5); opacity: 0; } }
+
+/* Contextual actions ride on the primed creature, not in a machine rail. */
+.chips {
+  position: absolute; left: 50%; bottom: -14px; display: flex; gap: 5px;
+  transform: translateX(-50%);
+  animation: chips-in .22s ease;
+}
+@keyframes chips-in { from { opacity: 0; transform: translate(-50%, 6px); } }
+.chip {
+  padding: 4px 8px; border-radius: 10px; cursor: pointer; white-space: nowrap;
+  color: var(--cream); background: rgba(13, 18, 14, .92);
+  border: 1px solid rgba(159, 232, 112, .45);
+  font: 500 7px "DM Mono", monospace; letter-spacing: .1em;
+}
+.chip:hover { color: #0d120e; background: var(--primed); }
+.chip[disabled] { opacity: .35; cursor: not-allowed; }
+.chip[disabled]:hover { color: var(--cream); background: rgba(13, 18, 14, .92); }
+
+/* Filaments between shared genes --------------------------------------- */
+
+.filaments { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.filament {
+  fill: none; stroke: var(--match); stroke-width: 1.2; stroke-dasharray: 4 5;
+  opacity: .75; animation: filament-crawl 1s linear infinite;
+}
+@keyframes filament-crawl { to { stroke-dashoffset: -18px; } }
+.filaments.taut .filament { stroke-dasharray: none; stroke-width: 2.4; opacity: 1; }
+
+/* Effects -------------------------------------------------------------- */
+
+.fx-layer { position: absolute; inset: 0; pointer-events: none; }
+
+.ring {
+  position: absolute; width: 22px; height: 22px; margin: -11px 0 0 -11px;
+  border: 2px solid var(--match); border-radius: 50%;
+  animation: ring-out .62s ease-out forwards;
+}
+.ring.cold { border-color: var(--lethal); }
+@keyframes ring-out { to { transform: scale(6); opacity: 0; } }
+
+.mote {
+  position: absolute; width: 5px; height: 5px; margin: -2.5px 0 0 -2.5px;
+  border-radius: 50%; background: var(--bio);
+  animation: mote-out .7s ease-out forwards;
+}
+.mote.cold { background: var(--lethal); }
+@keyframes mote-out {
+  to { transform: translate(var(--dx), var(--dy)) scale(.2); opacity: 0; }
+}
+
+.readout {
+  position: absolute; transform: translate(-50%, -50%);
+  color: var(--cream); font: 500 10px "DM Mono", monospace; text-align: center;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, .8);
+  animation: readout-rise 1.1s ease-out forwards;
+}
+.readout b { display: block; margin-bottom: 2px; font-size: 15px; color: var(--bio); }
+.readout.cold b { color: var(--lethal); }
+@keyframes readout-rise {
+  0% { opacity: 0; transform: translate(-50%, -30%); }
+  22% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -150%); }
+}
+
+/* Lab panel ------------------------------------------------------------ */
+
+.lab {
+  padding: 18px; border: 1px solid var(--line); border-radius: 7px;
+  background: rgba(255, 255, 255, .45);
+}
+
+.event-card {
+  padding: 14px; border-radius: 6px; color: var(--cream); background: var(--agar);
+}
+.event-card.empty { display: flex; gap: 10px; align-items: flex-start; opacity: .75; }
+.event-card.empty span { color: var(--bio); font: 500 13px "DM Mono", monospace; }
+.event-card.empty p { margin: 0; font-size: 11px; line-height: 1.5; opacity: .7; }
+.event-card.fired { animation: event-fire .5s ease; }
+@keyframes event-fire {
+  0% { box-shadow: 0 0 0 3px rgba(134, 194, 107, .5); transform: translateY(-3px); }
+}
+.event-expr { color: var(--match); font: 500 12px "DM Mono", monospace; word-break: break-word; }
+.event-meta {
+  display: flex; justify-content: space-between; gap: 10px;
+  margin-top: 10px; padding-top: 9px; border-top: 1px solid rgba(251, 248, 236, .12);
+  font: 9px "DM Mono", monospace; opacity: .6;
+}
+.event-meta b { color: var(--bio); opacity: 1; }
+.event-meta b.cold { color: var(--lethal); }
+
+.rules { margin-top: 16px; }
+.rules article { padding: 11px 0; border-top: 1px solid var(--line); }
+.rules article:first-child { border-top: 0; }
+.rules b { display: block; margin-bottom: 5px; color: var(--bio); font: 500 9px "DM Mono", monospace; letter-spacing: .12em; }
+.rules article.warn b { color: var(--lethal); }
+.rules p { margin: 0; font-size: 11px; line-height: 1.55; opacity: .72; }
+
+.footnote { margin: 14px 0 0; font-size: 10px; line-height: 1.5; opacity: .5; }
+.footnote code { font-family: "DM Mono", monospace; }
+
+/* Banner --------------------------------------------------------------- */
+
+.banner {
+  position: fixed; inset: 0; z-index: 20; display: grid; place-items: center;
+  background: rgba(16, 23, 16, .82); backdrop-filter: blur(3px);
+}
+.banner[hidden] { display: none; }
+.banner > div {
+  width: min(420px, calc(100% - 40px)); padding: 30px; text-align: center;
+  color: var(--cream); background: var(--agar); border-radius: 8px;
+  border: 1px solid rgba(134, 194, 107, .3);
+}
+.banner span { font-size: 26px; color: var(--bio); }
+.banner h2 { margin: 8px 0 10px; font-size: 25px; letter-spacing: -.03em; }
+.banner p { margin: 0 0 18px; font-size: 12px; opacity: .7; }
+.banner .ghost-button { color: var(--cream); border-color: rgba(251, 248, 236, .3); }
+.banner .ghost-button:hover { color: #0d120e; background: var(--bio); border-color: var(--bio); }
+
+@media (max-width: 980px) {
+  .play { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .agar::after, .host-wall, .host-nucleus, .capsid-core, .fibers i,
+  .phage-body, .gene.shared, .filament {
+    animation: none !important;
+  }
+  .phage { transition: none; }
+}

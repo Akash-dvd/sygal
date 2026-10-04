@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Reaction chamber — watch a sandhi merge happen: occupation ladders dock, the seam pairs, the determinant blooms."
+    />
+    <title>Reaction Chamber — Sandhi</title>
+    <link rel="stylesheet" href="chamber.css?v=2" />
+    <link rel="stylesheet" href="siteframe.css?v=3" />
+    <link rel="stylesheet" href="sitenav.css?v=4" />
+    <script src="sitenav.js?v=9" defer></script>
+  </head>
+  <body>
+    <main class="chamber-shell">
+      <header class="chamber-header">
+        <a class="brand" href="index.html">
+          <span class="brand-mark">⌋</span>
+          <span><strong>REACTION CHAMBER</strong><small>DOCK · PAIR · BLOOM · FUSE</small></span>
+        </a>
+      </header>
+
+      <nav class="site-nav" data-site-nav></nav>
+
+      <section class="chamber-intro">
+        <div>
+          <p class="eyebrow">EVERY FRAME COMPUTED BY THE ENGINE</p>
+          <h1>Watch one merge, slowly.</h1>
+        </div>
+        <p>
+          Each panel is drawn as an occupation ladder: a rung per shell, its pin on
+          the left, its symbols as filled slots. When two ladders dock, the shared
+          symbols pair against the pins and that web of pairings collapses into a
+          determinant — the overlap scalar. Panels, scalars and signs below are all
+          baked from <code>SandhiCanon</code> by <code>bake_chamber.py</code>.
+        </p>
+      </section>
+
+      <div class="chamber-body">
+        <aside class="case-rail">
+          <p class="eyebrow">REACTIONS</p>
+          <div id="caseList"></div>
+          <div class="engine-note">
+            <b>ENGINE</b>
+            <p id="engineExpr">—</p>
+          </div>
+        </aside>
+
+        <section class="stage-column">
+          <div class="stage-bar">
+            <span id="phaseLabel">READY</span>
+            <div class="controls">
+              <button class="ghost-button" id="stepButton">⏭ Step</button>
+              <button class="solid-button" id="playButton">▶ Run</button>
+              <button class="ghost-button" id="resetButton">↺ Reset</button>
+              <label class="speed">
+                <input type="range" id="speed" min="50" max="160" value="100" />
+                <span>speed</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="stage" id="stage">
+            <svg class="arc-layer" id="arcLayer" aria-hidden="true"></svg>
+            <div class="panels" id="panels"></div>
+            <div class="stamp" id="stamp" hidden></div>
+          </div>
+
+          <div class="tally">
+            <span class="tally-label">ACCUMULATED SCALAR</span>
+            <div id="tally" class="tally-slots"><em>1</em></div>
+          </div>
+        </section>
+
+        <aside class="bloom-column">
+          <p class="eyebrow">OVERLAP DETERMINANT</p>
+          <div class="bloom" id="bloom">
+            <p class="bloom-empty">The pairing matrix appears when a seam locks.</p>
+          </div>
+
+          <div class="legend">
+            <p><i class="dot pin"></i> pin — the contracting blade of a shell</p>
+            <p><i class="dot seam"></i> seam — symbol shared by both ladders</p>
+            <p><i class="dot fresh"></i> arrived — symbol carried in by the merge</p>
+          </div>
+
+          <p class="note" id="caseNote"></p>
+        </aside>
+      </div>
+    </main>
+
+    <script src="chamber.js?v=2"></script>
+  </body>
+</html>

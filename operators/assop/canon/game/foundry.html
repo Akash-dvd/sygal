@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Fermionic Foundry — run the reactor line: dock packets, peel shells, catch the energy, ship the contract."
+    />
+    <title>Fermionic Foundry — Sandhi</title>
+    <link rel="stylesheet" href="foundry.css?v=9" />
+    <link rel="stylesheet" href="siteframe.css?v=3" />
+    <link rel="stylesheet" href="sitenav.css?v=4" />
+    <script src="sitenav.js?v=9" defer></script>
+  </head>
+  <body>
+    <div class="stage-glow"></div>
+
+    <main class="foundry-shell">
+      <header class="foundry-header">
+        <a class="brand" href="index.html">
+          <span class="brand-mark">∧</span>
+          <span><strong>FERMIONIC FOUNDRY</strong><small>DOCK · PEEL · SHIP</small></span>
+        </a>
+
+        <div class="hud">
+          <div><small>ENERGY</small><strong id="energy">000000</strong></div>
+          <div class="hud-combo"><small>COMBO</small><strong id="combo">×1</strong></div>
+          <div><small>CYCLES</small><strong id="cycles">0</strong></div>
+        </div>
+      </header>
+
+      <nav class="site-nav" data-site-nav></nav>
+
+      <section class="goalbar">
+        <div>
+          <p class="eyebrow" id="levelLabel">LINE 01</p>
+          <h1 id="goalTitle">Ship four grade-5 packets</h1>
+        </div>
+        <div class="goal-progress">
+          <div class="goal-track"><div id="goalBar"></div></div>
+          <span id="goalText">0 / 4</span>
+        </div>
+        <button class="ghost-button" id="resetButton">↻ Restart line</button>
+      </section>
+
+      <section class="play">
+        <div class="floor">
+          <div class="toolrail" id="toolrail" role="toolbar" aria-label="Machines">
+            <button class="tool" data-tool="reactor" aria-pressed="true">
+              <b>SANDHI REACTOR</b><span>dock two packets · R</span>
+            </button>
+            <button class="tool" data-tool="peel" aria-pressed="false">
+              <b>VICHCHEDA PEEL</b><span>split one packet · V</span>
+            </button>
+            <button class="tool" data-tool="fuse" aria-pressed="false">
+              <b>PAULI FUSE</b><span>scrap a dead pair · F</span>
+            </button>
+            <button class="tool" data-tool="ship" aria-pressed="false">
+              <b>OUTPUT DOCK</b><span>ship to contract · S</span>
+            </button>
+          </div>
+
+          <div class="line-panel">
+            <div class="line-top">
+              <span id="statusLine">Pick a machine, then click packets on the belt.</span>
+              <span class="legend"><i class="seam-dot"></i> matching seam = dockable</span>
+            </div>
+
+            <div class="conveyor">
+              <div class="emitter">
+                <span class="emitter-mark">◆</span>
+                <small>EMITTER</small>
+                <em id="emitterRecipe">d1·d2</em>
+              </div>
+
+              <div class="belt">
+                <div class="belt-tread" aria-hidden="true"></div>
+                <div id="lane" class="lane" aria-label="Packets on the belt"></div>
+              </div>
+
+              <div class="dock" id="dock">
+                <small>CONTRACT</small>
+                <strong id="dockGrade">GRADE 5</strong>
+                <em>ship exact grade</em>
+              </div>
+            </div>
+
+            <div class="sink">
+              <div class="sink-head">
+                <small>ENERGY SINK</small>
+                <span id="sinkTotal">0 ◇</span>
+              </div>
+              <div id="sinkRow" class="sink-row"></div>
+            </div>
+
+            <svg id="arcLayer" class="arc-layer" aria-hidden="true"></svg>
+            <div id="fxLayer" class="fx-layer" aria-hidden="true"></div>
+            <div id="sparkLayer" class="spark-layer" aria-hidden="true"></div>
+            <div id="flash" class="flash" aria-hidden="true"></div>
+          </div>
+        </div>
+
+        <aside class="readout">
+          <p class="eyebrow">LAST REACTION</p>
+          <div id="scalarCard" class="scalar-card empty">
+            <span>◇</span>
+            <p>Nothing has fired yet. Dock two packets that share a deep occupation.</p>
+          </div>
+
+          <div class="rules">
+            <article>
+              <b>PACKET</b>
+              <p>A shell cartridge. The badge on each rung is the pin that acts; the lit beads are what it acts on.</p>
+            </article>
+            <article>
+              <b>REACTOR</b>
+              <p>Two packets with the same pin lineage and a shared deep bead fuse. The shared beads leave as energy; one wider packet exits.</p>
+            </article>
+            <article>
+              <b>PEEL</b>
+              <p>Split a deep core into two overlapping packets. It costs energy — the borrowed scalar is a debt you pay back on the next dock.</p>
+            </article>
+            <article class="warn">
+              <b>FUSE</b>
+              <p>A repeated bead inside one wedge is dead: the term is zero. Scrap the pair for a small refund and free belt space.</p>
+            </article>
+            <article>
+              <b>DOCK</b>
+              <p>Ship the leftmost packet. Exact contract grade pays the quota; wrong grade is scrapped at a penalty.</p>
+            </article>
+          </div>
+
+          <p class="footnote">
+            Factory skin over <code>SandhiCanon</code>. The engine additionally tracks
+            grade gates, parity signs, and Capelli overlap coefficients.
+          </p>
+        </aside>
+      </section>
+    </main>
+
+    <div id="banner" class="banner" hidden>
+      <div>
+        <span id="bannerMark">◇</span>
+        <p class="eyebrow" id="bannerKicker">CONTRACT FILLED</p>
+        <h2 id="bannerTitle">The line ran clean.</h2>
+        <p id="bannerText">Every shipped packet matched the contract grade.</p>
+        <button class="solid-button" id="bannerButton">Next line →</button>
+      </div>
+    </div>
+
+    <script src="foundry.js?v=13"></script>
+  </body>
+</html>

@@ -6,7 +6,7 @@ This repository is the **language** layer only. Geometry applications (triangle 
 
 ## Layout
 
-- `Sygal/` — package root (`GExpr`, `GAtom`, operators, strategies, tests)
+Package root is the repository root (`GExpr`, `GAtom`, `operators`, …) so this repo can be checked out as a `Sygal/` submodule.
 
 ## History
 

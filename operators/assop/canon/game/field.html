@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A free-play pattern field for combining and splitting hierarchical GA terms."
+    />
+    <title>Pattern Field — Sandhi</title>
+    <link rel="stylesheet" href="field.css?v=6" />
+    <link rel="stylesheet" href="siteframe.css?v=3" />
+    <link rel="stylesheet" href="sitenav.css?v=4" />
+    <script src="sitenav.js?v=9" defer></script>
+  </head>
+  <body>
+    <main class="field-shell">
+      <header class="field-header">
+        <a class="brand" href="index.html">
+          <span class="brand-mark">∧</span>
+          <span><strong>PATTERN FIELD</strong><small>SANDHI FREE PLAY</small></span>
+        </a>
+
+        <div class="hud">
+          <div><small>SCORE</small><strong id="fieldScore">000000</strong></div>
+          <div><small>CHAIN</small><strong id="fieldChain">×1</strong></div>
+          <div><small>DEPTH</small><strong id="fieldDepth">0</strong></div>
+        </div>
+
+      </header>
+
+      <nav class="site-nav" data-site-nav></nav>
+
+      <section class="goalbar">
+        <div>
+          <p class="eyebrow">AN INFINITE ALGEBRAIC PLAYGROUND</p>
+          <h1>Move terms. Grow structure.</h1>
+          <p class="mode-help" id="modeHelp">Drag a tile onto an adjacent cell to swap. Lines of three matching upper blades collapse into a nested term.</p>
+        </div>
+        <div class="toolbox" role="group" aria-label="Field tool">
+          <button class="tool active" data-tool="move"><span>↔</span><b>MOVE</b><small>swap &amp; match</small></button>
+          <button class="tool" data-tool="merge"><span>∧</span><b>SANDHI</b><small>drag to merge</small></button>
+          <button class="tool" data-tool="split"><span>⋔</span><b>VICCHEDA</b><small>click to split</small></button>
+        </div>
+        <button class="ghost-button" id="shuffleButton">⟳ Shuffle</button>
+      </section>
+
+      <section class="play-area">
+        <aside class="term-inspector">
+          <p class="eyebrow">TERM INSPECTOR</p>
+          <div id="emptyInspector" class="empty-inspector">
+            <span>◇</span>
+            <p>Hover over a term to inspect its hierarchy.</p>
+          </div>
+          <div id="termInspector" hidden>
+            <div id="inspectorGlyph" class="inspector-glyph"></div>
+            <div class="inspector-expression" id="inspectorExpression"></div>
+            <p class="geometry-reading" id="geometryReading"></p>
+            <dl>
+              <div><dt>Pin (⊥)</dt><dd id="inspectorUp"></dd></div>
+              <div><dt>Plate</dt><dd id="inspectorPlate"></dd></div>
+              <div><dt>Grade</dt><dd id="inspectorGrade"></dd></div>
+              <div><dt>Depth</dt><dd id="inspectorDepth"></dd></div>
+            </dl>
+            <p class="tree-label">DERIVATION TREE</p>
+            <div id="termTree" class="term-tree"></div>
+          </div>
+
+          <div class="field-log">
+            <p class="eyebrow">REWRITE LOG</p>
+            <ol id="rewriteLog">
+              <li>The field is ready.</li>
+            </ol>
+          </div>
+        </aside>
+
+        <div class="grid-stage">
+          <div class="grid-toolbar">
+            <span id="fieldStatus">MOVE mode · create a row or column of 3</span>
+            <span class="legend"><i class="seam-dot"></i> matching upper blade = mergeable</span>
+          </div>
+          <div id="patternGrid" class="pattern-grid" aria-label="Draggable pattern grid"></div>
+          <div id="floatingScore" class="floating-score" hidden>+300</div>
+        </div>
+
+        <aside class="field-rules">
+          <p class="eyebrow">FIELD RULES</p>
+          <div class="rules">
+            <article>
+              <b>MATCH</b>
+              <p>Three equal upper blades in a line undergo automatic Sandhi.</p>
+            </article>
+            <article>
+              <b>MERGE</b>
+              <p>Compatible adjacent terms combine and preserve their children.</p>
+            </article>
+            <article>
+              <b>SPLIT</b>
+              <p>A hierarchical term returns its immediate children to the field.</p>
+            </article>
+            <article>
+              <b>CASCADE</b>
+              <p>New terms fall in; further matches multiply the score.</p>
+            </article>
+          </div>
+
+          <p class="footnote">
+            Teaching model of <code>SandhiCanon</code>. The exact Python engine
+            additionally evaluates grade gates, parity, recursion, and Capelli
+            coefficients.
+          </p>
+        </aside>
+      </section>
+    </main>
+
+    <div id="toast" class="toast" aria-live="polite"></div>
+    <script src="field.js?v=3"></script>
+  </body>
+</html>

@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Five visual languages for wedge and contraction." />
+    <title>Visual Languages — Sandhi</title>
+    <link rel="stylesheet" href="themes.css?v=1" />
+    <link rel="stylesheet" href="siteframe.css?v=3" />
+    <link rel="stylesheet" href="sitenav.css?v=4" />
+    <script src="sitenav.js?v=9" defer></script>
+  </head>
+  <body>
+    <main class="themes-shell">
+      <header>
+        <a class="brand" href="index.html">
+          <span class="brand-mark">∧</span>
+          <span><strong>VISUAL LANGUAGES</strong><small>ONE OPERATION · FIVE WORLDS</small></span>
+        </a>
+      </header>
+
+      <nav class="site-nav" data-site-nav></nav>
+
+      <section class="themes-hero">
+        <div>
+          <p class="eyebrow">WHAT DOES CONTRACTION LOOK LIKE?</p>
+          <h1>One algebra.<br /><em>Many physical stories.</em></h1>
+        </div>
+        <p>
+          Compare exact realizations with useful metaphors. Change the visual
+          language; the invariant relation stays fixed.
+        </p>
+      </section>
+
+      <section class="formula-strip">
+        <span class="formula-name">INVARIANT CORE</span>
+        <strong>o ⌋ (A ∧ B)</strong>
+        <span class="formula-arrow">→</span>
+        <span>result lies in span(A,B)</span>
+        <span class="formula-dot">·</span>
+        <span>result ⟂ o</span>
+      </section>
+
+      <section class="themes-layout">
+        <aside class="theme-picker" aria-label="Choose a visual language">
+          <button class="active" data-theme="geometry">
+            <i>◇</i><span><b>Subspace plate</b><small>Exact geometry</small></span><em>EXACT</em>
+          </button>
+          <button data-theme="fock">
+            <i>ψ</i><span><b>Fermionic Fock</b><small>Quantum chemistry</small></span><em>EXACT</em>
+          </button>
+          <button data-theme="field">
+            <i>F</i><span><b>Observer &amp; field</b><small>Electrodynamics</small></span><em>EXACT*</em>
+          </button>
+          <button data-theme="threads">
+            <i>⌁</i><span><b>Thread calculus</b><small>Tensor diagrams</small></span><em>EXACT</em>
+          </button>
+          <button data-theme="dna">
+            <i>⌬</i><span><b>DNA helix</b><small>Pattern-game skin</small></span><em>METAPHOR</em>
+          </button>
+        </aside>
+
+        <section class="visual-stage" data-current-theme="geometry">
+          <div class="stage-topline">
+            <div>
+              <p class="eyebrow" id="themeDomain">GEOMETRIC ALGEBRA</p>
+              <h2 id="themeTitle">The pin cuts a subspace plate</h2>
+            </div>
+            <span id="truthBadge" class="truth-badge exact">EXACT REALIZATION</span>
+          </div>
+
+          <div id="themeVisual" class="theme-visual" aria-live="polite"></div>
+
+          <div class="transport">
+            <div>
+              <small>BUILD</small>
+              <span id="buildText">A and B span an oriented plane</span>
+            </div>
+            <button id="playButton"><span>▶</span> PLAY CONTRACTION</button>
+            <div>
+              <small>READ</small>
+              <span id="readText">o selects a vector inside that plane</span>
+            </div>
+          </div>
+        </section>
+
+        <aside class="meaning-panel">
+          <p class="eyebrow">SEMANTIC MAP</p>
+          <div class="mapping">
+            <div><small>WEDGE A∧B</small><strong id="wedgeMeaning">oriented subspace</strong></div>
+            <div><small>CONTRACTOR o</small><strong id="contractorMeaning">orthogonal probe</strong></div>
+            <div><small>RESULT</small><strong id="resultMeaning">in-plane vector</strong></div>
+          </div>
+          <p id="themeExplanation" class="theme-explanation"></p>
+          <div id="caveat" class="caveat"></div>
+        </aside>
+      </section>
+
+      <section class="comparison">
+        <p class="eyebrow">WHICH SHOULD THE GAME USE?</p>
+        <div>
+          <article><span>01</span><h3>Threads for recursion</h3><p>Best for showing nested panels, seams, splitting, and recombination without visual clutter.</p></article>
+          <article><span>02</span><h3>Fock space for truth</h3><p>The deepest physical match: wedge creates fermions; contraction annihilates an orbital component.</p></article>
+          <article><span>03</span><h3>DNA for delight</h3><p>Strong matching language and recognizable motion, but present it honestly as a skin rather than physics.</p></article>
+        </div>
+      </section>
+    </main>
+
+    <script src="themes.js?v=1"></script>
+  </body>
+</html>

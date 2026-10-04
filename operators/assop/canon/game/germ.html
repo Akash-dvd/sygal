@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Germ Culture — the sandhi rewrite played as a phage strain infecting a host colony."
+    />
+    <title>Germ Culture — Sandhi</title>
+    <link rel="stylesheet" href="siteframe.css?v=3" />
+    <link rel="stylesheet" href="sitenav.css?v=4" />
+    <link rel="stylesheet" href="germ.css?v=2" />
+    <script src="sitenav.js?v=9" defer></script>
+  </head>
+  <body>
+    <main class="germ-shell">
+      <header class="germ-header">
+        <a class="brand" href="index.html">
+          <span class="brand-mark">φ</span>
+          <span><strong>GERM CULTURE</strong><small>PRIME · INJECT · INFECT</small></span>
+        </a>
+        <div class="hud">
+          <div><span>BIOMASS</span><b id="biomass">000000</b></div>
+          <div class="hud-virulence"><span>VIRULENCE</span><b id="virulence">×1</b></div>
+          <div><span>GENERATIONS</span><b id="generations">0</b></div>
+        </div>
+      </header>
+
+      <nav class="site-nav" data-site-nav></nav>
+
+      <section class="goalbar">
+        <div>
+          <p class="eyebrow" id="plateLabel">PLATE 01</p>
+          <h1 id="goalTitle">Infect the host four times</h1>
+        </div>
+        <div class="goal-progress">
+          <div class="goal-track"><div id="goalBar"></div></div>
+          <span id="goalText">0 / 4</span>
+        </div>
+        <button class="ghost-button" id="resetButton">↻ New culture</button>
+      </section>
+
+      <section class="play">
+        <div class="culture">
+          <p class="hint" id="hintLine">Click a phage to prime it.</p>
+
+          <div class="dish" id="dish">
+            <div class="agar" aria-hidden="true"></div>
+            <div class="rim" aria-hidden="true"></div>
+
+            <button class="host" id="host" type="button" aria-label="Host cell">
+              <svg class="host-shell" viewBox="0 0 200 200" aria-hidden="true">
+                <circle class="host-wall" cx="100" cy="100" r="92" />
+                <circle class="host-cyto" cx="100" cy="100" r="80" />
+                <circle class="host-nucleus" cx="100" cy="100" r="34" />
+              </svg>
+              <span class="host-read">
+                <small>RECEPTOR</small>
+                <b id="hostDemand">5</b>
+                <em>genes exactly</em>
+              </span>
+            </button>
+
+            <svg id="filaments" class="filaments" aria-hidden="true"></svg>
+            <div id="colony" class="colony"></div>
+            <div id="fxLayer" class="fx-layer" aria-hidden="true"></div>
+          </div>
+        </div>
+
+        <aside class="lab">
+          <p class="eyebrow">LAST EVENT</p>
+          <div id="eventCard" class="event-card empty">
+            <span>φ</span>
+            <p>Nothing has happened yet. Prime a phage and find one that shares a gene.</p>
+          </div>
+
+          <div class="rules">
+            <article>
+              <b>PHAGE</b>
+              <p>A creature carrying a genome. The collar badge is the pin that acts; the genes on the base plate are what it acts on.</p>
+            </article>
+            <article>
+              <b>INJECT</b>
+              <p>Two phages of one lineage that share a gene lock on and inject. The shared gene pairs off as biomass; one survivor carries everything else.</p>
+            </article>
+            <article>
+              <b>CUT</b>
+              <p>Cut a genome of three or more genes into two daughters that overlap. Cutting borrows biomass you repay on the next injection.</p>
+            </article>
+            <article class="warn">
+              <b>LYSIS</b>
+              <p>A repeated gene is lethal — the pair is dead. Burst both capsids for a small refund and free room on the plate.</p>
+            </article>
+            <article>
+              <b>HOST</b>
+              <p>Send a phage into the host. An exact genome size infects; anything else is rejected and costs you.</p>
+            </article>
+          </div>
+
+          <p class="footnote">
+            Germ skin over <code>SandhiCanon</code>. The rules are identical to
+            the foundry; the biology is costume, never the claim.
+          </p>
+        </aside>
+      </section>
+
+      <div class="banner" id="banner" hidden>
+        <div>
+          <span id="bannerMark">◇</span>
+          <p class="eyebrow" id="bannerKicker">PLATE CLEARED</p>
+          <h2 id="bannerTitle">The colony fell.</h2>
+          <p id="bannerText">Every infection matched the receptor.</p>
+          <button class="ghost-button" id="bannerButton">Next plate</button>
+        </div>
+      </div>
+    </main>
+
+    <script src="germ.js?v=3"></script>
+  </body>
+</html>

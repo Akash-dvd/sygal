@@ -1,0 +1,59 @@
+/* Shared top navigation: same bar, same place, same order on every page. */
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 26px;
+  width: 100%;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--line);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.site-nav::-webkit-scrollbar { display: none; }
+
+.site-nav a {
+  position: relative;
+  flex: 0 0 auto;
+  color: inherit;
+  font: 500 10px "DM Mono", monospace;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  padding: 6px 0;
+  border-bottom: 2px solid transparent;
+  opacity: .55;
+  transition: color .15s, border-color .15s, opacity .15s;
+}
+
+.site-nav a:hover {
+  color: var(--orange);
+  opacity: 1;
+}
+
+.site-nav a[aria-current="page"] {
+  color: var(--orange);
+  border-bottom-color: var(--orange);
+  opacity: 1;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.site-nav a[aria-current="page"]::before {
+  content: "";
+  position: absolute;
+  left: -10px;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  margin-top: -2px;
+  border-radius: 50%;
+  background: var(--orange);
+}
+
+@media (max-width: 860px) {
+  .site-nav { gap: 18px; padding: 10px 0; }
+  .site-nav a { font-size: 9px; }
+}
