@@ -1,0 +1,10 @@
+name = "Sandhi"
+version = "0.1.0"
+defaultTargets = ["sandhi"]
+
+[[lean_lib]]
+name = "Sandhi"
+
+[[lean_exe]]
+name = "sandhi"
+root = "Main"

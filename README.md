@@ -4,6 +4,13 @@ Geometric algebra expression language (operators, rewrite / canon, atoms).
 
 This repository is the **language** layer only. Geometry applications (triangle charts, olympiad constructions, prover, etc.) live in a separate project that depends on Sygal.
 
+## Sandhi paper
+
+The main language-level algorithm writeup is in [`paper/sandhi/`](paper/sandhi/):
+
+- [`draft.md`](paper/sandhi/draft.md) / [`draft.pdf`](paper/sandhi/draft.pdf) — recursive sandhi
+- [`lean/`](paper/sandhi/lean/) — Lean sketches
+
 ## Layout
 
 Package files live at the **repository root** (`GExpr.py`, `GAtom.py`, `operators/`, …).
