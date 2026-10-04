@@ -1,5 +1,9 @@
 # Recursive Sandhi and Vichcheda Canonicalization
 
+**Akash Dwivedi**  
+akash.d.dwivedi@gmail.com  
+https://www.linkedin.com/in/akash-dvd-3259402a/
+
 ## Introduction
 
 Exterior products give a compact representation of antisymmetric
