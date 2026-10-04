@@ -8,9 +8,18 @@ This repository is the **language** layer only. Geometry applications (triangle 
 
 The main language-level algorithm writeup is in [`paper/sandhi/`](paper/sandhi/):
 
-- **[`demo/index.html`](paper/sandhi/demo/index.html)** — interactive step-by-step expression walkthrough (simple → grade-r → nested). Open in a browser; no build.
 - [`draft.md`](paper/sandhi/draft.md) / [`draft.pdf`](paper/sandhi/draft.pdf) — recursive sandhi
 - [`lean/`](paper/sandhi/lean/) — Lean sketches
+
+### View the demo
+
+Interactive step-by-step expression walkthrough (simple → grade-r → nested). No build step.
+
+GitHub’s **blob** view shows HTML as source — it does **not** render the page live. Use one of:
+
+1. **GitHub Pages (live):** [https://akash-dvd.github.io/sygal/sandhi/](https://akash-dvd.github.io/sygal/sandhi/)  
+   (served from [`docs/sandhi/`](docs/sandhi/); requires Pages enabled; private repos may need a paid plan for public Pages.)
+2. **Local:** open [`paper/sandhi/demo/index.html`](paper/sandhi/demo/index.html) in a browser after cloning.
 
 ## Layout
 

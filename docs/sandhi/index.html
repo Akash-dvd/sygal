@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sandhi — Expression Walkthrough</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #071210;
+      --bg-2: #0e1f1c;
+      --panel: #122925;
+      --ink: #e7f2ed;
+      --muted: #8aa89e;
+      --seam: #d6ff4b;
+      --scalar: #ff8f6b;
+      --residual: #7ed0ff;
+      --line: rgba(231, 242, 237, 0.12);
+      --glow: rgba(214, 255, 75, 0.16);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        radial-gradient(900px 500px at 12% -10%, rgba(214,255,75,.08), transparent 55%),
+        radial-gradient(700px 420px at 100% 0%, rgba(126,208,255,.08), transparent 50%),
+        linear-gradient(180deg, var(--bg), var(--bg-2) 40%, #06110f);
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+    }
+
+    .grain {
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      opacity: .05;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      z-index: 0;
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      width: min(1100px, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: 2.2rem 0 4rem;
+    }
+
+    header.hero {
+      display: grid;
+      gap: 1rem;
+      padding: 1.5rem 0 2rem;
+      border-bottom: 1px solid var(--line);
+      animation: rise .7s ease both;
+    }
+
+    .eyebrow {
+      color: var(--seam);
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      font-size: .72rem;
+      font-weight: 600;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: "Syne", sans-serif;
+      font-weight: 800;
+      font-size: clamp(2.2rem, 6vw, 4.2rem);
+      line-height: .95;
+      letter-spacing: -.03em;
+      max-width: 12ch;
+    }
+
+    .lede {
+      max-width: 58ch;
+      color: var(--muted);
+      font-size: .95rem;
+      line-height: 1.55;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .6rem;
+      margin-top: .4rem;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: .45rem;
+      padding: .35rem .7rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: .72rem;
+      color: var(--muted);
+    }
+    .dot { width: .55rem; height: .55rem; border-radius: 50%; }
+    .dot.seam { background: var(--seam); box-shadow: 0 0 12px var(--seam); }
+    .dot.scalar { background: var(--scalar); }
+    .dot.residual { background: var(--residual); }
+
+    .levels {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      margin: 1.6rem 0 1rem;
+    }
+    .levels button {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--muted);
+      padding: .55rem .9rem;
+      border-radius: .55rem;
+      cursor: pointer;
+      font: inherit;
+      font-size: .78rem;
+      transition: border-color .2s, color .2s, background .2s, transform .15s;
+    }
+    .levels button:hover { color: var(--ink); border-color: rgba(231,242,237,.3); }
+    .levels button.active {
+      color: var(--bg);
+      background: var(--seam);
+      border-color: var(--seam);
+      font-weight: 600;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 1.25rem;
+      align-items: start;
+    }
+    @media (max-width: 860px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    .examples {
+      display: grid;
+      gap: .45rem;
+      padding: .75rem;
+      background: rgba(18, 41, 37, .55);
+      border: 1px solid var(--line);
+      border-radius: 1rem;
+      max-height: min(70vh, 640px);
+      overflow: auto;
+    }
+    .examples h2 {
+      margin: .2rem .35rem .5rem;
+      font-family: "Syne", sans-serif;
+      font-size: .85rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .ex-btn {
+      text-align: left;
+      width: 100%;
+      appearance: none;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--ink);
+      padding: .7rem .75rem;
+      border-radius: .7rem;
+      cursor: pointer;
+      font: inherit;
+      font-size: .78rem;
+      line-height: 1.35;
+      transition: background .2s, border-color .2s;
+    }
+    .ex-btn small {
+      display: block;
+      margin-top: .25rem;
+      color: var(--muted);
+      font-size: .68rem;
+    }
+    .ex-btn:hover { background: rgba(231,242,237,.04); }
+    .ex-btn.active {
+      background: rgba(214,255,75,.08);
+      border-color: rgba(214,255,75,.35);
+    }
+
+    .stage {
+      border: 1px solid var(--line);
+      border-radius: 1.1rem;
+      background:
+        linear-gradient(180deg, rgba(214,255,75,.04), transparent 30%),
+        rgba(18, 41, 37, .72);
+      padding: 1.1rem 1.1rem 1.25rem;
+      min-height: 420px;
+      animation: rise .55s ease both;
+    }
+
+    .stage-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: baseline;
+      margin-bottom: .85rem;
+    }
+    .stage-top h3 {
+      margin: 0;
+      font-family: "Syne", sans-serif;
+      font-size: 1.35rem;
+      letter-spacing: -.02em;
+    }
+    .meta {
+      color: var(--muted);
+      font-size: .72rem;
+      text-align: right;
+    }
+
+    .story {
+      color: var(--muted);
+      font-size: .86rem;
+      line-height: 1.55;
+      margin: 0 0 1rem;
+      max-width: 62ch;
+    }
+
+    .expr-board {
+      position: relative;
+      padding: 1.25rem 1.1rem;
+      border-radius: .9rem;
+      background: #081816;
+      border: 1px solid var(--line);
+      overflow: hidden;
+      min-height: 7.5rem;
+      display: grid;
+      place-items: center;
+    }
+    .expr-board::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, transparent, var(--glow), transparent);
+      opacity: 0;
+      transform: translateX(-40%);
+      transition: opacity .35s;
+    }
+    .expr-board.flash::before { opacity: 1; animation: sweep .7s ease; }
+
+    .expr {
+      position: relative;
+      z-index: 1;
+      font-size: clamp(.85rem, 2.2vw, 1.15rem);
+      line-height: 1.7;
+      text-align: center;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-weight: 500;
+      letter-spacing: .01em;
+    }
+
+    .tok { transition: color .25s, background .25s, box-shadow .25s, transform .25s; border-radius: .25rem; padding: 0 .08em; }
+    .tok.hl-seam { color: var(--seam); background: rgba(214,255,75,.12); box-shadow: 0 0 0 1px rgba(214,255,75,.35); }
+    .tok.hl-scalar { color: var(--scalar); background: rgba(255,143,107,.12); }
+    .tok.hl-residual { color: var(--residual); background: rgba(126,208,255,.1); }
+    .tok.hl-fade { opacity: .35; }
+    .tok.hl-pulse { animation: pulse .9s ease; }
+
+    .step-note {
+      margin: .9rem 0 0;
+      min-height: 3.2rem;
+      color: var(--ink);
+      font-size: .9rem;
+      line-height: 1.5;
+    }
+    .step-note strong { color: var(--seam); font-weight: 600; }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .55rem;
+      margin-top: 1rem;
+      align-items: center;
+    }
+    .controls button {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--ink);
+      padding: .65rem 1rem;
+      border-radius: .65rem;
+      cursor: pointer;
+      font: inherit;
+      font-size: .8rem;
+      transition: background .2s, border-color .2s, transform .12s;
+    }
+    .controls button.primary {
+      background: var(--seam);
+      color: var(--bg);
+      border-color: var(--seam);
+      font-weight: 600;
+    }
+    .controls button:hover { border-color: rgba(231,242,237,.35); }
+    .controls button.primary:hover { filter: brightness(1.05); }
+    .controls button:active { transform: translateY(1px); }
+    .controls button:disabled { opacity: .35; cursor: not-allowed; }
+
+    .progress {
+      flex: 1;
+      min-width: 120px;
+      height: 4px;
+      background: rgba(231,242,237,.08);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .progress > span {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--seam), var(--residual));
+      transition: width .35s ease;
+    }
+
+    .rail {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: .5rem;
+      margin-top: 1rem;
+    }
+    .rail div {
+      border: 1px dashed var(--line);
+      border-radius: .7rem;
+      padding: .65rem .7rem;
+      font-size: .72rem;
+      color: var(--muted);
+    }
+    .rail strong {
+      display: block;
+      color: var(--ink);
+      margin-bottom: .25rem;
+      font-size: .68rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .rail code { color: var(--ink); }
+
+    footer {
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: .72rem;
+      line-height: 1.5;
+    }
+    footer a { color: var(--residual); }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: none; }
+    }
+    @keyframes sweep {
+      from { transform: translateX(-50%); opacity: .0; }
+      40% { opacity: .8; }
+      to { transform: translateX(50%); opacity: 0; }
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      40% { transform: scale(1.04); }
+      100% { transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="wrap">
+    <header class="hero">
+      <div class="eyebrow">Sygal · language layer</div>
+      <h1>Sandhi, step by step</h1>
+      <p class="lede">
+        Watch overlapping contraction panels zip along a shared seam.
+        Start with one vector. Then signs, grade-r seams, and nested towers.
+        Each example is a short movie of expression modification.
+      </p>
+      <div class="legend">
+        <span class="chip"><span class="dot seam"></span>seam</span>
+        <span class="chip"><span class="dot scalar"></span>Capelli / scalar</span>
+        <span class="chip"><span class="dot residual"></span>residual panel</span>
+      </div>
+    </header>
+
+    <nav class="levels" id="levels" aria-label="Depth levels"></nav>
+
+    <div class="layout">
+      <aside class="examples" id="examples"></aside>
+      <section class="stage" id="stage">
+        <div class="stage-top">
+          <h3 id="title">—</h3>
+          <div class="meta" id="meta"></div>
+        </div>
+        <p class="story" id="story"></p>
+        <div class="expr-board" id="board">
+          <div class="expr" id="expr" aria-live="polite"></div>
+        </div>
+        <p class="step-note" id="note"></p>
+        <div class="controls">
+          <button type="button" id="prev">← Prev</button>
+          <button type="button" class="primary" id="next">Next step →</button>
+          <button type="button" id="restart">Restart</button>
+          <button type="button" id="auto">Play</button>
+          <div class="progress" aria-hidden="true"><span id="bar"></span></div>
+        </div>
+        <div class="rail" id="rail"></div>
+      </section>
+    </div>
+
+    <footer>
+      Based on <a href="../../paper/sandhi/draft.md">Recursive Sandhi and Vichcheda Canonicalization</a>
+      and the grade-r sole-seam identity.
+      Open this file locally or via GitHub Pages — no build step.
+      Notation: ⌋ left contraction, ∧ exterior, | scalar pairing.
+    </footer>
+  </div>
+
+  <script>
+    const LEVELS = [
+      { id: "L0", label: "L0 · Simple seam" },
+      { id: "L1", label: "L1 · Signs & fails" },
+      { id: "L2", label: "L2 · Grade-r" },
+      { id: "L3", label: "L3 · Nested" },
+    ];
+
+    /** @typedef {{html:string, note:string, hl?:string}} Step */
+
+    /**
+     * Helper: wrap named tokens for highlighting.
+     * Tokens use {{name:text}}
+     */
+    function T(s) {
+      return s.replace(/\{\{(\w+):([^}]+)\}\}/g, (_, kind, text) =>
+        `<span class="tok" data-k="${kind}">${text}</span>`
+      );
+    }
+
+    function paint(html, hl) {
+      const root = document.createElement("div");
+      root.innerHTML = html;
+      root.querySelectorAll(".tok").forEach((el) => {
+        el.classList.remove("hl-seam", "hl-scalar", "hl-residual", "hl-fade", "hl-pulse");
+        if (!hl) return;
+        const k = el.dataset.k;
+        if (hl === "all-fade" && k !== "keep") el.classList.add("hl-fade");
+        else if (hl === k || (Array.isArray(hl) && hl.includes(k))) {
+          if (k === "seam") el.classList.add("hl-seam", "hl-pulse");
+          else if (k === "scalar") el.classList.add("hl-scalar", "hl-pulse");
+          else if (k === "residual") el.classList.add("hl-residual", "hl-pulse");
+          else if (k === "left" || k === "right") el.classList.add("hl-seam");
+        } else if (hl) el.classList.add("hl-fade");
+      });
+      return root.innerHTML;
+    }
+
+    const EXAMPLES = [
+      // —— L0 ——
+      {
+        id: "classic",
+        level: "L0",
+        title: "Classic one-vector seam",
+        blurb: "Two panels, shared s",
+        story: "The elementary sandhi pattern: same contractor a, shared seam s, leftovers b and c zip into one residual panel.",
+        rail: {
+          scalar: "(a | s)",
+          residual: "a ⌋ (b ∧ s ∧ c)",
+          rule: "sole-shared-seam",
+        },
+        steps: [
+          {
+            html: T(`{{left:(a ⌋ (b ∧ {{seam:s}}))}}  ∧  {{right:(a ⌋ ({{seam:s}} ∧ c))}}`),
+            note: "<strong>Start.</strong> Two contraction panels with the same contractor a. Spot the shared factor.",
+            hl: "seam",
+          },
+          {
+            html: T(`(a ⌋ (b ∧ {{seam:s}}))  ∧  (a ⌋ ({{seam:s}} ∧ c))`),
+            note: "<strong>Align.</strong> Seams already face each other: …∧s on the left, s∧… on the right.",
+            hl: "seam",
+          },
+          {
+            html: T(`{{scalar:(a | s)}}  ·  {{residual:(a ⌋ (b ∧ s ∧ c))}}`),
+            note: "<strong>Zip.</strong> Overlap becomes the scalar (a|s). Leftovers concatenate around the seam into one residual.",
+            hl: ["scalar", "residual"],
+          },
+          {
+            html: T(`{{scalar:(a | s)}} · {{residual:(a ⌋ (b ∧ s ∧ c))}}`),
+            note: "<strong>Done.</strong> Two panels → one scalar × one panel. This is sandhi at grade 1.",
+            hl: ["scalar", "residual"],
+          },
+        ],
+      },
+      {
+        id: "abc-labels",
+        level: "L0",
+        title: "Concrete labels A,B,C",
+        blurb: "Game-style naming",
+        story: "Same identity with the naming from the sandhi game docs: contractor d, seam B.",
+        rail: { scalar: "(d | B)", residual: "d ⌋ (A ∧ B ∧ C)", rule: "L ∧ R merge" },
+        steps: [
+          {
+            html: T(`L = d ⌋ (A ∧ {{seam:B}})\nR = d ⌋ ({{seam:B}} ∧ C)`),
+            note: "<strong>Name the germs.</strong> L and R share seam B.",
+            hl: "seam",
+          },
+          {
+            html: T(`{{left:L}} ∧ {{right:R}}`),
+            note: "<strong>Ask for the wedge</strong> of the two germs — the sandhi candidate.",
+            hl: ["left", "right"],
+          },
+          {
+            html: T(`{{scalar:(d | B)}} · {{residual:(d ⌋ (A ∧ B ∧ C))}}`),
+            note: "<strong>Engine result.</strong> Scalar gained from the seam; residual is the single merged panel.",
+            hl: ["scalar", "residual"],
+          },
+        ],
+      },
+      {
+        id: "asymmetric",
+        level: "L0",
+        title: "Asymmetric leftovers",
+        blurb: "U longer than V",
+        story: "The left leftover can be a longer blade. Sandhi still emits one scalar and one residual.",
+        rail: { scalar: "(a | s)", residual: "a ⌋ (u1∧u2 ∧ s ∧ v)", rule: "A ⊔ B" },
+        steps: [
+          {
+            html: T(`(a ⌋ (u₁ ∧ u₂ ∧ {{seam:s}})) ∧ (a ⌋ ({{seam:s}} ∧ v))`),
+            note: "<strong>Uneven panels.</strong> Left carries two free factors; right carries one.",
+            hl: "seam",
+          },
+          {
+            html: T(`{{scalar:(a | s)}} · {{residual:(a ⌋ (u₁ ∧ u₂ ∧ s ∧ v))}}`),
+            note: "<strong>Concatenate.</strong> Free factors keep order: u₁∧u₂ then seam then v.",
+            hl: ["scalar", "residual"],
+          },
+        ],
+      },
+
+      // —— L1 ——
+      {
+        id: "sign",
+        level: "L1",
+        title: "Sign from reversal",
+        blurb: "Swap carries coefficient",
+        story: "If a prior mutation reversed a panel, sandhi must keep that sign. Never drop parity.",
+        rail: { scalar: "−(d | B)", residual: "d ⌋ (A ∧ B ∧ C)", rule: "signed merge" },
+        steps: [
+          {
+            html: T(`(d ⌋ (A ∧ {{seam:B}})) ∧ (d ⌋ (C ∧ {{seam:B}}))`),
+            note: "<strong>Misaligned seam.</strong> Right panel has C∧B, not B∧C.",
+            hl: "seam",
+          },
+          {
+            html: T(`(d ⌋ (A ∧ {{seam:B}})) ∧ {{scalar:(−1)}} (d ⌋ ({{seam:B}} ∧ C))`),
+            note: "<strong>Reorder.</strong> C∧B = − B∧C. The minus is remembered.",
+            hl: ["seam", "scalar"],
+          },
+          {
+            html: T(`{{scalar:−(d | B)}} · {{residual:(d ⌋ (A ∧ B ∧ C))}}`),
+            note: "<strong>Merge with sign.</strong> Scalar absorbs the reversal parity.",
+            hl: ["scalar", "residual"],
+          },
+        ],
+      },
+      {
+        id: "fail-pin",
+        level: "L1",
+        title: "Failure · different pins",
+        blurb: "No match",
+        story: "Sandhi requires the same contractor lineage. Different pins do not zip.",
+        rail: { scalar: "—", residual: "no merge", rule: "gate fail" },
+        steps: [
+          {
+            html: T(`({{left:d₁}} ⌋ (A ∧ {{seam:B}})) ∧ ({{right:d₂}} ⌋ ({{seam:B}} ∧ C))`),
+            note: "<strong>Shared seam, different contractors.</strong> The seam alone is not enough.",
+            hl: ["left", "right", "seam"],
+          },
+          {
+            html: T(`(d₁ ⌋ (A ∧ B)) ∧ (d₂ ⌋ (B ∧ C))\n{{scalar:↛ sandhi}}`),
+            note: "<strong>Reject.</strong> Engine reports no Sandhi match. Visual similarity is insufficient.",
+            hl: "scalar",
+          },
+        ],
+      },
+      {
+        id: "zero-repeat",
+        level: "L1",
+        title: "Collapse · repeated factor",
+        blurb: "Alternation → 0",
+        story: "If leftovers share a factor, the residual wedge vanishes. Sandhi can evaluate to zero.",
+        rail: { scalar: "(a | s)", residual: "0", rule: "s∧s = 0 style" },
+        steps: [
+          {
+            html: T(`(a ⌋ ({{seam:x}} ∧ s)) ∧ (a ⌋ (s ∧ {{seam:x}}))`),
+            note: "<strong>Danger.</strong> Free factor x appears on both sides.",
+            hl: "seam",
+          },
+          {
+            html: T(`{{scalar:(a | s)}} · (a ⌋ (x ∧ s ∧ x))`),
+            note: "<strong>Formal merge</strong> still writes a residual — but x∧…∧x is alternating zero.",
+            hl: "scalar",
+          },
+          {
+            html: T(`{{scalar:0}}`),
+            note: "<strong>Cleared.</strong> Alternation annihilates the residual; the whole expression is 0.",
+            hl: "scalar",
+          },
+        ],
+      },
+
+      // —— L2 ——
+      {
+        id: "grade2",
+        level: "L2",
+        title: "Grade-2 seam",
+        blurb: "S = s₁ ∧ s₂",
+        story: "When the seam is a grade-2 blade and the contractor matches that grade, the overlap is a Capelli / minor scalar — not a single inner product.",
+        rail: { scalar: "Capelli(D, S)", residual: "D ⌋ (A ∧ S ∧ C)", rule: "grade-r theorem" },
+        steps: [
+          {
+            html: T(`S = {{seam:s₁ ∧ s₂}}\nD grade 2`),
+            note: "<strong>Setup.</strong> Seam blade S and contractor D have the same grade r = 2.",
+            hl: "seam",
+          },
+          {
+            html: T(`(D ⌋ (A ∧ {{seam:S}})) ∧ (D ⌋ ({{seam:S}} ∧ C))`),
+            note: "<strong>Two panels</strong> with multi-vector seam, still facing each other.",
+            hl: "seam",
+          },
+          {
+            html: T(`{{scalar:Capelli(D, S)}} · {{residual:(D ⌋ (A ∧ S ∧ C))}}`),
+            note: "<strong>Grade-r zip.</strong> Overlap is the determinant-like Capelli pairing of D with S.",
+            hl: ["scalar", "residual"],
+          },
+          {
+            html: T(`{{scalar:(D | S)_Capelli}} · {{residual:(D ⌋ (A ∧ s₁ ∧ s₂ ∧ C))}}`),
+            note: "<strong>Expanded seam.</strong> Same residual, seam written as factors. Signs follow the paper’s iteration convention.",
+            hl: ["scalar", "residual"],
+          },
+        ],
+      },
+      {
+        id: "grade3",
+        level: "L2",
+        title: "Grade-3 seam sketch",
+        blurb: "r = 3",
+        story: "Same theorem at r = 3. More minors inside Capelli; the cartoon stays: scalar × one residual panel.",
+        rail: { scalar: "Capelli₃(A, S)", residual: "A ⌋ (U ∧ S ∧ V)", rule: "r = 3" },
+        steps: [
+          {
+            html: T(`S = {{seam:s₁ ∧ s₂ ∧ s₃}}`),
+            note: "<strong>Thicker seam.</strong> Three factors to match against a grade-3 contractor.",
+            hl: "seam",
+          },
+          {
+            html: T(`(A ⌋ (U ∧ {{seam:S}})) ∧ (A ⌋ ({{seam:S}} ∧ V))`),
+            note: "<strong>Panels.</strong> Structure identical to the vector case — only grades grew.",
+            hl: "seam",
+          },
+          {
+            html: T(`{{scalar:Capelli(A,S)}} · {{residual:(A ⌋ (U ∧ S ∧ V))}}`),
+            note: "<strong>Same shape of answer.</strong> Deeper algebra, same sandhi silhouette.",
+            hl: ["scalar", "residual"],
+          },
+        ],
+      },
+      {
+        id: "capelli-expand",
+        level: "L2",
+        title: "Capelli as minors",
+        blurb: "What the scalar hides",
+        story: "Schematic expansion: Capelli collects signed pairings of contractor factors with seam factors (minor expansion of iterated contraction).",
+        rail: { scalar: "Σ ± products", residual: "unchanged idea", rule: "proof engine" },
+        steps: [
+          {
+            html: T(`{{scalar:Capelli(D, s₁∧s₂)}}`),
+            note: "<strong>Opaque scalar</strong> from the grade-2 merge.",
+            hl: "scalar",
+          },
+          {
+            html: T(`{{scalar:(D₁|s₁)(D₂|s₂) − (D₁|s₂)(D₂|s₁)}}`),
+            note: "<strong>One schematic unfolding</strong> (ordering depends on convention). This is why grade-r sandhi is richer than (a|s).",
+            hl: "scalar",
+          },
+          {
+            html: T(`{{scalar:det-like(D; S)}} · {{residual:residual panel}}`),
+            note: "<strong>Return to the cartoon.</strong> Implementation detail stays inside Capelli; users see scalar × residual.",
+            hl: ["scalar", "residual"],
+          },
+        ],
+      },
+
+      // —— L3 ——
+      {
+        id: "nested2",
+        level: "L3",
+        title: "Nested · two levels",
+        blurb: "Inner seam first",
+        story: "Compatible towers can merge on an inner seam. Contractor and seam grow together so the pairing stays scalar at each level.",
+        rail: { scalar: "overlap(d₁∧d₂, S)", residual: "tower with merged core", rule: "recursive sandhi" },
+        steps: [
+          {
+            html: T(`T₁ = d₁ ⌋ (A₁ ∧ (d₂ ⌋ (B₁ ∧ {{seam:S}})))\nT₂ = d₁ ⌋ (A₂ ∧ (d₂ ⌋ ({{seam:S}} ∧ B₂)))`),
+            note: "<strong>Two towers.</strong> Outer contractors match; inner seam S is shared.",
+            hl: "seam",
+          },
+          {
+            html: T(`merge at inner {{seam:S}}`),
+            note: "<strong>Schedule.</strong> Apply local sandhi at the deepest compatible seam first.",
+            hl: "seam",
+          },
+          {
+            html: T(`{{scalar:overlap(d₁∧d₂, S)}} ·\n{{residual:d₁ ⌋ ((A₁∧A₂) ∧ (d₂ ⌋ (B₁ ∧ S ∧ B₂)))}}`),
+            note: "<strong>After inner zip.</strong> Scalar from the joint overlap; residual is one tower with a merged middle.",
+            hl: ["scalar", "residual"],
+          },
+          {
+            html: T(`{{residual:single nested normal form}}`),
+            note: "<strong>Canonical shape.</strong> Exact tree is produced by SandhiCanon; this page shows the silhouette.",
+            hl: "residual",
+          },
+        ],
+      },
+      {
+        id: "nested-grow",
+        level: "L3",
+        title: "Growing contractor",
+        blurb: "r increases with depth",
+        story: "In recursive sandhi the effective contractor can thicken as outer factors are absorbed into the pairing — grade-matched at every seam.",
+        rail: { scalar: "stacked Capelli", residual: "deeper residual", rule: "induction schedule" },
+        steps: [
+          {
+            html: T(`outer: a ⌋ ( … inner panels … )`),
+            note: "<strong>Outer frame</strong> wraps an already sandhi-ready pair.",
+            hl: null,
+          },
+          {
+            html: T(`inner zip → {{scalar:σ_inner}} · {{residual:R}}`),
+            note: "<strong>Level 1 done.</strong> Inner scalar factored out.",
+            hl: ["scalar", "residual"],
+          },
+          {
+            html: T(`{{scalar:σ_outer · σ_inner}} · {{residual:a ⌋ R'}}`),
+            note: "<strong>Level 0 zip.</strong> Scalars multiply; residual may still carry structure for another pass.",
+            hl: ["scalar", "residual"],
+          },
+          {
+            html: T(`repeat until no facing seams remain`),
+            note: "<strong>Fixed schedule.</strong> The paper’s induction theorem covers well-formed panels under a chosen merge order.",
+            hl: null,
+          },
+        ],
+      },
+      {
+        id: "cascade",
+        level: "L3",
+        title: "Cascade sketch",
+        blurb: "Residual meets a neighbour",
+        story: "After a merge, the residual can immediately match another panel — a cascade of sandhi steps.",
+        rail: { scalar: "σ₁ σ₂ …", residual: "final panel", rule: "game cascade" },
+        steps: [
+          {
+            html: T(`P₁ ∧ P₂ ∧ P₃`),
+            note: "<strong>Three panels</strong> in a line; first two share a seam.",
+            hl: null,
+          },
+          {
+            html: T(`({{scalar:σ₁}} · {{residual:R₁₂}}) ∧ P₃`),
+            note: "<strong>First sandhi.</strong> P₁,P₂ consumed.",
+            hl: ["scalar", "residual"],
+          },
+          {
+            html: T(`{{scalar:σ₁ σ₂}} · {{residual:R₁₂₃}}`),
+            note: "<strong>Cascade.</strong> R₁₂ faces P₃; second zip fires.",
+            hl: ["scalar", "residual"],
+          },
+          {
+            html: T(`{{residual:normal form}}`),
+            note: "<strong>Stop</strong> when no adjacent compatible pair remains.",
+            hl: "residual",
+          },
+        ],
+      },
+    ];
+
+    let level = "L0";
+    let exampleId = "classic";
+    let step = 0;
+    let timer = null;
+
+    const els = {
+      levels: document.getElementById("levels"),
+      examples: document.getElementById("examples"),
+      title: document.getElementById("title"),
+      meta: document.getElementById("meta"),
+      story: document.getElementById("story"),
+      expr: document.getElementById("expr"),
+      board: document.getElementById("board"),
+      note: document.getElementById("note"),
+      bar: document.getElementById("bar"),
+      rail: document.getElementById("rail"),
+      prev: document.getElementById("prev"),
+      next: document.getElementById("next"),
+      restart: document.getElementById("restart"),
+      auto: document.getElementById("auto"),
+    };
+
+    function currentExample() {
+      return EXAMPLES.find((e) => e.id === exampleId);
+    }
+
+    function examplesForLevel() {
+      return EXAMPLES.filter((e) => e.level === level);
+    }
+
+    function renderLevels() {
+      els.levels.innerHTML = "";
+      LEVELS.forEach((L) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.textContent = L.label;
+        b.className = L.id === level ? "active" : "";
+        b.addEventListener("click", () => {
+          level = L.id;
+          const list = examplesForLevel();
+          exampleId = list[0].id;
+          step = 0;
+          stopAuto();
+          renderAll();
+        });
+        els.levels.appendChild(b);
+      });
+    }
+
+    function renderExamples() {
+      els.examples.innerHTML = `<h2>Examples</h2>`;
+      examplesForLevel().forEach((ex) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "ex-btn" + (ex.id === exampleId ? " active" : "");
+        b.innerHTML = `${ex.title}<small>${ex.blurb}</small>`;
+        b.addEventListener("click", () => {
+          exampleId = ex.id;
+          step = 0;
+          stopAuto();
+          renderAll();
+        });
+        els.examples.appendChild(b);
+      });
+    }
+
+    function renderRail(ex) {
+      els.rail.innerHTML = `
+        <div><strong>Scalar</strong><code>${ex.rail.scalar}</code></div>
+        <div><strong>Residual</strong><code>${ex.rail.residual}</code></div>
+        <div><strong>Rule</strong><code>${ex.rail.rule}</code></div>
+      `;
+    }
+
+    function renderStep() {
+      const ex = currentExample();
+      const s = ex.steps[step];
+      els.title.textContent = ex.title;
+      els.meta.textContent = `${ex.level} · step ${step + 1} / ${ex.steps.length}`;
+      els.story.textContent = ex.story;
+      els.expr.innerHTML = paint(s.html, s.hl);
+      els.note.innerHTML = s.note;
+      els.bar.style.width = `${((step + 1) / ex.steps.length) * 100}%`;
+      els.prev.disabled = step === 0;
+      els.next.disabled = step >= ex.steps.length - 1;
+      els.board.classList.remove("flash");
+      void els.board.offsetWidth;
+      els.board.classList.add("flash");
+      renderRail(ex);
+    }
+
+    function renderAll() {
+      renderLevels();
+      renderExamples();
+      renderStep();
+    }
+
+    function stopAuto() {
+      if (timer) clearInterval(timer);
+      timer = null;
+      els.auto.textContent = "Play";
+    }
+
+    els.prev.addEventListener("click", () => {
+      if (step > 0) { step--; renderStep(); }
+    });
+    els.next.addEventListener("click", () => {
+      const ex = currentExample();
+      if (step < ex.steps.length - 1) { step++; renderStep(); }
+      else stopAuto();
+    });
+    els.restart.addEventListener("click", () => {
+      step = 0; stopAuto(); renderStep();
+    });
+    els.auto.addEventListener("click", () => {
+      if (timer) { stopAuto(); return; }
+      els.auto.textContent = "Pause";
+      timer = setInterval(() => {
+        const ex = currentExample();
+        if (step >= ex.steps.length - 1) { stopAuto(); return; }
+        step++;
+        renderStep();
+      }, 1600);
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight") els.next.click();
+      if (e.key === "ArrowLeft") els.prev.click();
+    });
+
+    renderAll();
+  </script>
+</body>
+</html>
