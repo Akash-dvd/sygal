@@ -8,6 +8,7 @@ This repository is the **language** layer only. Geometry applications (triangle 
 
 The main language-level algorithm writeup is in [`paper/sandhi/`](paper/sandhi/):
 
+- **[`demo/index.html`](paper/sandhi/demo/index.html)** — interactive step-by-step expression walkthrough (simple → grade-r → nested). Open in a browser; no build.
 - [`draft.md`](paper/sandhi/draft.md) / [`draft.pdf`](paper/sandhi/draft.pdf) — recursive sandhi
 - [`lean/`](paper/sandhi/lean/) — Lean sketches
 
