@@ -15,11 +15,11 @@ The main language-level algorithm writeup is in [`paper/sandhi/`](paper/sandhi/)
 
 Interactive step-by-step expression walkthrough (simple → grade-r → nested). No build step.
 
-GitHub’s **blob** view shows HTML as source — it does **not** render the page live. Use one of:
+GitHub’s **blob** view shows HTML as source — it does **not** render the page live.
 
-1. **GitHub Pages (live):** [https://akash-dvd.github.io/sygal/sandhi/](https://akash-dvd.github.io/sygal/sandhi/)  
-   (served from [`docs/sandhi/`](docs/sandhi/); requires Pages enabled; private repos may need a paid plan for public Pages.)
-2. **Local:** open [`paper/sandhi/demo/index.html`](paper/sandhi/demo/index.html) in a browser after cloning.
+**Local (works now):** after cloning, open [`paper/sandhi/demo/index.html`](paper/sandhi/demo/index.html) in a browser (or the Pages copy at [`docs/sandhi/index.html`](docs/sandhi/index.html)).
+
+**GitHub Pages:** intended URL once enabled — [https://akash-dvd.github.io/sygal/sandhi/](https://akash-dvd.github.io/sygal/sandhi/) (from [`docs/sandhi/`](docs/sandhi/)). Currently blocked: this repo is **private** and the free plan does not include Pages. Options: make the repo public, upgrade to a plan that includes private Pages, or use a separate Docs site. (`htmlpreview.github.io` also only works for public repos.)
 
 ## Layout
 
