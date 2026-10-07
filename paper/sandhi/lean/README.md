@@ -52,6 +52,22 @@ Conventions: `ExteriorAlgebra R M` over a commutative ring, an arbitrary
 bilinear form `B`, left contraction `contractVec B u = contractLeft (B u)`, and
 $(u\wedge A)\lrcorner X = u\lrcorner(A\lrcorner X)$.
 
+## Implementation cross-check
+
+[`../tests/crosscheck_lean.py`](../tests/crosscheck_lean.py) compares the
+Sygal implementation with these formulas exactly (sign included), evaluating
+fully expanded Sygal expressions on rational vectors with random symmetric
+forms:
+
+- Sygal's `K|S` and the `CapelliOptionB` coefficient equal `seamPairing` for
+  $r \le 4$.
+- Every flat stitch performed by `sandhi_canon` equals the
+  `soleSeam_gradeR` right-hand side; overflow cases give $0$.
+- The nested identity holds in Sygal's own expansion for depth 2–3 shapes,
+  including a grade-2 contractor level and odd $\varepsilon$. `sandhi_canon`
+  does **not** stitch these (no visible seam at the outer level); it leaves
+  them unchanged.
+
 ## Proof idea
 
 Flat case, with $Z = A\lrcorner(U\wedge S)$:

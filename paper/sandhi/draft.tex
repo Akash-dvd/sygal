@@ -1263,9 +1263,18 @@ expression for panels sharing a seam and orients them, and it then replaces
 the pair by the right-hand side of the applicable theorem. Only the second
 step is a mathematical claim, and it is the one covered above. The search is
 pattern matching; its correctness amounts to applying the theorem with the
-correct seam, contractors, orientation parities, and coefficient, and is
-supported by regression tests (including the three-level identity after
-Theorem~\ref{thm:nested-closed}), not by the formal proof.
+correct seam, contractors, orientation parities, and coefficient.
+
+An exact cross-check against the Lean formulas (\texttt{tests/crosscheck\_lean.py},
+evaluating both sides with rational vectors and random symmetric forms) finds
+that the implementation's pairing and Capelli coefficient equal
+\((-1)^{\binom r2}\det[k_i\cdot s_j]\) for \(r\le 4\), and that each flat
+stitch it performs equals the right-hand side of
+Theorem~\ref{thm:grade-r-seam}, sign included. The implementation does not
+yet apply Theorem~\ref{thm:nested-closed}: when the outer levels share no
+visible factor it leaves the product unchanged, which is correct but not
+reduced. The three-level identity after Theorem~\ref{thm:nested-closed} is
+therefore checked by expansion and by Lean, not by the canonicalizer.
 
 \section{Limitations}
 

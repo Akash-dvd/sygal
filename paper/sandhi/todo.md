@@ -67,8 +67,13 @@ implementation (search) concern and is deliberately not on this list.
 
 ## Implementation vs. theorem
 
-- [ ] Confirm Sygal's `|` pairing equals `seamPairing` (sign included) for
-  \(r\ge 2\).
+- [x] Sygal's `|` pairing and `CapelliOptionB` equal `seamPairing` (sign
+  included) for \(r\le 4\); flat stitches equal the Lean RHS
+  (`tests/crosscheck_lean.py`).
+- [ ] Teach `sandhi_canon` the nested closed form (`nested_soleSeam'`): it
+  currently leaves nested products with no visible outer seam unchanged.
+- [ ] `sandhi_helpers.assert_sandhi_merge` accepts either sign; tighten it to
+  an exact comparison.
 - [x] Keep symbolic checks separate from proof: `tests/test1.py`–`test3.py`
   are regression checks of the implementation; `test1` is also proved as a
   Lean `example`.
