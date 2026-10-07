@@ -1,61 +1,58 @@
 # Formal Proof Checklist
 
-The local grade-\(r\) identity has been proved mathematically. This file
-separates the proof details that still need to be written explicitly in the
-paper from the global claims currently supported only by symbolic experiments.
+Items marked **Lean** are machine-checked in `lean/` (names in parentheses);
+see `lean/README.md` and Section 8 of the draft. Paper-only proofs and open
+items are listed separately. Finding seams in an arbitrary expression is an
+implementation (search) concern and is deliberately not on this list.
 
-The current draft now includes a conditional induction theorem for nested
-recursion. It assumes an explicit sole-seam closure invariant; the remaining
-formal task is to derive that invariant from the concrete panel syntax rather
-than treating it as an assumption.
+## Local identity
 
-## Local identity: write the complete proof
-
-- [ ] State the contraction-order convention precisely for
-  \(A=a_1\wedge\cdots\wedge a_r\).
-- [ ] Expand \(A\mathbin{\lrcorner}X\) as a signed sum over \(r\)-element
-  subsets of the ordered factors of \(X\).
-- [ ] Prove that the coefficient of the seam block is the determinant
-  \(A\mid S=\det[(a_i\cdot s_j)]\), including the contraction-order sign.
-- [ ] Show explicitly how terms with repeated residual factors vanish.
-- [ ] Show that the surviving terms are exactly the Laplace/Cauchy--Binet
-  expansion of
-  \(A\mathbin{\lrcorner}(b\wedge S\wedge c)\).
-- [ ] Track \(\epsilon_B\epsilon_C\) through the orientation changes.
+- [x] Contraction-order convention for \(A=a_1\wedge\cdots\wedge a_r\):
+  \((u\wedge A)\lrcorner X=u\lrcorner(A\lrcorner X)\). **Lean** (`contractBlade`)
+- [x] Coefficient of the seam block is
+  \(A\mid S=(-1)^{\binom r2}\det[(a_i\cdot s_j)]\), including the
+  contraction-order sign. **Lean** (`contractBlade_ofList_eq_seamPairing`)
+- [x] Grade-\(r\) sole-seam identity for arbitrary wings.
+  **Lean** (`soleSeam_gradeR`)
+- [x] Terms with repeated residual factors vanish. **Lean** (`Sandhi.Grade`
+  kill lemmas)
+- [x] Orientation factors \(\epsilon_B\epsilon_C\): the theorem is stated on
+  oriented panels, so they multiply both sides.
+- [ ] Signed sum (3.1) over \(r\)-element subsets for \(r>1\). Paper proof;
+  Lean has \(r=1\) (`contractVec_ofList_eq_expandSum`) and does not need
+  \(r>1\).
 
 ## Grade gate
 
-- [ ] Derive \(x=t-r\) from the grades of the two panels and their merged
-  panel.
-- [ ] Prove the \(t=r\) case produces a scalar coefficient.
-- [ ] Under the sole-seam invariant, prove that \(t>r\) leaves repeated
-  residual seam factors and therefore gives zero.
-- [ ] Explain why \(t<r\) requires descent rather than scalar extraction.
+- [x] Grade difference of the two sides is \(t-r\) (paper, Section 3).
+- [x] \(t=r\) gives a scalar coefficient. **Lean** (`soleSeam_gradeR`)
+- [x] \(t>r\) gives zero. **Lean** (`soleSeam_vanish`, `nested_vanish`)
+- [x] \(t<r\) requires descent: in a nest the contractor accumulates level by
+  level until it matches the seam. **Lean** (`nested_soleSeam'`, innermost
+  seam)
 
-## Nested recursion: remaining global proof
+## Nested recursion
 
-- [ ] Define the sole-seam invariant for a nested contraction tree.
-- [ ] Prove that one valid merge preserves decomposability and the
-  sole-seam invariant of the merged expression.
-- [x] Draft an induction on nesting depth under an explicit sole-seam
-  invariant.
-- [ ] Prove from the concrete panel syntax that the sole-seam invariant is
-  preserved at every merge.
-- [ ] Prove by induction on nesting depth, without assuming the closure clause,
-  that contractor and seam grades accumulate together.
-- [ ] Prove that every recursive cross term containing a repeated residual
-  seam factor vanishes.
-- [ ] Prove that the grade gate agrees with direct left-contraction expansion
-  at every recursive level.
-- [ ] If schedule independence is claimed, prove that different valid merge
-  orders produce the same result.
+- [x] Closed-form nested identity of any depth with the exact shuffle sign.
+  **Lean** (`nested_soleSeam'`, `nestSign_eq`)
+- [x] Contractor and seam grades accumulate together (the theorem's
+  hypothesis \(\lvert A_{\mathrm{acc}}\rvert=\lvert S\rvert\)). **Lean**
+- [x] Recursive cross terms with a repeated residual seam factor vanish.
+  **Lean** (`nest_stitch` error terms)
+- [ ] Sole-seam invariant for general nested trees, and its preservation
+  under one merge (visibility, sibling separation, one-stitch closure).
+  Paper proof only.
+- [ ] Seam factors distributed across several levels (beyond the
+  innermost-seam closed form). Paper proof only.
+- [ ] Schedule independence (confluence). Open; do not claim.
 
 ## Capelli coefficient
 
-- [ ] Prove that the determinant pairing and the Capelli contraction use the
-  same ordering convention.
-- [ ] Isolate the parity contribution from seam alignment from the determinant
-  sign.
+- [x] Determinant pairing and Capelli contraction use the same ordering
+  convention. **Lean** (`seamPairing`)
+- [x] Seam-alignment parity is separate from the determinant sign: the
+  nested sign \(\sigma\) is a shuffle parity, the determinant carries
+  \((-1)^{\binom r2}\).
 
 ## Applications
 
@@ -68,12 +65,12 @@ than treating it as an assumption.
 - [ ] Check that the three application outputs use the same orientation and
   scale conventions as the cited CGA sources.
 
-## Evidence and claim wording
+## Implementation vs. theorem
 
-- [ ] Keep manual symbolic checks separate from mathematical proof.
-- [ ] Identify `test2.py` as a manual grade-three, three-panel sanity check;
-  it compares expanded expressions rather than asserting a theorem.
+- [ ] Confirm Sygal's `|` pairing equals `seamPairing` (sign included) for
+  \(r\ge 2\).
+- [x] Keep symbolic checks separate from proof: `tests/test1.py`–`test3.py`
+  are regression checks of the implementation; `test1` is also proved as a
+  Lean `example`.
 - [ ] Record the tested nesting depths and grades for the computational
   evidence.
-- [ ] Do not state a global normal-form or confluence theorem until the
-  nested-recursion proof is complete.

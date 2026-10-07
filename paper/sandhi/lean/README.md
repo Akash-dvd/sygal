@@ -24,7 +24,7 @@ A nest is a list of levels $(D_i, U_i, V_i)$: contractor $D_i$, left wing
 $U_i$, right wing $V_i$. Write
 
 $$
-\Phi_U(X) = D_1\lrcorner\bigl(U_1\wedge D_2\lrcorner(U_2\wedge\cdots D_k\lrcorner X)\bigr),
+\Phi_U(X) = D_1\lrcorner\bigl(U_1\wedge D_2\lrcorner(U_2\wedge\cdots D_k\lrcorner(U_k\wedge X))\bigr),
 \qquad A = D_1 D_2\cdots D_k,
 $$
 

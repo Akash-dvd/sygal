@@ -33,6 +33,13 @@ proved for the well-formed panel grammar using a level-local visibility
 closure lemma. Schedule-independent normalization remains open; cases through
 nesting depth six have been checked by direct symbolic expansion.
 
+The stitching identities themselves are machine-checked. The grade-\(r\)
+identity, its vanishing branch, the Capelli coefficient, and a closed-form
+nested identity of arbitrary depth are proved in Lean 4 with Mathlib, over any
+commutative ring and any bilinear form (Section 8). Locating a seam inside a
+given expression is a separate search problem, solved by the implementation
+and not part of these theorems.
+
 ## 1. Setting
 
 Let \(V\) be a vector space with a nondegenerate bilinear form. We use
@@ -661,6 +668,65 @@ schedules are confluent. Computational checks of nesting depths up to six,
 including higher-grade decomposable blades, support the invariant but do not
 replace its proof.
 
+### Closed form for a nest with an innermost seam
+
+When the shared seam sits at the bottom of a contraction chain, the recursion
+above can be written in one formula. Let \(K_1,\ldots,K_k\) be contractor
+blades and \(U_i,V_i\) wing blades, and let \(U_x\), \(S\), \(W\) be blades.
+Put
+\[
+\begin{aligned}
+\Phi^L&:=K_1\lrcorner\bigl(U_1\wedge K_2\lrcorner
+  (U_2\wedge\cdots K_k\lrcorner(U_k\wedge U_x\wedge S))\bigr),\\
+\Phi^R&:=K_1\lrcorner\bigl(V_1\wedge K_2\lrcorner
+  (V_2\wedge\cdots K_k\lrcorner(V_k\wedge S\wedge W))\bigr),\\
+\Phi^M&:=K_1\lrcorner\bigl(U_1\wedge V_1\wedge\cdots
+  K_k\lrcorner(U_k\wedge V_k\wedge U_x\wedge S\wedge W)\bigr),
+\end{aligned}
+\]
+and \(A_{\mathrm{acc}}:=K_1\wedge\cdots\wedge K_k\).
+
+### Theorem: nested sole-seam identity, closed form
+
+If \(\operatorname{grade}(A_{\mathrm{acc}})=\operatorname{grade}(S)\), then
+\[
+\Phi^L\wedge\Phi^R
+=(-1)^{\sigma}\,(A_{\mathrm{acc}}\mid S)\,\Phi^M,
+\qquad
+\sigma=\sum_{i=1}^{k}\lvert V_i\rvert
+  \Bigl(\lvert U_x\rvert+\sum_{j>i}\lvert U_j\rvert\Bigr),
+\]
+where \(\lvert\cdot\rvert\) is grade. If
+\(\operatorname{grade}(A_{\mathrm{acc}})<\operatorname{grade}(S)\), then
+\(\Phi^L\wedge\Phi^R=0\). No disjointness or nondegeneracy hypothesis is
+needed.
+
+#### Proof sketch
+
+Prove the stronger statement in which \(\Phi^R\) is replaced by
+\(E\lrcorner\Phi^R\) for an extra contractor \(E\), by induction on \(k\). At
+each level the outer \(K_1\) annihilates \(\Phi^L\) and is pulled out of both
+factors; the accumulated contractor \(E\wedge K_1\) is then pushed past
+\(V_1\), and every error term is a deficient instance, hence zero. At the
+bottom, \(S\wedge(E\lrcorner(S\wedge Y))=S\wedge(E\lrcorner S)\wedge Y\), and
+\(E\lrcorner S=(E\mid S)\) by the Capelli extraction. The sign \(\sigma\) is
+the shuffle parity of moving each \(V_i\) past the deeper left wings. The
+full proof is machine-checked (Section 8). \(\square\)
+
+For \(k=1\) this is the grade-\(r\) theorem. With juxtaposition denoting
+\(\wedge\) and \(S=c_1c_2c_3\), the identity
+\[
+\begin{aligned}
+&(d_1\lrcorner(a_1a_2\wedge d_2\lrcorner(b_1b_2\wedge d_3\lrcorner S)))
+\wedge
+(d_1\lrcorner(a_3a_4\wedge d_2\lrcorner(b_3b_4\wedge d_3\lrcorner(S\wedge c_4)))))\\
+&\quad=(d_1d_2d_3\mid S)\;
+d_1\lrcorner(a_1a_2a_3a_4\wedge d_2\lrcorner(b_1b_2b_3b_4\wedge
+d_3\lrcorner(S\wedge c_4)))
+\end{aligned}
+\]
+is the case \(k=3\), \(\sigma=4\).
+
 ### The overlap coefficient via Capelli
 
 The grade-\(r\) theorem identifies the coefficient as the scalar pairing
@@ -672,12 +738,14 @@ If
 A_{\mathrm{acc}}=d_1\wedge\cdots\wedge d_r,\qquad
 S_{\mathrm{acc}}=s_1\wedge\cdots\wedge s_r,
 \]
-then, up to the fixed contraction-order sign convention,
+then
 \[
 \kappa=
-\det\bigl[(d_i\cdot s_j)\bigr]_{i,j=1}^{r}.
+(-1)^{\binom r2}\det\bigl[(d_i\cdot s_j)\bigr]_{i,j=1}^{r}.
 \]
-The determinant is the finite Capelli contraction of the accumulated
+The factor \((-1)^{\binom r2}\) is the reversal forced by the iterated
+contraction order of Section 1: for equal grades, \(A\lrcorner S\) is exactly
+this scalar. The determinant is the finite Capelli contraction of the accumulated
 contractor with the accumulated seam. It is a finite algebraic pairing, not an
 additional geometric operation.
 
@@ -858,13 +926,55 @@ stitching calculus uses geometric hypotheses such as concyclicity in addition
 to grade balance. We therefore record it as a boundary case rather than claim
 a two-stitch contraction proof for it.
 
-## 8. Limitations
+## 8. Formal Verification and Implementation
 
-The grade-\(r\) seam identity is proved for homogeneous decomposable blades
-with the stated orientation and sole-seam hypotheses. The fixed-schedule
-induction theorem is proved for the well-formed, level-local panel grammar;
+The stitching identities are proved in Lean 4 (v4.33.1) with Mathlib, in
+`paper/sandhi/lean/` of the Sygal repository, with no unproved assumptions
+beyond Lean's standard axioms. The setting is \(\Lambda M\) for a module \(M\)
+over an arbitrary commutative ring, with left contraction by an arbitrary
+bilinear form; neither nondegeneracy nor disjointness of wing factors is
+required.
+
+| Machine-checked result | Lean name |
+|---|---|
+| Base identity (Section 2) | `soleSeam_grade1` |
+| Grade-\(r\) identity (Section 3) | `soleSeam_gradeR` |
+| Flat overflow (\(\operatorname{grade}S>\operatorname{grade}A\)) gives \(0\) | `soleSeam_vanish` |
+| Capelli: \(A\lrcorner S=(-1)^{\binom r2}\det[a_i\cdot s_j]\) | `contractBlade_ofList_eq_seamPairing` |
+| Nested closed form (Section 4) | `nested_soleSeam'` |
+| Nested overflow gives \(0\) | `nested_vanish` |
+| Expansion (3.1) for \(r=1\) | `contractVec_ofList_eq_expandSum` |
+
+The expansion (3.1) for \(r>1\), and the visibility, sibling-separation, and
+one-stitch closure lemmas of Section 4, have paper proofs only; schedule
+independence is open.
+
+The Lean proof of the grade-\(r\) identity does not use the minor expansion
+of Section 3. It uses self-annihilation (each contractor factor annihilates
+\(A\lrcorner(b\wedge S)\)), the fact that any term spending a contractor on
+\(b\) leaves a seam factor that dies against \(S\), and a Laplace expansion
+along the last row for the Capelli coefficient.
+
+The implementation (the Sygal canonicalizer) does two things: it searches an
+expression for panels sharing a seam and orients them, and it then replaces
+the pair by the right-hand side of the applicable theorem. Only the second
+step is a mathematical claim, and it is the one covered above. The search is
+pattern matching; its correctness amounts to applying the theorem with the
+correct seam, contractors, orientation parities, and coefficient, and is
+supported by regression tests (including the three-level identity in
+Section 4), not by the formal proof.
+
+## 9. Limitations
+
+The grade-\(r\) seam identity is machine-checked for arbitrary blades given
+as wedge products of vectors; the sole-seam hypotheses are needed only to
+interpret the result as a unique stitch. The fixed-schedule induction theorem
+is proved for the well-formed, level-local panel grammar;
 schedule-independent normalization remains open, despite verification through
-depth six. The result does not claim a normal-form theorem for arbitrary
+depth six. The nested identity is machine-checked for a seam at the innermost
+level of a shared contractor chain; configurations in which seam factors are
+distributed across levels rely on the paper proof of the nested recursion
+theorem. The result does not claim a normal-form theorem for arbitrary
 mixed-grade or nondecomposable multivectors.
 
 ## References
