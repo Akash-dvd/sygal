@@ -1,4 +1,4 @@
-# Recursive Sandhi and Vichcheda Canonicalization
+# Seam Stitching for Exterior-Product Contractions: Recursive Canonicalization with Machine-Checked Identities
 
 **Akash Dwivedi**  
 akash.d.dwivedi@gmail.com  
@@ -422,7 +422,7 @@ mathematical data, not a cosmetic normalization step.
 
 We borrow two terms from Sanskrit grammar. *Sandhi* ("joining") is the stitch
 itself: replacing two panels that share a seam by one merged panel and a
-scalar, as in the grade-\(r\) theorem. *Vichcheda* ("splitting") is the
+scalar, as in the grade-\(r\) theorem. *Vichcheda* ("splitting"; IAST *viccheda*) is the
 preparatory step that exposes the seam, and it acts on either side of a
 contraction.
 
