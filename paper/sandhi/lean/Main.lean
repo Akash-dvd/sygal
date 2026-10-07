@@ -1,4 +1,4 @@
 import Sandhi
 
 def main : IO Unit :=
-  IO.println s!"Hello, {hello}!"
+  IO.println "Sandhi: flat and nested sole-seam stitching (Lean / Mathlib)"

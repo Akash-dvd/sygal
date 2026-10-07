@@ -9,7 +9,25 @@ This repository is the **language** layer only. Geometry applications (triangle 
 The main language-level algorithm writeup is in [`paper/sandhi/`](paper/sandhi/):
 
 - [`draft.md`](paper/sandhi/draft.md) / [`draft.pdf`](paper/sandhi/draft.pdf) — recursive sandhi
-- [`lean/`](paper/sandhi/lean/) — Lean sketches
+- [`lean/`](paper/sandhi/lean/) — Lean 4 / Mathlib formalization ([status](paper/sandhi/lean/README.md))
+
+### Formal status
+
+The core claim of the paper is **machine-checked in Lean** (no `sorry`):
+when two contraction expressions share a seam $S$, their wedge product
+stitches into one expression times the Capelli pairing $(A\mid S)$, with an
+exact shuffle sign — for every grade and every nesting depth. When there are
+fewer contractors than seam factors, the product is zero.
+
+| Result | Lean |
+|--------|------|
+| Flat stitching, any grade | `soleSeam_gradeR`, `soleSeam_vanish` |
+| Nested stitching, any depth | `nested_soleSeam'`, `nested_vanish` |
+| Capelli pairing $A\lrcorner S = (A\mid S)$ | `contractBlade_ofList_eq_seamPairing` |
+
+Finding the seam inside an arbitrary expression is a search / pattern-matching
+problem; the Python canonicalizer does that and is not part of the proof. Also
+open: the hidden-seam regime inside nests and schedule confluence.
 
 ### View the demo
 
