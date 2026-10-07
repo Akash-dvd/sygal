@@ -27,6 +27,11 @@ fewer contractors than seam factors, the product is zero.
 | Flat stitching, any grade | `soleSeam_gradeR`, `soleSeam_vanish` |
 | Nested stitching, any depth | `nested_soleSeam'`, `nested_vanish` |
 | Capelli pairing $A\lrcorner S = (A\mid S)$ | `contractBlade_ofList_eq_seamPairing` |
+| Up vichcheda (contractors $K\wedge P$ and $K$) gives $0$ | `upVichcheda_vanish` |
+
+An exact cross-check ([`paper/sandhi/tests/crosscheck_lean.py`](paper/sandhi/tests/crosscheck_lean.py))
+confirms that the Python canonicalizer's coefficients and stitches match these
+formulas, signs included. It does not yet apply the nested rule.
 
 Finding the seam inside an arbitrary expression is a search / pattern-matching
 problem; the Python canonicalizer does that and is not part of the proof. Also

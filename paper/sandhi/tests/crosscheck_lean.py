@@ -5,6 +5,7 @@
   C. ``sandhi_canon`` on flat panels  vs  Lean ``soleSeam_gradeR`` / ``soleSeam_vanish``
   D. nested sole-seam shapes          vs  Lean ``nested_soleSeam'`` / ``nested_vanish``,
      and whether ``sandhi_canon`` actually stitches them
+  E. up vichcheda (contractors K^P, K) vs  Lean ``upVichcheda_vanish(_right)``
 
 A and B are compared symbolically. C and D are compared by exact evaluation
 (rational vectors, random symmetric form, several seeds) of the fully expanded
@@ -175,14 +176,33 @@ def section_nested():
     )
 
 
+def section_up():
+  print("== E: up vichcheda (contractors K^P and K)  vs  Lean upVichcheda_vanish")
+  cases = [
+    ("seam grade 2 > |K|=1", ((d1 ^ d2) < (c1 ^ c2 ^ c3)) ^ (d1 < (a1 ^ (d2 < (c1 ^ c2 ^ c3))))),
+    ("seam grade 2, wing in X", ((d1 ^ d2) < (b1 ^ c1 ^ c2)) ^ (d1 < (a1 ^ (d2 < (b1 ^ c1 ^ c2))))),
+    ("seam panel on the left", (d1 < (a1 ^ (d2 < (b1 ^ c1 ^ c2)))) ^ ((d1 ^ d2) < (b1 ^ c1 ^ c2))),
+    ("|K|=2, seam grade 3", ((d1 ^ d2 ^ d3) < (b1 ^ c1 ^ c2 ^ c3)) ^ ((d1 ^ d2) < (a1 ^ (d3 < (b1 ^ c1 ^ c2 ^ c3))))),
+  ]
+  for name, e in cases:
+    got = sandhi_canon(e)
+    check(f"E {name}  canon == 0 and input == 0", got == GExpr.Znl and same(e, GExpr.Znl))
+  X = (d1 ^ d2) < (b1 ^ c1 ^ c2)
+  Y = d1 < (a2 ^ (d2 < (b1 ^ c1 ^ c2)))
+  e = (a1 < (a3 ^ X ^ c4)) ^ (a1 < (c4 ^ Y ^ a4))
+  check("E inside an outer stitch  canon == 0 and input == 0", sandhi_canon(e) == GExpr.Znl and same(e, GExpr.Znl))
+
+
 if __name__ == "__main__":
-  only = sys.argv[1:] or ["pairing", "flat", "nested"]
+  only = sys.argv[1:] or ["pairing", "flat", "nested", "up"]
   if "pairing" in only:
     section_pairing()
   if "flat" in only:
     section_flat()
   if "nested" in only:
     section_nested()
+  if "up" in only:
+    section_up()
   print(f"\n{len(failures)} failure(s)")
   for f in failures:
     print("  " + f)

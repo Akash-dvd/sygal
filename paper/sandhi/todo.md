@@ -74,6 +74,12 @@ implementation (search) concern and is deliberately not on this list.
   currently leaves nested products with no visible outer seam unchanged.
 - [ ] `sandhi_helpers.assert_sandhi_merge` accepts either sign; tighten it to
   an exact comparison.
+- [x] Up vichcheda (contractors \(K\wedge P\), \(K\)): every non-scalar result
+  is \(0\), justified by **Lean** `upVichcheda_vanish(_right)`; cross-checked.
+- [ ] `CapelliOptionB` returns \(0\) when the seam is a nested panel and the
+  contractor has \(\ge 2\) factors (factor-count mismatch). In every
+  reachable case the true value is also \(0\) (by `upVichcheda_vanish`), but
+  the code should compute \(K\lrcorner S\) instead of relying on this.
 - [x] Keep symbolic checks separate from proof: `tests/test1.py`–`test3.py`
   are regression checks of the implementation; `test1` is also proved as a
   Lean `example`.

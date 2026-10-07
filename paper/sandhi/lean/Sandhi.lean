@@ -9,3 +9,4 @@ import Sandhi.Panel
 import Sandhi.Induction
 import Sandhi.Stitching
 import Sandhi.Nested
+import Sandhi.UpVichcheda

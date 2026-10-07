@@ -943,7 +943,15 @@ required.
 | Capelli: \(A\lrcorner S=(-1)^{\binom r2}\det[a_i\cdot s_j]\) | `contractBlade_ofList_eq_seamPairing` |
 | Nested closed form (Section 4) | `nested_soleSeam'` |
 | Nested overflow gives \(0\) | `nested_vanish` |
+| Up vichcheda: \((K\lrcorner S)\wedge K\lrcorner(w_1\wedge S\wedge w_2)=0\) | `upVichcheda_vanish` |
 | Expansion (3.1) for \(r=1\) | `contractVec_ofList_eq_expandSum` |
+
+In the up-vichcheda row the contractors are \(K\wedge P\) and \(K\), the seam
+is the peeled panel \(S=P\lrcorner X\), and
+\(\operatorname{grade}S>\lvert K\rvert\); the result holds over a field, for
+arbitrary wings, because \(P\lrcorner X\) is again a blade when \(X\) is a
+wedge of vectors (`contractBlade_ofList_blade`). It is false for a general
+homogeneous \(S\).
 
 The expansion (3.1) for \(r>1\), and the visibility, sibling-separation, and
 one-stitch closure lemmas of Section 4, have paper proofs only; schedule
@@ -967,7 +975,9 @@ evaluating both sides with rational vectors and random symmetric forms) finds
 that the implementation's pairing and Capelli coefficient equal
 \((-1)^{\binom r2}\det[k_i\cdot s_j]\) for \(r\le 4\), and that each flat
 stitch it performs equals the right-hand side of the grade-\(r\) theorem,
-sign included. The implementation does not yet apply the nested closed form:
+sign included; its up-vichcheda reductions return \(0\) exactly in the cases
+covered by `upVichcheda_vanish`. The implementation does not yet apply the
+nested closed form:
 when the outer levels share no visible factor it leaves the product
 unchanged, which is correct but not reduced. The three-level identity in
 Section 4 is therefore checked by expansion and by Lean, not by the
