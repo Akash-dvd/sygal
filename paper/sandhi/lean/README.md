@@ -42,8 +42,11 @@ Let $S$ be the shared seam blade.
   `contractBlade_ofList_eq_seamPairing`.
 - Depth $k = 1$ is the flat sole-seam identity `soleSeam_gradeR` /
   `soleSeam_vanish`.
-- The three-level identity checked numerically in `Sygal/test1.py` is proved as
-  an `example` at the end of `Sandhi/Nested.lean` (sign $+1$).
+- The three-level identity checked symbolically by Sygal in
+  [`../tests/test1.py`](../tests/test1.py) is proved as an `example` at the end
+  of `Sandhi/Nested.lean` (sign $+1$). The flat and two-panel checks
+  [`test2.py`](../tests/test2.py) and [`test3.py`](../tests/test3.py) are
+  instances of the same theorems.
 
 Conventions: `ExteriorAlgebra R M` over a commutative ring, an arbitrary
 bilinear form `B`, left contraction `contractVec B u = contractLeft (B u)`, and

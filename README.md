@@ -10,6 +10,9 @@ The main language-level algorithm writeup is in [`paper/sandhi/`](paper/sandhi/)
 
 - [`draft.md`](paper/sandhi/draft.md) / [`draft.pdf`](paper/sandhi/draft.pdf) — recursive sandhi
 - [`lean/`](paper/sandhi/lean/) — Lean 4 / Mathlib formalization ([status](paper/sandhi/lean/README.md))
+- [`tests/`](paper/sandhi/tests/) — Sygal checks of complex stitching identities
+  (run from the parent of `Sygal/` with it on `PYTHONPATH`, e.g.
+  `python3 Sygal/paper/sandhi/tests/test1.py`; the printed difference is `0`)
 
 ### Formal status
 
