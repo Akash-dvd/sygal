@@ -36,7 +36,8 @@ nesting depth six have been checked by direct symbolic expansion.
 The stitching identities themselves are machine-checked. The grade-\(r\)
 identity, its vanishing branch, the Capelli coefficient, and a closed-form
 nested identity of arbitrary depth are proved in Lean 4 with Mathlib, over any
-commutative ring and any bilinear form (Section 8). Locating a seam inside a
+commutative ring and any bilinear form (Section 8); the Lean source is at
+<https://github.com/Akash-dvd/sygal/tree/main/paper/sandhi/lean>. Locating a seam inside a
 given expression is a separate search problem, solved by the implementation
 and not part of these theorems.
 
@@ -929,7 +930,8 @@ a two-stitch contraction proof for it.
 ## 8. Formal Verification and Implementation
 
 The stitching identities are proved in Lean 4 (v4.33.1) with Mathlib, in
-`paper/sandhi/lean/` of the Sygal repository, with no unproved assumptions
+`paper/sandhi/lean/` of the Sygal repository,
+<https://github.com/Akash-dvd/sygal/tree/main/paper/sandhi/lean>, with no unproved assumptions
 beyond Lean's standard axioms. The setting is \(\Lambda M\) for a module \(M\)
 over an arbitrary commutative ring, with left contraction by an arbitrary
 bilinear form; neither nondegeneracy nor disjointness of wing factors is
