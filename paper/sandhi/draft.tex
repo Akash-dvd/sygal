@@ -61,6 +61,11 @@ The local identity and the fixed-schedule induction theorem are proved for the
 well-formed panel grammar using a level-local visibility closure lemma.
 Schedule-independent normalization remains open; cases through nesting depth
 six have been checked by direct symbolic expansion.
+
+The grade-\(r\) identity, its vanishing branch, the Capelli coefficient, a
+closed-form nested identity of arbitrary depth, and the up-vichcheda vanishing
+rule are machine-checked in Lean~4 with Mathlib, over any commutative ring and
+any bilinear form.
 \end{abstract}
 
 \noindent\textbf{Keywords:}
@@ -532,6 +537,29 @@ C=\epsilon_C\,S\wedge c,\qquad
 The factors \(\epsilon_B\) and \(\epsilon_C\) record the parity of these
 reorderings. They are part of the coefficient, so alignment is mathematical
 data rather than a cosmetic normalization step.
+
+\subsection{Sandhi and vichcheda}
+
+We borrow two terms from Sanskrit grammar. \textit{Sandhi} (``joining'') is the
+stitch itself: replacing two panels that share a seam by one merged panel and
+a scalar, as in Theorem~\ref{thm:grade-r-seam}. \textit{Vichcheda} (``splitting'') is
+the preparatory step that exposes the seam, and it acts on either side of a
+contraction.
+
+\emph{Down vichcheda} splits the two down arguments along their common visible
+factors \(S\): it reorders them into the aligned forms \(B=\epsilon_B\,b\wedge
+S\) and \(C=\epsilon_C\,S\wedge c\) above, recording the parities.
+
+\emph{Up vichcheda} splits the contractors. If the two panels have contractors
+\(K\wedge P\) and \(K\), the extra factor \(P\) is peeled into the down
+argument,
+\[
+(K\wedge P)\mathbin{\lrcorner}X = K\mathbin{\lrcorner}(P\mathbin{\lrcorner}X),
+\]
+so both panels have the common contractor \(K\), and \(P\mathbin{\lrcorner}X\)
+becomes a candidate seam. When this seam has grade larger than
+\(\lvert K\rvert\), the product vanishes (\texttt{upVichcheda\_vanish},
+Section~\ref{sec:formal}).
 
 The grade-\(r\) identity resolves the local seam step. The remaining nested
 construction is an iteration of vector contractions, not an application of
@@ -1258,9 +1286,13 @@ arbitrary wings, because \(P\mathbin{\lrcorner}X\) is again a blade when \(X\)
 is a wedge of vectors (\texttt{contractBlade\_ofList\_blade}). It is false for
 a general homogeneous \(S\).
 
-The expansion (3.1) for \(r>1\), and the visibility, sibling-separation, and
-one-stitch closure lemmas of Section~4, have paper proofs only; schedule
-independence is open.
+The following have paper proofs only: the expansion (3.1) for \(r>1\) and the
+sign lemma for the minor convolution; the canonical-orientation lemma; the
+visibility, sibling-separation, and one-stitch closure lemmas of Section~4;
+the nested recursion theorem (Theorem~\ref{thm:nested-induction}) for seams
+distributed across levels; and the CGA encoding and the results of the
+Applications section (the incidence proposition, the radius annihilator, and
+Monge's theorem). Schedule independence is open.
 
 The Lean proof of the grade-\(r\) identity does not use the minor expansion
 of Section~3. It uses self-annihilation (each contractor factor annihilates

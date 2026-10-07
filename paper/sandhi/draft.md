@@ -34,8 +34,9 @@ closure lemma. Schedule-independent normalization remains open; cases through
 nesting depth six have been checked by direct symbolic expansion.
 
 The stitching identities themselves are machine-checked. The grade-\(r\)
-identity, its vanishing branch, the Capelli coefficient, and a closed-form
-nested identity of arbitrary depth are proved in Lean 4 with Mathlib, over any
+identity, its vanishing branch, the Capelli coefficient, a closed-form
+nested identity of arbitrary depth, and the up-vichcheda vanishing rule are
+proved in Lean 4 with Mathlib, over any
 commutative ring and any bilinear form (Section 8); the Lean source is at
 <https://github.com/Akash-dvd/sygal/tree/main/paper/sandhi/lean>. Locating a seam inside a
 given expression is a separate search problem, solved by the implementation
@@ -416,6 +417,29 @@ C=\epsilon_C\,S\wedge c,
 The factors \(\epsilon_B\) and \(\epsilon_C\) record the parity of these
 reorderings. They are part of the coefficient; alignment is therefore
 mathematical data, not a cosmetic normalization step.
+
+### Sandhi and vichcheda
+
+We borrow two terms from Sanskrit grammar. *Sandhi* ("joining") is the stitch
+itself: replacing two panels that share a seam by one merged panel and a
+scalar, as in the grade-\(r\) theorem. *Vichcheda* ("splitting") is the
+preparatory step that exposes the seam, and it acts on either side of a
+contraction.
+
+*Down vichcheda* splits the two down arguments along their common visible
+factors \(S\): it reorders them into the aligned forms
+\(B=\epsilon_B\,b\wedge S\) and \(C=\epsilon_C\,S\wedge c\) above, recording
+the parities.
+
+*Up vichcheda* splits the contractors. If the two panels have contractors
+\(K\wedge P\) and \(K\), the extra factor \(P\) is peeled into the down
+argument,
+\[
+(K\wedge P)\lrcorner X = K\lrcorner(P\lrcorner X),
+\]
+so both panels have the common contractor \(K\), and \(P\lrcorner X\) becomes
+a candidate seam. When this seam has grade larger than \(\lvert K\rvert\), the
+product vanishes (`upVichcheda_vanish`, Section 8).
 
 ### Nested recursion
 
@@ -955,9 +979,12 @@ arbitrary wings, because \(P\lrcorner X\) is again a blade when \(X\) is a
 wedge of vectors (`contractBlade_ofList_blade`). It is false for a general
 homogeneous \(S\).
 
-The expansion (3.1) for \(r>1\), and the visibility, sibling-separation, and
-one-stitch closure lemmas of Section 4, have paper proofs only; schedule
-independence is open.
+The following have paper proofs only: the expansion (3.1) for \(r>1\) and the
+sign lemma for the minor convolution; the canonical-orientation lemma; the
+visibility, sibling-separation, and one-stitch closure lemmas of Section 4;
+the nested recursion theorem for seams distributed across levels; and the CGA
+encoding and the results of Section 7 (the incidence proposition, the radius
+annihilator, and Monge's theorem). Schedule independence is open.
 
 The Lean proof of the grade-\(r\) identity does not use the minor expansion
 of Section 3. It uses self-annihilation (each contractor factor annihilates
